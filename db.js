@@ -137,11 +137,21 @@ const ChestomDB = (() => {
 
   const save = (db) => localStorage.setItem(KEY, JSON.stringify(db));
   const reset = () => localStorage.removeItem(KEY);
+  const hasLocal = () => { try { return !!localStorage.getItem(KEY); } catch (e) { return false; } };
+
+  /* опубликованный db.json (из репозитория) — базовый слой под локальными правками:
+     пустые разделы в файле означают «использовать встроенные данные» */
+  const mergeRemote = (db, remote) => ({
+    prices:  { ...db.prices, ...(remote.prices || {}) },
+    doctors: Array.isArray(remote.doctors) && remote.doctors.length ? remote.doctors : db.doctors,
+    reviews: Array.isArray(remote.reviews) && remote.reviews.length ? remote.reviews : db.reviews,
+    news:    Array.isArray(remote.news) && remote.news.length ? remote.news : db.news
+  });
 
   const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   const doctorById = (db, id) => db.doctors.find((d) => d.id === id) || null;
   const reviewsFor = (db, id) => db.reviews.filter((r) => r.doctorId === id);
   const postsFor = (db, id) => db.news.filter((n) => n.authorId === id);
 
-  return { load, save, reset, deepCopy, initials, doctorById, reviewsFor, postsFor, SEED };
+  return { load, save, reset, hasLocal, mergeRemote, deepCopy, initials, doctorById, reviewsFor, postsFor, SEED };
 })();

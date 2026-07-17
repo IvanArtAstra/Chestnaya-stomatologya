@@ -295,6 +295,24 @@
   /* старт */
   applyLang(lang);
 
+  /* опубликованный db.json — применяем, если нет локальных правок админки */
+  if (!ChestomDB.hasLocal()) {
+    fetch("db.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((remote) => {
+        if (!remote) return;
+        Object.assign(db, ChestomDB.mergeRemote(db, remote));
+        $$("[data-price-id]").forEach((el) => {
+          const v = db.prices[el.dataset.priceId];
+          if (v) el.textContent = v;
+        });
+        renderNews();
+        renderDoctors();
+        renderReviews();
+      })
+      .catch(() => {});
+  }
+
   } catch (e) {
     /* любой сбой — показываем контент без анимаций, дизайн не должен «пропадать» */
     document.documentElement.classList.remove("js", "reveal-armed");

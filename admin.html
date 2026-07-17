@@ -142,8 +142,12 @@ try {
         <div class="adm__actions">
           <button type="submit" class="btn btn--primary">Сохранить цены</button>
           <button type="button" class="btn btn--ghost" id="pricesReset">Вернуть исходные</button>
+          <button type="button" class="btn btn--ghost" id="dbExport">⬇ Скачать db.json</button>
           <span class="adm__saved" id="pricesSaved" hidden>✓ Сохранено — обновите вкладку с сайтом</span>
         </div>
+        <p class="adm__hint">Сейчас изменения видны только в этом браузере. Чтобы опубликовать их для всех:
+        нажмите «Скачать db.json», замените файл <code>site/db.json</code> в репозитории и запушьте
+        (или запустите «Опубликовать.command»).</p>
       </form>
     </section>
 
