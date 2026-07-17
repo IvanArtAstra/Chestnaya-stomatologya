@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+try {
+  document.documentElement.dataset.theme =
+    localStorage.getItem("chestom_theme") ||
+    (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+} catch (e) { document.documentElement.dataset.theme = "dark"; }
+</script>
+<title>Страница не найдена — Честная стоматология</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .nf { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; gap: 18px; }
+  .nf__tooth { width: 120px; opacity: 0.85; filter: drop-shadow(0 16px 50px rgba(56,189,248,0.35)); animation: nfFloat 4s ease-in-out infinite alternate; }
+  @keyframes nfFloat { to { transform: translateY(-14px) rotate(4deg); } }
+  .nf h1 { font-size: clamp(3rem, 10vw, 5.5rem); }
+  .nf p { color: var(--ink-dim); max-width: 420px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<main class="nf">
+  <svg class="nf__tooth" viewBox="0 0 200 220" aria-hidden="true">
+    <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ee8dc"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs>
+    <path d="M100 10C62 10 36 36 36 68c0 26 13 39 19 65 5 21 9 60 22 60 16 0 10-46 23-46s7 46 23 46c13 0 17-39 22-60 6-26 19-39 19-65 0-32-26-58-64-58z" fill="none" stroke="url(#tg)" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M70 80h20l10-16 14 28 10-13h16" fill="none" stroke="url(#tg)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <h1>404</h1>
+  <p>Такой страницы нет — как и скрытых доплат в нашей клинике. Зато есть главная со всеми услугами и ценами.</p>
+  <a class="btn btn--primary btn--lg" href="index.html">На главную</a>
+  <a class="btn btn--ghost" href="tel:+79991152419">Позвонить: +7 999 115-24-19</a>
+</main>
+</body>
+</html>

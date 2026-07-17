@@ -61,6 +61,7 @@ const I18N = {
   "svc.6.p":        { ru: "Бережное удаление, в том числе неотложная помощь для взрослых.", en: "Gentle extraction, including urgent care for adults.", ar: "خلع لطيف، بما في ذلك الرعاية العاجلة للبالغين." },
   "svc.from":       { ru: "от", en: "from", ar: "من" },
   "svc.book":       { ru: "Записаться →", en: "Book →", ar: "← احجز" },
+  "svc.more":       { ru: "Подробнее", en: "Learn more", ar: "التفاصيل" },
   "svc.calc.h":     { ru: "Не знаете, сколько будет стоить?", en: "Not sure what it will cost?", ar: "لست متأكداً من التكلفة؟" },
   "svc.calc.p":     { ru: "Ответьте на 4 вопроса — покажем ориентировочную смету за 30 секунд.", en: "Answer 4 questions and get an estimate in 30 seconds.", ar: "أجب عن ٤ أسئلة واحصل على تقدير خلال ٣٠ ثانية." },
   "svc.calc.btn":   { ru: "Рассчитать стоимость", en: "Calculate cost", ar: "احسب التكلفة" },
