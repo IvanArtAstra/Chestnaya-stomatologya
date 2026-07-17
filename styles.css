@@ -1026,3 +1026,79 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 :root[data-theme="light"] .modal__backdrop { background: rgba(190, 220, 232, 0.55); }
 :root[data-theme="light"] .modal__card { box-shadow: inset 0 1px 0 var(--glass-hi), 0 40px 100px rgba(11, 69, 96, 0.25); }
 :root[data-theme="light"] .booking-form small a, :root[data-theme="light"] .post__body a { color: var(--aqua-soft); }
+
+/* ═══════════════ ДОСТУПНОСТЬ ═══════════════ */
+:focus-visible { outline: 2.5px solid var(--aqua); outline-offset: 3px; border-radius: 4px; }
+.skip-link {
+  position: fixed; top: -60px; left: 16px; z-index: 200;
+  padding: 12px 20px; border-radius: 12px; font-weight: 700;
+  background: var(--aqua); color: #04202e; transition: top 0.25s;
+}
+.skip-link:focus { top: 12px; }
+/* контраст акцентного текста в светлой теме */
+:root[data-theme="light"] .svc-card__cta,
+:root[data-theme="light"] .doc-card__more,
+:root[data-theme="light"] .svc-card__page { color: var(--aqua-soft); }
+
+/* ═══════════════ КНОПКА «НАВЕРХ» ═══════════════ */
+.to-top {
+  position: fixed; bottom: 96px; inset-inline-end: 22px; z-index: 60;
+  width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--glass-bg); border: 1px solid var(--glass-line); color: var(--aqua-soft);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5);
+  box-shadow: inset 0 1px 0 var(--glass-hi), 0 10px 30px rgba(2, 18, 28, 0.3);
+  opacity: 0; transform: translateY(14px); pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.2), border-color 0.25s;
+}
+.to-top.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+.to-top:hover { border-color: var(--aqua); }
+.to-top svg { width: 18px; height: 18px; }
+@media (max-width: 640px) { .to-top { bottom: 150px; inset-inline-end: 14px; } }
+
+/* ═══════════════ АКТИВНЫЙ ПУНКТ МЕНЮ ═══════════════ */
+.nav__links a.is-current { color: var(--aqua-soft); }
+.nav__links a.is-current::after { right: 0; }
+
+/* ═══════════════ КАРТОЧКИ УСЛУГ: ссылки ═══════════════ */
+.svc-card__links { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.svc-card__page {
+  font-weight: 700; font-size: 0.88rem; color: var(--aqua);
+  padding: 4px 0; transition: color 0.2s, transform 0.25s;
+}
+.svc-card__page:hover { color: var(--aqua-soft); transform: translateX(3px); }
+
+/* ═══════════════ СТРАНИЦА УСЛУГИ ═══════════════ */
+.svcpage__icon { color: var(--aqua-soft); }
+.svcpage__meta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 18px; }
+.svcpage__price b { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); color: var(--aqua-soft); }
+.svcpage__dur { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-dim); font-size: 0.92rem; }
+.svcpage__dur .icon { width: 16px; height: 16px; color: var(--aqua-soft); }
+.svcpage__faq { display: flex; flex-direction: column; gap: 10px; }
+.faq {
+  border: 1px solid var(--card-line); border-radius: 16px;
+  background: var(--card); overflow: hidden; transition: border-color 0.25s;
+}
+.faq:hover { border-color: rgba(126, 232, 220, 0.4); }
+.faq summary {
+  padding: 18px 22px; font-weight: 700; cursor: pointer; list-style: none;
+  position: relative; padding-inline-end: 48px;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; position: absolute; inset-inline-end: 20px; top: 50%; transform: translateY(-50%);
+  font-size: 1.3rem; font-weight: 400; color: var(--aqua-soft); transition: transform 0.3s;
+}
+.faq[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.faq p { padding: 0 22px 18px; color: var(--ink-dim); line-height: 1.65; }
+.svcpage__others { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.svc-mini {
+  display: flex; align-items: center; gap: 12px;
+  padding: 15px 18px; border-radius: 14px;
+  border: 1px solid var(--card-line); background: var(--card);
+  transition: border-color 0.25s, transform 0.25s;
+}
+.svc-mini:hover { border-color: var(--aqua); transform: translateY(-3px); }
+.svc-mini .icon { width: 20px; height: 20px; color: var(--aqua-soft); flex: none; }
+.svc-mini span { flex: 1; font-size: 0.88rem; font-weight: 600; line-height: 1.3; }
+.svc-mini b { color: var(--aqua-soft); font-size: 0.85rem; white-space: nowrap; }
