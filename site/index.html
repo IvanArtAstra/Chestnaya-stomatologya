@@ -71,6 +71,7 @@ try {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="effects.css">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#services">Перейти к содержанию</a>
@@ -407,6 +408,8 @@ try {
       <button type="submit" class="btn btn--primary btn--lg" data-i18n="calc.show">Показать смету</button>
     </form>
   </div>
+  <!-- интерактивная карта зубов (рендерится из teeth-map.js) -->
+  <div class="teeth-host reveal" id="teethMap"></div>
 </section>
 
 <!-- ══════════ КОМАНДА ══════════ -->
@@ -448,6 +451,9 @@ try {
   </div>
 </section>
 
+<!-- ══════════ ЭКСКУРСИЯ ПО КЛИНИКЕ (рендерится из tour.js) ══════════ -->
+<section class="tour-host" id="tour" aria-label="Экскурсия по клинике"></section>
+
 <!-- ══════════ АКЦИИ (реальные из ВК) ══════════ -->
 <section class="section promo" id="promo">
   <div class="section__head reveal">
@@ -486,7 +492,10 @@ try {
     <h2 data-i18n="news.title">Лента клиники</h2>
     <p data-i18n="news.sub">Врачи рассказывают о работе, а клиника — о новостях и акциях. Посты добавляются через админ-панель.</p>
   </div>
-  <div class="news__feed" id="newsFeed"><!-- рендерится из app.js --></div>
+  <div class="news__feed" id="newsFeed"><!-- рендерится из app.js -->
+    <div class="sk-card" aria-hidden="true"><span class="sk sk--ava"></span><span class="sk sk--line" style="width:55%"></span><span class="sk sk--line" style="width:90%"></span><span class="sk sk--line" style="width:75%"></span></div>
+    <div class="sk-card" aria-hidden="true"><span class="sk sk--ava"></span><span class="sk sk--line" style="width:45%"></span><span class="sk sk--line" style="width:85%"></span><span class="sk sk--line" style="width:70%"></span></div>
+  </div>
   <div class="news__vk reveal">
     <a class="btn btn--ghost" href="https://vk.com/chestom" target="_blank" rel="noopener">
       <svg class="icon"><use href="#i-vk"/></svg>
@@ -502,7 +511,11 @@ try {
     <h2 data-i18n="rev.title">5,0 из 5 — говорят пациенты</h2>
     <p data-i18n="rev.sub">72 оценки и 59 отзывов на 2ГИС — ниже реальные отзывы пациентов клиники.</p>
   </div>
-  <div class="reviews__row" id="reviewsRow"><!-- рендерится из app.js --></div>
+  <div class="reviews__row" id="reviewsRow"><!-- рендерится из app.js -->
+    <div class="sk-card" aria-hidden="true"><span class="sk sk--line" style="width:40%"></span><span class="sk sk--line" style="width:95%"></span><span class="sk sk--line" style="width:88%"></span><span class="sk sk--line" style="width:50%"></span></div>
+    <div class="sk-card" aria-hidden="true"><span class="sk sk--line" style="width:40%"></span><span class="sk sk--line" style="width:92%"></span><span class="sk sk--line" style="width:80%"></span><span class="sk sk--line" style="width:45%"></span></div>
+    <div class="sk-card" aria-hidden="true"><span class="sk sk--line" style="width:40%"></span><span class="sk sk--line" style="width:90%"></span><span class="sk sk--line" style="width:84%"></span><span class="sk sk--line" style="width:55%"></span></div>
+  </div>
   <div class="reviews__all reveal">
     <a class="btn btn--ghost" href="https://2gis.ru/perm/firm/70000001054392269/tab/reviews" target="_blank" rel="noopener">
       <svg class="icon icon--star"><use href="#i-star"/></svg>
@@ -685,5 +698,10 @@ try {
 <script src="md.js"></script>
 <script src="ux.js"></script>
 <script src="app.js"></script>
+<script src="water.js" defer></script>
+<script src="effects.js" defer></script>
+<script src="teeth-map.js" defer></script>
+<script src="tour.js" defer></script>
+<script src="dive3d.js" defer></script>
 </body>
 </html>
