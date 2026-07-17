@@ -1,0 +1,149 @@
+/* ===========================================================
+   effects.css — декоративные эффекты (tilt, магнитные кнопки,
+   рисующиеся иконки, прелоадер, бегущие строки, split-заголовки)
+   Подключается после styles.css. Ничего в styles.css не меняем.
+   =========================================================== */
+
+/* ---------- 1. 3D-tilt карточек ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .svc-card,
+  a.doc-card,
+  .promo-card {
+    transform-origin: center;
+  }
+  .is-tilting {
+    /* пока идёт tilt — без transition transform, чтобы не дёргалось */
+    transition: border-color 0.25s, box-shadow 0.25s !important;
+    will-change: transform;
+    position: relative;
+    overflow: hidden;
+  }
+  .tilt-glare {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(240px circle at var(--gx, 50%) var(--gy, 50%),
+      rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    z-index: 2;
+  }
+  .is-tilting .tilt-glare { opacity: 1; }
+}
+
+/* ---------- 2. Магнитные кнопки ---------- */
+@media (pointer: fine) {
+  .btn--primary.is-magnetic {
+    transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+    will-change: transform;
+  }
+}
+
+/* ---------- 3. Рисующиеся иконки ---------- */
+.svc-card:hover .svc-card__icon svg,
+.svc-mini:hover .icon {
+  stroke-dasharray: 70;
+  stroke-dashoffset: 70;
+  animation: iconDraw 0.9s ease forwards;
+}
+@keyframes iconDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ---------- 4. Прелоадер первого визита ---------- */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--deep-0, #02121c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+:root[data-theme="light"] #preloader { background: #eef9fc; }
+#preloader.is-done {
+  opacity: 0;
+  transform: scale(1.08);
+  pointer-events: none;
+}
+#preloader svg { width: 84px; height: 84px; }
+#preloader .pl-tooth,
+#preloader .pl-pulse {
+  stroke: var(--aqua-soft, #7ee8dc);
+  stroke-width: 3;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 130;
+  stroke-dashoffset: 130;
+  animation: plDraw 0.8s ease forwards;
+}
+#preloader .pl-pulse { animation-delay: 0.25s; }
+@keyframes plDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ---------- 5. Бегущие строки-разделители ---------- */
+.ticker {
+  overflow: hidden;
+  padding: 28px 0;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+.ticker__track {
+  display: inline-block;
+  white-space: nowrap;
+  font-family: var(--font-display, "Unbounded", sans-serif);
+  font-size: clamp(1.1rem, 2.4vw, 1.7rem);
+  font-weight: 600;
+  color: var(--ink-dim, #9cc3d1);
+  opacity: 0.35;
+  letter-spacing: 0.06em;
+  will-change: transform;
+  animation: tickerMove 40s linear infinite;
+}
+html[dir="rtl"] .ticker__track { animation-direction: reverse; }
+@keyframes tickerMove {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ---------- 6. Split-заголовки ---------- */
+.section__head h2 .w {
+  display: inline-block;
+  transform: translateY(0.7em) rotate(4deg);
+  opacity: 0;
+  transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.45s ease;
+  transition-delay: var(--wd, 0ms);
+  will-change: transform, opacity;
+}
+.section__head h2.is-inview .w,
+.section__head h2 .w.is-shown {
+  transform: none;
+  opacity: 1;
+}
+
+/* ---------- Reduced motion: всё выключаем ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .is-tilting { transition: none !important; transform: none !important; }
+  .tilt-glare { display: none !important; }
+  .btn--primary.is-magnetic { transition: none !important; transform: none !important; }
+  .svc-card:hover .svc-card__icon svg,
+  .svc-mini:hover .icon {
+    animation: none !important;
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+  #preloader { display: none !important; }
+  .ticker { text-align: center; }
+  .ticker__track { animation: none !important; transform: none !important; }
+  .section__head h2 .w {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}
