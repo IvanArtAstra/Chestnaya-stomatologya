@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script>
+try {
+  document.documentElement.dataset.theme =
+    localStorage.getItem("chestom_theme") ||
+    (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+} catch (e) { document.documentElement.dataset.theme = "dark"; }
+</script>
+<title>Врач — Честная стоматология, Пермь</title>
+<meta name="description" content="Личная страница врача клиники «Честная стоматология» в Перми: отзывы пациентов, публикации, онлайн-запись.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-tooth" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3C8 3 5.5 5.6 5.5 8.8c0 2.6 1.3 3.9 1.9 6.5.5 2 .9 5.7 2.2 5.7 1.5 0 1-4.4 2.4-4.4s.9 4.4 2.4 4.4c1.3 0 1.7-3.7 2.2-5.7.6-2.6 1.9-3.9 1.9-6.5C18.5 5.6 16 3 12 3z"/>
+    <path d="M8.5 9.5h2l1-1.7 1.4 3 1-1.3h1.6"/>
+  </symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <path d="M12 3.6 14.4 9l5.8.5-4.4 3.9 1.3 5.7L12 16.1 6.9 19l1.3-5.7L3.8 9.5 9.6 9z"/>
+  </symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m16.8 4.3 2.9 2.9L8.5 18.4l-4 1.1 1.1-4z"/><path d="m14.5 6.6 2.9 2.9"/>
+  </symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 4.5c.8 0 1.7 1.4 2.1 2.6.3 1-.2 1.6-.9 2.2-.4.4-.4 1 0 1.6 1 1.6 2.3 2.9 4 3.9.6.4 1.2.4 1.6 0 .6-.7 1.2-1.2 2.2-.9 1.2.4 2.6 1.3 2.6 2.1 0 1.7-2 3.2-3.7 3.2C10 19.2 4.8 14 4.8 8.7c0-1.7 1-4.2 2.7-4.2z"/>
+  </symbol>
+  <symbol id="i-arrow-l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19.5 12h-15M10 6.5 4.5 12l5.5 5.5"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19.5 13.5A7.8 7.8 0 0 1 10.5 4.5a7.8 7.8 0 1 0 9 9z"/>
+  </symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4.2"/>
+    <path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/>
+  </symbol>
+</svg>
+
+<header class="nav is-scrolled">
+  <a class="nav__logo" href="index.html">
+    <svg class="icon icon--lg" aria-hidden="true"><use href="#i-tooth"/></svg>
+    <span>Честная<b>стоматология</b></span>
+  </a>
+  <div class="nav__actions">
+    <button class="theme-btn" id="themeBtn" aria-label="Переключить тему">
+      <svg class="icon theme-btn__moon"><use href="#i-moon"/></svg>
+      <svg class="icon theme-btn__sun"><use href="#i-sun"/></svg>
+    </button>
+    <a class="nav__phone" href="tel:+79991152419">+7 999 115-24-19</a>
+    <button class="btn btn--primary btn--sm" data-open-booking>Записаться</button>
+  </div>
+</header>
+
+<main class="dpage">
+  <a class="dpage__back" href="index.html#team"><svg class="icon"><use href="#i-arrow-l"/></svg>Вся команда клиники</a>
+
+  <section class="dpage__hero" id="docHero">
+    <div class="dpage__ava" id="docAva">…</div>
+    <div class="dpage__info">
+      <h1 id="docName">Врач клиники</h1>
+      <p class="dpage__role" id="docRole"></p>
+      <p class="dpage__desc" id="docDesc"></p>
+      <div class="dpage__cta">
+        <button class="btn btn--primary" data-open-booking id="docBook">Записаться к врачу</button>
+        <a class="btn btn--ghost" href="tel:+79991152419"><svg class="icon"><use href="#i-phone"/></svg>Позвонить</a>
+      </div>
+    </div>
+  </section>
+
+  <h2><svg class="icon"><use href="#i-star"/></svg>Отзывы пациентов <span id="docRevCount"></span></h2>
+  <div class="dpage__reviews" id="docReviews"></div>
+
+  <h2><svg class="icon"><use href="#i-pen"/></svg>Публикации врача</h2>
+  <div class="dpage__posts" id="docPosts"></div>
+
+  <p class="dpage__note">
+    Эта страница управляется через <a href="admin.html">админ-панель клиники</a>: врач сам обновляет описание,
+    а отзывы синхронизируются с <a href="https://2gis.ru/perm/firm/70000001054392269/tab/reviews" target="_blank" rel="noopener">2ГИС</a>
+    и <a href="https://vk.com/chestom" target="_blank" rel="noopener">ВКонтакте</a>.
+  </p>
+</main>
+
+<footer class="footer">
+  <div class="footer__grid">
+    <div class="footer__col footer__col--brand">
+      <p>© 2026 ООО «Честная стоматология» · Пермь, ул. Танкистов, 68</p>
+      <p>Имеются противопоказания. Необходима консультация специалиста.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="modal" id="bookingModal" hidden>
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__card" role="dialog" aria-modal="true" aria-label="Онлайн-запись">
+    <button class="modal__close" data-close-modal aria-label="Закрыть">✕</button>
+    <h3>Онлайн-запись</h3>
+    <p id="modalContext">Оставьте контакты — подберём удобное время.</p>
+    <form id="modalBooking">
+      <label>Имя<input type="text" name="name" required placeholder="Ваше имя" autocomplete="name"></label>
+      <label>Телефон<input type="tel" name="phone" required placeholder="+7 ___ ___-__-__" autocomplete="tel"></label>
+      <button type="submit" class="btn btn--primary btn--lg">Отправить заявку</button>
+      <small>Согласие на обработку персональных данных (152-ФЗ)</small>
+      <div class="booking-form__ok" hidden>✓ Готово! Перезвоним в рабочее время.</div>
+    </form>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script src="md.js"></script>
+<script src="doctor.js"></script>
+</body>
+</html>
