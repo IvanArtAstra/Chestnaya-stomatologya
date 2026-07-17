@@ -25,6 +25,19 @@
 
   /* ── профиль ── */
   document.title = `${doc.name} — Честная стоматология, Пермь`;
+  /* Schema.org Physician для поисковиков */
+  const ld = document.createElement("script");
+  ld.type = "application/ld+json";
+  ld.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Physician",
+    "name": doc.fullName || doc.name,
+    "jobTitle": doc.role,
+    "description": doc.desc,
+    "worksFor": { "@type": "Dentist", "name": "Честная стоматология", "telephone": "+79991152419",
+      "address": { "@type": "PostalAddress", "streetAddress": "ул. Танкистов, 68", "addressLocality": "Пермь", "addressCountry": "RU" } }
+  });
+  document.head.appendChild(ld);
   const ava = $("#docAva");
   ava.textContent = ChestomDB.initials(doc.name);
   ava.style.setProperty("--hue", doc.hue || 190);
