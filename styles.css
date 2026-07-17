@@ -1102,3 +1102,32 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 .svc-mini .icon { width: 20px; height: 20px; color: var(--aqua-soft); flex: none; }
 .svc-mini span { flex: 1; font-size: 0.88rem; font-weight: 600; line-height: 1.3; }
 .svc-mini b { color: var(--aqua-soft); font-size: 0.85rem; white-space: nowrap; }
+
+/* ═══════════════ VIEW TRANSITIONS (переходы между страницами) ═══════════════ */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vtOut 0.25s ease both; }
+::view-transition-new(root) { animation: vtIn 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes vtOut { to { opacity: 0; transform: scale(0.985); } }
+@keyframes vtIn { from { opacity: 0; transform: scale(1.015); } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
+/* ═══════════════ СКЕЛЕТОНЫ (шиммер до загрузки данных) ═══════════════ */
+.sk-card {
+  padding: 26px 28px; border-radius: var(--radius);
+  background: var(--card); border: 1px solid var(--card-line);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.sk { display: block; border-radius: 8px; height: 14px; position: relative; overflow: hidden;
+  background: rgba(126, 232, 220, 0.08); }
+.sk--ava { width: 44px; height: 44px; border-radius: 50%; }
+.sk::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(126, 232, 220, 0.14) 50%, transparent 70%);
+  transform: translateX(-100%); animation: skShimmer 1.4s ease-in-out infinite;
+}
+@keyframes skShimmer { to { transform: translateX(100%); } }
+:root[data-theme="light"] .sk { background: rgba(11, 69, 96, 0.07); }
+:root[data-theme="light"] .sk::after { background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.7) 50%, transparent 70%); }
+@media (prefers-reduced-motion: reduce) { .sk::after { animation: none; } }
