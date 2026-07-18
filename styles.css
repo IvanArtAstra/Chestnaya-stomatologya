@@ -1219,3 +1219,41 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 .lang__btn { height: 40px; box-sizing: border-box; }
 .account-btn, .theme-btn { width: 40px; height: 40px; }
 .nav__burger { height: 40px; width: 40px; align-items: center; justify-content: center; }
+
+/* ═══════════════ МЕНЮ: БЕЗ ПЕРЕНОСОВ СТРОК ═══════════════ */
+.nav__links a { white-space: nowrap; }
+
+/* телефон в мобильном бургер-меню (на десктопе скрыт) */
+.nav__links-phone { display: none; }
+.nav__links.is-open .nav__links-phone {
+  display: flex; align-items: center; gap: 9px;
+  font-weight: 800; color: var(--aqua-soft) !important;
+}
+.nav__links-phone .icon { width: 16px; height: 16px; }
+
+/* ═══════════════ ДО/ПОСЛЕ: АВТОПЛЕЙ ПОЛЗУНКА ═══════════════
+   Ползунок сам плавно ездит туда-обратно (зацикленно, как GIF),
+   пока пользователь не наведёт курсор или не начнёт тянуть сам. */
+@property --pos {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 50%;
+}
+@supports (animation-timeline: none) or (background: paint(x)) {
+  /* современные браузеры с поддержкой @property-анимаций */
+}
+.ba__frame {
+  animation: baSweep 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes baSweep {
+  0%   { --pos: 18%; }
+  50%  { --pos: 82%; }
+  100% { --pos: 18%; }
+}
+.ba__frame:hover,
+.ba__frame.is-manual { animation-play-state: paused; }
+.ba__frame.is-manual { animation: none; }
+/* плавность ручного ведения сохраняется: inline --pos применяется после animation:none */
+@media (prefers-reduced-motion: reduce) {
+  .ba__frame { animation: none; }
+}

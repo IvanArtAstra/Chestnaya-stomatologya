@@ -270,7 +270,11 @@
       frame.style.setProperty("--pos", p + "%");
     };
     let dragging = false;
-    frame.addEventListener("pointerdown", (e) => { dragging = true; frame.setPointerCapture(e.pointerId); setPos(e.clientX); });
+    frame.addEventListener("pointerdown", (e) => {
+      /* пользователь взял управление — останавливаем автоплей навсегда */
+      frame.classList.add("is-manual");
+      dragging = true; frame.setPointerCapture(e.pointerId); setPos(e.clientX);
+    });
     frame.addEventListener("pointermove", (e) => dragging && setPos(e.clientX));
     frame.addEventListener("pointerup", () => (dragging = false));
     frame.addEventListener("pointercancel", () => (dragging = false));
