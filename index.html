@@ -15,6 +15,11 @@ try {
 <meta name="description" content="Стоматологическая клиника «Честная стоматология» в Перми, ул. Танкистов, 68. Лечение без скрытых услуг и навязанных процедур. Рейтинг 5.0 на 2ГИС. Онлайн-запись.">
 <link rel="canonical" href="https://ivanartastra.github.io/Chestnaya-stomatologya/">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="geo.region" content="RU-PER">
+<meta name="geo.placename" content="Пермь">
+<meta name="geo.position" content="57.979157;56.20138">
+<meta name="ICBM" content="57.979157, 56.20138">
+
 <meta property="og:type" content="website">
 <meta property="og:title" content="Честная стоматология — клиника в Перми">
 <meta property="og:description" content="Лечение без скрытых услуг и навязанных процедур. Рейтинг 5,0 на 2ГИС. Честно. Профессионально. С заботой о вас.">
@@ -48,6 +53,8 @@ try {
     "opens": "10:00", "closes": "20:00"
   },
   "sameAs": ["https://vk.com/chestom", "https://2gis.ru/perm/firm/70000001054392269"],
+  "hasMap": "https://2gis.ru/perm/firm/70000001054392269",
+  "areaServed": { "@type": "City", "name": "Пермь" },
   "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5.0", "bestRating": "5", "ratingCount": "72", "reviewCount": "59" },
   "review": [
     {
@@ -658,6 +665,10 @@ try {
   </div>
 </footer>
 
+<!-- ══════════ БОКОВЫЕ БАННЕРЫ (управляются из админки) ══════════ -->
+<aside class="rail rail--left" id="railLeft" hidden aria-label="Реклама"></aside>
+<aside class="rail rail--right" id="railRight" hidden aria-label="Реклама"></aside>
+
 <!-- ══════════ ПЛАВАЮЩИЙ ВИДЖЕТ СВЯЗИ ══════════ -->
 <div class="fab" id="fab">
   <div class="fab__menu" id="fabMenu">
@@ -697,6 +708,7 @@ try {
 
 <script src="i18n.js"></script>
 <script src="db.js"></script>
+<script src="auth.js"></script>
 <script src="md.js"></script>
 <script src="ux.js"></script>
 <script src="app.js"></script>

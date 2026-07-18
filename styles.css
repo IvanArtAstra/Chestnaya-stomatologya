@@ -1144,3 +1144,71 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
   .lang__btn #langCur { display: none; }
   .nav__burger { padding: 6px; }
 }
+
+/* ═══════════════ ЛЕНТА ВРАЧЕЙ: ИДЕАЛЬНЫЙ ЦИКЛ ═══════════════
+   gap ломает бесшовность translateX(-50%): половины трека получаются
+   разной ширины. Заменяем gap на margin у карточек. */
+.hscroll--marquee .hscroll__track { gap: 0; }
+.hscroll--marquee .doc-card { margin-inline-end: 20px; }
+
+/* ═══════════════ КНОПКА ВХОДА В АККАУНТ ═══════════════ */
+.account-btn {
+  position: relative; width: 40px; height: 40px; border-radius: 50%; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--card-line); color: var(--ink-dim);
+  transition: color 0.25s, border-color 0.25s, transform 0.3s;
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.account-btn:hover { color: var(--aqua-soft); border-color: var(--aqua); transform: translateY(-2px); }
+.account-btn svg { width: 18px; height: 18px; }
+.account-btn__dot {
+  position: absolute; top: 2px; inset-inline-end: 2px; width: 9px; height: 9px;
+  border-radius: 50%; background: #34d399; border: 2px solid var(--deep-0);
+}
+@media (max-width: 480px) { .account-btn { width: 36px; height: 36px; } }
+
+/* ═══════════════ БОКОВЫЕ БАННЕРЫ ═══════════════ */
+.rail { display: none; }
+@media (min-width: 1460px) {
+  .rail {
+    display: block; position: fixed; top: 50%; transform: translateY(-50%);
+    width: 216px; z-index: 45;
+  }
+  .rail--left { left: 20px; }
+  .rail--right { right: 20px; }
+}
+.rail__card {
+  position: relative; padding: 20px 18px; border-radius: 18px;
+  background: var(--glass-bg); border: 1px solid var(--glass-line);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6);
+  box-shadow: inset 0 1px 0 var(--glass-hi), 0 16px 44px rgba(2, 18, 28, 0.3);
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+  animation: railIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes railIn { from { opacity: 0; transform: translateX(var(--rail-dx, -16px)); } }
+.rail--right .rail__card { --rail-dx: 16px; }
+.rail__close {
+  position: absolute; top: 8px; inset-inline-end: 8px;
+  width: 26px; height: 26px; border-radius: 50%; font-size: 0.7rem;
+  color: var(--ink-dim); background: rgba(255, 255, 255, 0.06); transition: 0.2s;
+}
+.rail__close:hover { color: var(--ink); background: rgba(255, 255, 255, 0.14); }
+.rail__badge {
+  padding: 4px 11px; border-radius: 999px; font-size: 0.66rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--aqua-soft); background: rgba(45, 212, 191, 0.1); border: 1px solid var(--card-line);
+}
+.rail__title { font-size: 1.02rem; line-height: 1.25; }
+.rail__text { color: var(--ink-dim); font-size: 0.82rem; line-height: 1.5; }
+
+/* ═══════════════ НОВОСТИ: FEATURED-СЕТКА ═══════════════ */
+@media (min-width: 900px) {
+  .news__feed { max-width: 1080px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  .post--featured { grid-column: 1 / -1; }
+  .post--featured h3 { font-size: 1.5rem; }
+  .post--featured .post__body p, .post--featured .post__body ul li { font-size: 1.02rem; }
+  .post--featured {
+    background: linear-gradient(140deg, rgba(45, 212, 191, 0.1), rgba(56, 189, 248, 0.05)), var(--card);
+    border-color: rgba(126, 232, 220, 0.28);
+  }
+}
