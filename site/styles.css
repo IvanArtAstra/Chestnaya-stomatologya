@@ -1212,3 +1212,10 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
     border-color: rgba(126, 232, 220, 0.28);
   }
 }
+
+/* ═══════════════ ХЕДЕР: ВЫРАВНИВАНИЕ (телефон убран) ═══════════════ */
+.nav__actions { gap: 10px; }
+.nav__actions .btn--sm { height: 40px; padding: 0 22px; display: inline-flex; align-items: center; }
+.lang__btn { height: 40px; box-sizing: border-box; }
+.account-btn, .theme-btn { width: 40px; height: 40px; }
+.nav__burger { height: 40px; width: 40px; align-items: center; justify-content: center; }
