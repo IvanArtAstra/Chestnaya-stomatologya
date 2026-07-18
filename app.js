@@ -217,14 +217,27 @@
       </a>`;
     };
     const cards = db.doctors.map(cardHtml).join("");
-    /* плоское дублирование набора: track = две идентичные последовательности,
-       translateX(-50%) даёт идеально бесшовный бесконечный цикл */
-    track.innerHTML = cards + cards;
-    const kids = [...track.children];
-    kids.slice(db.doctors.length).forEach((el) => { el.setAttribute("aria-hidden", "true"); el.tabIndex = -1; });
-    /* скорость постоянна независимо от числа врачей: ~7с на карточку */
-    track.style.animationDuration = Math.max(20, db.doctors.length * 7) + "s";
+    /* Бесшовный бесконечный цикл через translateX(-50%): трек = две
+       ИДЕНТИЧНЫЕ половины, и каждая половина должна быть НЕ УЖЕ окна —
+       иначе в конце прохода появляется пустота. Меряем ширину одного
+       набора и повторяем его столько раз, сколько нужно. */
+    track.innerHTML = cards;
+    const holder = track.parentElement;
+    const setW = Math.max(track.scrollWidth, 1);
+    const k = Math.max(1, Math.ceil((holder.clientWidth || innerWidth) / setW));
+    track.innerHTML = cards.repeat(2 * k);
+    [...track.children].forEach((el, i) => {
+      if (i >= db.doctors.length) { el.setAttribute("aria-hidden", "true"); el.tabIndex = -1; }
+    });
+    /* скорость постоянна: ~7с на карточку в половине трека */
+    track.style.animationDuration = Math.max(20, db.doctors.length * k * 7) + "s";
   }
+  /* при изменении ширины окна пересобираем трек под новую геометрию */
+  let marqueeResizeT = 0;
+  addEventListener("resize", () => {
+    clearTimeout(marqueeResizeT);
+    marqueeResizeT = setTimeout(renderDoctors, 250);
+  });
 
   /* ══════════ Отзывы из 2ГИС/ВК (из БД) ══════════ */
   function renderReviews() {
