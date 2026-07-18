@@ -86,6 +86,25 @@ const ChestomDB = (() => {
       { id: "r12", doctorId: null,       author: "Дарья Ж.",          source: "2ГИС", date: "2026-03-12", text: "Лечила кариес — быстро и безболезненно, объяснили, что ещё нужно подлечить. На следующий день сделала ультразвуковую чистку — тоже супер аккуратно. Приветливый персонал, приемлемые цены." }
     ],
 
+    /* ── АККАУНТЫ (демо-авторизация; пароли — SHA-256) ── */
+    accounts: [
+      {
+        id: "acc-admin",
+        login: "admin",
+        name: "Анна Павлюсенко",
+        role: "admin",
+        doctorId: null,
+        /* пароль по умолчанию: chestom2026 — смените в админке! */
+        pass: "9247becfcc913e3b75c4cf0aabbddf82a8fdda4399eca98b001b5bd51e3fd323"
+      }
+    ],
+
+    /* ── БОКОВЫЕ БАННЕРЫ (управляются из админки) ── */
+    banners: {
+      left:  { on: true, badge: "Акция",    title: "Гигиена 1+1",  text: "Профчистка для двоих — всего 6 990 ₽ до 31.08", url: "#promo", cta: "Подробнее" },
+      right: { on: true, badge: "Неотложка", title: "Острая боль?", text: "Неотложная помощь взрослым — примем сегодня",  url: "tel:+79991152419", cta: "Позвонить" }
+    },
+
     /* ── НОВОСТИ / БЛОГ ── */
     news: [
       {
@@ -130,7 +149,12 @@ const ChestomDB = (() => {
         prices:  { ...SEED.prices, ...db.prices },
         doctors: Array.isArray(db.doctors) && db.doctors.length ? db.doctors : deepCopy(SEED.doctors),
         reviews: Array.isArray(db.reviews) && db.reviews.length ? db.reviews : deepCopy(SEED.reviews),
-        news:    Array.isArray(db.news) ? db.news : deepCopy(SEED.news)
+        news:    Array.isArray(db.news) ? db.news : deepCopy(SEED.news),
+        accounts: Array.isArray(db.accounts) && db.accounts.length ? db.accounts : deepCopy(SEED.accounts),
+        banners: {
+          left:  { ...SEED.banners.left,  ...(db.banners && db.banners.left) },
+          right: { ...SEED.banners.right, ...(db.banners && db.banners.right) }
+        }
       };
     } catch (e) { return deepCopy(SEED); }
   };
@@ -145,7 +169,12 @@ const ChestomDB = (() => {
     prices:  { ...db.prices, ...(remote.prices || {}) },
     doctors: Array.isArray(remote.doctors) && remote.doctors.length ? remote.doctors : db.doctors,
     reviews: Array.isArray(remote.reviews) && remote.reviews.length ? remote.reviews : db.reviews,
-    news:    Array.isArray(remote.news) && remote.news.length ? remote.news : db.news
+    news:    Array.isArray(remote.news) && remote.news.length ? remote.news : db.news,
+    accounts: db.accounts, /* аккаунты никогда не публикуются в db.json */
+    banners: {
+      left:  { ...db.banners.left,  ...(remote.banners && remote.banners.left) },
+      right: { ...db.banners.right, ...(remote.banners && remote.banners.right) }
+    }
   });
 
   const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();

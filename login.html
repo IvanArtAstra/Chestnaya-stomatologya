@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+try {
+  document.documentElement.dataset.theme =
+    localStorage.getItem("chestom_theme") ||
+    (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+} catch (e) { document.documentElement.dataset.theme = "dark"; }
+</script>
+<title>Вход для сотрудников — Честная стоматология</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .login {
+    min-height: 100svh; display: flex; align-items: center; justify-content: center;
+    padding: 24px; position: relative; overflow: hidden;
+  }
+  .login__glow {
+    position: absolute; inset: -20%;
+    background:
+      radial-gradient(40% 34% at 30% 20%, rgba(45, 212, 191, 0.14), transparent 70%),
+      radial-gradient(36% 30% at 75% 75%, rgba(56, 189, 248, 0.12), transparent 70%);
+  }
+  .login__card {
+    position: relative; width: min(420px, 100%);
+    padding: clamp(30px, 5vw, 46px); border-radius: 28px;
+    background: var(--glass-bg); border: 1px solid var(--glass-line);
+    -webkit-backdrop-filter: blur(24px) saturate(1.7); backdrop-filter: blur(24px) saturate(1.7);
+    box-shadow: inset 0 1px 0 var(--glass-hi), 0 30px 90px rgba(2, 18, 28, 0.4);
+    display: flex; flex-direction: column; gap: 16px;
+    animation: loginIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  @keyframes loginIn { from { opacity: 0; transform: translateY(26px) scale(0.98); } }
+  .login__logo { display: flex; align-items: center; gap: 11px; color: var(--aqua-soft); font-weight: 600; margin-bottom: 6px; }
+  .login__logo b { color: var(--ink); }
+  .login__card h1 { font-size: 1.4rem; }
+  .login__card p { color: var(--ink-dim); font-size: 0.9rem; line-height: 1.55; }
+  .login__card label { display: flex; flex-direction: column; gap: 7px; font-size: 0.85rem; font-weight: 700; color: var(--ink-dim); }
+  .login__card input {
+    padding: 14px 16px; border-radius: 13px; border: 1.5px solid var(--card-line);
+    background: rgba(2, 18, 28, 0.4); color: var(--ink); font: inherit; font-size: 1rem;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  :root[data-theme="light"] .login__card input { background: rgba(255, 255, 255, 0.75); }
+  .login__card input:focus { outline: none; border-color: var(--aqua); box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15); }
+  .login__err {
+    padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 0.88rem;
+    background: rgba(255, 138, 138, 0.12); border: 1px solid rgba(255, 138, 138, 0.4); color: #ff9a9a;
+  }
+  :root[data-theme="light"] .login__err { color: #b42318; }
+  .login__card.is-shake { animation: loginShake 0.4s; }
+  @keyframes loginShake { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+  .login__hint { font-size: 0.78rem; opacity: 0.8; }
+  .login__hint code {
+    font-family: ui-monospace, Menlo, monospace; padding: 2px 7px; border-radius: 6px;
+    background: rgba(45, 212, 191, 0.1); border: 1px solid var(--card-line); color: var(--aqua-soft);
+  }
+  .login__back { text-align: center; font-size: 0.85rem; color: var(--ink-dim); }
+  .login__back a { color: var(--aqua-soft); text-decoration: underline; }
+</style>
+</head>
+<body>
+<main class="login">
+  <div class="login__glow" aria-hidden="true"></div>
+  <form class="login__card" id="loginForm">
+    <span class="login__logo">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C8 3 5.5 5.6 5.5 8.8c0 2.6 1.3 3.9 1.9 6.5.5 2 .9 5.7 2.2 5.7 1.5 0 1-4.4 2.4-4.4s.9 4.4 2.4 4.4c1.3 0 1.7-3.7 2.2-5.7.6-2.6 1.9-3.9 1.9-6.5C18.5 5.6 16 3 12 3z"/><path d="M8.5 9.5h2l1-1.7 1.4 3 1-1.3h1.6"/></svg>
+      Честная<b>стоматология</b>
+    </span>
+    <h1>Вход для сотрудников</h1>
+    <p>Администратор управляет всем сайтом; врачи — своей страницей и блогом.</p>
+    <div class="login__err" id="loginErr" hidden></div>
+    <label>Логин<input name="login" autocomplete="username" required autofocus></label>
+    <label>Пароль<input name="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit" class="btn btn--primary btn--lg">Войти</button>
+    <p class="login__hint">Демо-доступ администратора: <code>admin</code> / <code>chestom2026</code>. Аккаунты врачей создаёт администратор в панели.</p>
+    <p class="login__back"><a href="index.html">← Вернуться на сайт</a></p>
+  </form>
+</main>
+
+<script src="db.js"></script>
+<script src="auth.js"></script>
+<script>
+(() => {
+  "use strict";
+  /* уже вошли — сразу в панель */
+  if (ChestomAuth.current()) { location.replace("admin.html"); return; }
+  const form = document.getElementById("loginForm");
+  const err = document.getElementById("loginErr");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    err.hidden = true;
+    const f = new FormData(form);
+    const res = await ChestomAuth.login(f.get("login"), f.get("password"));
+    if (res.ok) { location.replace("admin.html"); return; }
+    err.textContent = res.error;
+    err.hidden = false;
+    form.classList.remove("is-shake");
+    void form.offsetWidth;
+    form.classList.add("is-shake");
+  });
+})();
+</script>
+</body>
+</html>
