@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /login.html
 
 Sitemap: https://ivanartastra.github.io/Chestnaya-stomatologya/sitemap.xml
