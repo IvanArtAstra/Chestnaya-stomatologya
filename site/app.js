@@ -72,9 +72,9 @@
       feed.innerHTML = `<p class="news__empty">${(I18N["news.empty"] || {})[lang] || ""}</p>`;
       return;
     }
-    feed.innerHTML = items.map((n) => {
+    feed.innerHTML = items.map((n, idx) => {
       const initials = n.author.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
-      return `<article class="post reveal is-in">
+      return `<article class="post reveal is-in${idx === 0 ? " post--featured" : ""}">
         <header class="post__head">
           <span class="post__ava" aria-hidden="true">${initials}</span>
           <span class="post__meta"><b>${esc(n.author)}</b><span>${esc(n.role)} · ${newsDateFmt(n.date)}</span></span>
@@ -86,6 +86,32 @@
     }).join("");
   }
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  /* ══════════ Боковые баннеры (из админки) ══════════ */
+  function renderBanners() {
+    ["left", "right"].forEach((side) => {
+      const host = $("#rail" + (side === "left" ? "Left" : "Right"));
+      if (!host) return;
+      const b = db.banners && db.banners[side];
+      let dismissed = false;
+      try { dismissed = sessionStorage.getItem("chestom_rail_" + side) === "1"; } catch (e) {}
+      if (!b || !b.on || dismissed) { host.hidden = true; return; }
+      host.hidden = false;
+      host.innerHTML = `
+        <div class="rail__card">
+          <button class="rail__close" aria-label="Скрыть баннер">✕</button>
+          ${b.badge ? `<span class="rail__badge">${esc(b.badge)}</span>` : ""}
+          <b class="rail__title">${esc(b.title || "")}</b>
+          <p class="rail__text">${esc(b.text || "")}</p>
+          ${b.url ? `<a class="btn btn--primary btn--sm" href="${esc(b.url)}">${esc(b.cta || "Подробнее")}</a>` : ""}
+        </div>`;
+      $(".rail__close", host).addEventListener("click", () => {
+        host.hidden = true;
+        try { sessionStorage.setItem("chestom_rail_" + side, "1"); } catch (e) {}
+      });
+    });
+  }
+  renderBanners();
 
   /* ══════════ Шапка ══════════ */
   const nav = $("#nav");
@@ -191,8 +217,13 @@
       </a>`;
     };
     const cards = db.doctors.map(cardHtml).join("");
-    /* дублируем набор для бесшовного бесконечного бега */
-    track.innerHTML = cards + `<div class="hscroll__dup" aria-hidden="true">${cards}</div>`;
+    /* плоское дублирование набора: track = две идентичные последовательности,
+       translateX(-50%) даёт идеально бесшовный бесконечный цикл */
+    track.innerHTML = cards + cards;
+    const kids = [...track.children];
+    kids.slice(db.doctors.length).forEach((el) => { el.setAttribute("aria-hidden", "true"); el.tabIndex = -1; });
+    /* скорость постоянна независимо от числа врачей: ~7с на карточку */
+    track.style.animationDuration = Math.max(20, db.doctors.length * 7) + "s";
   }
 
   /* ══════════ Отзывы из 2ГИС/ВК (из БД) ══════════ */
@@ -309,6 +340,7 @@
         renderNews();
         renderDoctors();
         renderReviews();
+        renderBanners();
       })
       .catch(() => {});
   }
