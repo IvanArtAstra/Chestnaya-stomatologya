@@ -9,6 +9,8 @@ try {
     localStorage.getItem("chestom_theme") ||
     (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
 } catch (e) { document.documentElement.dataset.theme = "dark"; }
+/* гейт: без сессии — на страницу входа (полная проверка в admin.js) */
+try { if (!localStorage.getItem("chestom_session")) location.replace("login.html"); } catch (e) {}
 </script>
 <title>Админ-панель — Честная стоматология</title>
 <meta name="robots" content="noindex, nofollow">
@@ -48,6 +50,12 @@ try {
   <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <path d="M19.5 13.5A7.8 7.8 0 0 1 10.5 4.5a7.8 7.8 0 1 0 9 9z"/>
   </symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8.2" r="3.7"/><path d="M4.5 20c1.2-3.4 4-5.2 7.5-5.2s6.3 1.8 7.5 5.2"/>
+  </symbol>
+  <symbol id="i-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.5 4.5h-8a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5h8M10 12h9.5M16 8.5l3.5 3.5-3.5 3.5"/>
+  </symbol>
   <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="4.2"/>
     <path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/>
@@ -75,6 +83,13 @@ try {
         <svg class="icon"><use href="#i-pen"/></svg><span>Блог и новости</span>
         <em class="adm-side__badge" id="navPostCount"></em>
       </button>
+      <button class="adm-side__item adm__tab" data-tab="banners" data-admin-only>
+        <svg class="icon"><use href="#i-feed"/></svg><span>Баннеры</span>
+      </button>
+      <button class="adm-side__item adm__tab" data-tab="accounts" data-admin-only>
+        <svg class="icon"><use href="#i-user"/></svg><span>Аккаунты</span>
+        <em class="adm-side__badge" id="navAccCount"></em>
+      </button>
       <a class="adm-side__item" href="index.html">
         <svg class="icon"><use href="#i-globe2"/></svg><span>Открыть сайт →</span>
       </a>
@@ -100,8 +115,11 @@ try {
           <svg class="icon theme-btn__sun"><use href="#i-sun"/></svg>
         </button>
         <div class="adm-head__user">
-          <span class="adm-head__ava">АП</span>
-          <span class="adm-head__who"><b>Анна Павлюсенко</b><small>администратор</small></span>
+          <span class="adm-head__ava" id="userAva">АП</span>
+          <span class="adm-head__who"><b id="userName">…</b><small id="userRole">…</small></span>
+          <button class="adm-head__logout" id="logoutBtn" title="Выйти" aria-label="Выйти из аккаунта">
+            <svg class="icon"><use href="#i-exit"/></svg>
+          </button>
         </div>
       </div>
     </header>
@@ -123,7 +141,7 @@ try {
     </section>
 
     <!-- ═══ ЦЕНЫ ═══ -->
-    <section class="adm__panel is-active" id="panel-prices">
+    <section class="adm__panel is-active" id="panel-prices" data-admin-only>
       <form class="adm-card adm__prices" id="pricesForm">
         <div class="adm-card__head">
           <h2>Прайс-лист</h2>
@@ -161,9 +179,55 @@ try {
         <div id="doctorsList"><!-- рендерится из admin.js --></div>
         <div class="adm__actions">
           <button type="submit" class="btn btn--primary">Сохранить врачей</button>
-          <span class="adm__saved" id="doctorsSaved" hidden>✓ Сохранено — страницы врачей обновлены</span>
+          <button type="button" class="btn btn--ghost" id="doctorAdd" data-admin-only>+ Добавить врача</button>
+          <span class="adm__saved" id="doctorsSaved" hidden>✓ Сохранено — лента и страницы врачей обновлены</span>
         </div>
       </form>
+    </section>
+
+    <!-- ═══ БАННЕРЫ ═══ -->
+    <section class="adm__panel" id="panel-banners" data-admin-only>
+      <form class="adm-card" id="bannersForm">
+        <div class="adm-card__head">
+          <h2>Боковые баннеры</h2>
+          <p>Показываются по краям экрана на широких мониторах (от 1460px). Каждый можно включить, выключить и отредактировать — изменения видны на сайте сразу.</p>
+        </div>
+        <div class="adm-banners" id="bannersList"><!-- рендерится из admin.js --></div>
+        <div class="adm__actions">
+          <button type="submit" class="btn btn--primary">Сохранить баннеры</button>
+          <span class="adm__saved" id="bannersSaved" hidden>✓ Сохранено</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- ═══ АККАУНТЫ ═══ -->
+    <section class="adm__panel" id="panel-accounts" data-admin-only>
+      <div class="adm__blog">
+        <form class="adm-card" id="accountForm">
+          <div class="adm-card__head">
+            <h2>Новый аккаунт врача</h2>
+            <p>Врач войдёт со своим логином и сможет редактировать свою карточку и вести блог от своего имени.</p>
+          </div>
+          <label>Врач
+            <select name="doctorId" id="accDoctor"><!-- врачи без аккаунта --></select>
+          </label>
+          <label>Логин<input name="login" required autocomplete="off" placeholder="например: ramdun"></label>
+          <label>Пароль<input name="password" type="text" required minlength="6" placeholder="минимум 6 символов"></label>
+          <div class="adm__actions">
+            <button type="submit" class="btn btn--primary">Создать аккаунт</button>
+            <span class="adm__saved" id="accSaved" hidden>✓ Аккаунт создан</span>
+          </div>
+          <p class="adm__hint">Демо-режим: аккаунты и пароли (в виде SHA-256) хранятся в этом браузере.
+          На проде — серверная авторизация с теми же ролями.</p>
+        </form>
+        <div class="adm-card">
+          <div class="adm-card__head">
+            <h2>Существующие аккаунты</h2>
+            <p>Смена пароля — кнопкой «Сбросить пароль»; аккаунт администратора удалить нельзя.</p>
+          </div>
+          <div id="accountList"><!-- рендерится из admin.js --></div>
+        </div>
+      </div>
     </section>
 
     <!-- ═══ БЛОГ ═══ -->
@@ -223,6 +287,7 @@ try {
 </div>
 
 <script src="db.js"></script>
+<script src="auth.js"></script>
 <script src="md.js"></script>
 <script src="admin.js"></script>
 </body>
