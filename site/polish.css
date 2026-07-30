@@ -1,0 +1,100 @@
+/* ═══════════════ POLISH: плёночное зерно + бейдж «открыто» ═══════════════ */
+
+/* ── 1. Киношное зерно ──
+   z-index 85: над контентом, fab (70) и nav (50), под модалкой (90) и прелоадером (300) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 85;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 280px 280px;
+  mix-blend-mode: overlay;
+  animation: grainShift 0.9s steps(2) infinite;
+}
+
+:root[data-theme="light"] body::after {
+  opacity: 0.025;
+  mix-blend-mode: soft-light;
+}
+
+@keyframes grainShift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-4px, 3px); }
+  50%  { transform: translate(3px, -5px); }
+  75%  { transform: translate(-2px, -3px); }
+  100% { transform: translate(4px, 4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
+}
+
+/* ── 2. Бейдж «Открыто сейчас» ── */
+.open-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--card-line);
+  background: rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  flex: none;
+  transition: border-color 0.25s, color 0.25s;
+}
+.open-badge:hover { border-color: var(--aqua); color: var(--ink); }
+
+:root[data-theme="light"] .open-badge { background: rgba(255, 255, 255, 0.5); }
+
+.open-badge__dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55);
+  animation: badgePing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.open-badge.is-closed .open-badge__dot {
+  background: rgba(251, 191, 36, 0.75);
+  box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
+  animation-name: badgePingAmber;
+}
+
+@keyframes badgePing {
+  0%   { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
+  70%  { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+@keyframes badgePingAmber {
+  0%   { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(251, 191, 36, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .open-badge__dot { animation: none; }
+}
+
+/* Тесная шапка: оставляем только пульсирующую точку, текст прячем
+   (полной пилюле нужно ~1380px, иначе меню переносится на вторую строку) */
+@media (max-width: 1400px) {
+  .open-badge__text { display: none; }
+  .open-badge { padding: 7px; gap: 0; }
+}
+
+/* Совсем узкая шапка: прячем бейдж целиком, чтобы не тесниться с бургером */
+@media (max-width: 640px) {
+  .open-badge { display: none; }
+}

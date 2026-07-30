@@ -1,0 +1,166 @@
+/* ===========================================================
+   cards-fx.css — эффекты карточек:
+   1) border beam (вращающийся световой сегмент по периметру),
+   2) spotlight-сетка (подсветка границ у курсора),
+   3) внутренний параллакс при 3D-tilt,
+   4) стаггер-каскад появления.
+   Подключается ПОСЛЕ styles.css и effects.css, ничего в них не меняем.
+   Псевдоэлементы карточек: ::before занят под beam
+   (только .promo-card / .svc-card--accent), ::after — под заливку
+   spotlight; рамка spotlight — инжектируемый из JS span.spot.
+   =========================================================== */
+
+/* ---------- 1. BORDER BEAM ---------- */
+@property --beam-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@supports (mask-composite: exclude) or (-webkit-mask-composite: xor) {
+  .promo-card::before,
+  .svc-card--accent::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    padding: 1.5px;
+    pointer-events: none;
+    background: conic-gradient(
+      from var(--beam-angle, 0deg),
+      transparent 0deg 340deg,
+      var(--aqua) 355deg,
+      var(--cyan) 360deg
+    );
+    /* маска: остаётся только зона рамки */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    animation: beamSpin 6s linear infinite;
+  }
+  /* на акцентной (аква-градиентной) карточке сегмент делаем белёсым,
+     чтобы был виден на её собственном фоне */
+  .svc-card--accent::before {
+    background: conic-gradient(
+      from var(--beam-angle, 0deg),
+      transparent 0deg 340deg,
+      rgba(255, 255, 255, 0.9) 355deg,
+      #ffffff 360deg
+    );
+  }
+}
+@keyframes beamSpin {
+  to { --beam-angle: 360deg; }
+}
+
+/* ---------- 2. SPOTLIGHT-СЕТКА ---------- */
+@media (hover: hover) and (pointer: fine) {
+  /* рамка-свечение: инжектируемый span.spot (JS пишет --mx/--my) */
+  .services__grid .spot,
+  .promo__row .spot {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    padding: 1.5px;
+    pointer-events: none;
+    background: radial-gradient(
+      300px circle at var(--mx, 50%) var(--my, 50%),
+      var(--aqua) 0%,
+      transparent 70%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .is-spotlit .spot { opacity: 1; }
+
+  /* лёгкая заливка внутри карточки тем же градиентом */
+  .services__grid > .svc-card::after,
+  .promo__row > .promo-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      260px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--aqua) 12%, transparent),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .services__grid.is-spotlit > .svc-card::after,
+  .promo__row.is-spotlit > .promo-card::after { opacity: 0.42; }
+}
+
+/* ---------- 3. ВНУТРЕННИЙ ПАРАЛЛАКС ПРИ TILT ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .is-tilting {
+    transform-style: preserve-3d;
+    /* effects.css ставит overflow:hidden — он принудительно "сплющивает"
+       3D-контекст; возвращаем visible (слои и так скруглены через
+       border-radius:inherit, за пределы карточки ничего не выходит) */
+    overflow: visible;
+  }
+  .promo-card.is-tilting { overflow: visible; }
+  /* backdrop-filter тоже принудительно даёт flat — на время tilt отключаем */
+  .svc-card.is-tilting,
+  a.doc-card.is-tilting {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* слои глубины (тени/blur детей не трогаем) */
+  .svc-card.is-tilting .svc-card__icon {
+    /* комбинируем с hover-эффектом из styles.css, не затирая его */
+    transform: rotate(-6deg) scale(1.08) translateZ(46px);
+  }
+  .svc-card.is-tilting h3 { transform: translateZ(28px); }
+  .svc-card.is-tilting .svc-card__price b { transform: translateZ(36px); }
+  .svc-card.is-tilting .svc-card__cta,
+  .svc-card.is-tilting .svc-card__page { transform: translateZ(22px); }
+  a.doc-card.is-tilting .doc-card__photo { transform: translateZ(30px); }
+  a.doc-card.is-tilting h3 { transform: translateZ(22px); }
+  .promo-card.is-tilting .promo-card__price b {
+    display: inline-block;
+    transform: translateZ(40px);
+  }
+  .promo-card.is-tilting h3 { transform: translateZ(26px); }
+  .promo-card.is-tilting .promo-card__badge { transform: translateZ(24px); }
+  .promo-card.is-tilting .btn { transform: translateZ(30px); }
+
+  /* блик из effects.js остаётся чуть выше плоскости карточки */
+  .is-tilting .tilt-glare { transform: translateZ(1px); }
+}
+
+/* ---------- 4. СТАГГЕР-КАСКАД появления ----------
+   cards-fx.js назначает детям гридов inline --rd (index * 60ms)
+   и снимает её по transitionend/таймеру, чтобы delay не влиял
+   на последующие hover-переходы. */
+html.reveal-armed .services__grid > .reveal,
+html.reveal-armed .promo__row > .reveal,
+html.reveal-armed .reviews__row > .reveal {
+  transition-delay: var(--rd, 0s);
+}
+
+/* ---------- Reduced motion: всё выключаем ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .promo-card::before,
+  .svc-card--accent::before { content: none !important; animation: none !important; }
+  .spot,
+  .services__grid > .svc-card::after,
+  .promo__row > .promo-card::after { display: none !important; }
+  .is-tilting,
+  .is-tilting * { transform: none !important; }
+  html.reveal-armed .services__grid > .reveal,
+  html.reveal-armed .promo__row > .reveal,
+  html.reveal-armed .reviews__row > .reveal { transition-delay: 0s !important; }
+}

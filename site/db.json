@@ -1,0 +1,15 @@
+{
+  "prices": {
+    "exam": "600 ₽",
+    "caries": "4 000–4 500 ₽",
+    "hygiene": "4 900 ₽",
+    "restore": "3 500 ₽",
+    "prosthetics": "10 440 ₽",
+    "extraction": "2 500 ₽",
+    "promoHygiene": "6 990 ₽",
+    "promoCrown": "24 500 ₽"
+  },
+  "doctors": [],
+  "reviews": [],
+  "news": []
+}
