@@ -8,7 +8,9 @@ try {
   document.documentElement.dataset.theme =
     localStorage.getItem("chestom_theme") ||
     "light";
-  if (localStorage.getItem("chestom_bvi") === "1") document.documentElement.classList.add("bvi");
+  var _a=null; try{_a=JSON.parse(localStorage.getItem("chestom_a11y"));}catch(_){}
+  if(!_a && localStorage.getItem("chestom_bvi")==="1") _a={on:true};
+  if(_a && _a.on){var _r=document.documentElement; _r.classList.add("bvi");_r.setAttribute("data-a11y-font",_a.font||1);_r.setAttribute("data-a11y-scheme",_a.scheme||"wb");_r.setAttribute("data-a11y-spacing",_a.spacing||1);_r.setAttribute("data-a11y-images",_a.images||"on");}
 } catch (e) { document.documentElement.dataset.theme = "light"; }
 </script>
 <title>Эстетическая реставрация зубов в Перми — от 3 500 ₽ | Честная стоматология</title>
