@@ -292,6 +292,33 @@ try {
   </div>
 </section>
 
+<!-- ══════════ СЕКВЕНЦИЯ «в наших руках» (скролл-погружение) ══════════ -->
+<section class="reveal-seq" id="care" aria-label="Здоровье ваших зубов — в наших руках">
+  <div class="reveal-seq__sticky">
+    <canvas class="reveal-seq__canvas" id="seqCanvas" aria-hidden="true"></canvas>
+    <img class="reveal-seq__fallback" src="hero-seq/06.jpg" width="1600" height="893"
+         alt="Руки бережно держат здоровый зуб — символ заботы клиники о здоровье пациента" loading="lazy">
+    <div class="reveal-seq__steps">
+      <div class="reveal-seq__step is-active" data-step="0">
+        <h2 data-i18n="care.h1">Здоровье ваших зубов — в наших руках</h2>
+        <p data-i18n="care.p1">Бережный подход на каждом этапе: осматриваем, показываем на фото и объясняем.</p>
+      </div>
+      <div class="reveal-seq__step" data-step="1">
+        <h2 data-i18n="care.h2">План и цена — до начала</h2>
+        <p data-i18n="care.p2">Понятный план и честная стоимость. Она не вырастет в кресле.</p>
+      </div>
+      <div class="reveal-seq__step" data-step="2">
+        <h2 data-i18n="care.h3">Только то, что необходимо</h2>
+        <p data-i18n="care.p3">Без лишних назначений и навязанных процедур.</p>
+      </div>
+      <div class="reveal-seq__step" data-step="3">
+        <h2 data-i18n="care.h4">Здоровье — на первом месте</h2>
+        <p data-i18n="care.p4">Прозрачность и доверие — основа нашей работы.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ══════════ УСЛУГИ И ЦЕНЫ (реальный прайс) ══════════ -->
 <section class="section services" id="services">
   <div class="section__head reveal">
@@ -704,6 +731,7 @@ try {
 <script src="water.js" defer></script>
 <script src="effects.js" defer></script>
 <script src="teeth-map.js" defer></script>
+<script src="hero-seq.js" defer></script>
 <script src="tour.js" defer></script>
 <script src="cards-fx.js" defer></script>
 <script src="motion-fx.js" defer></script>
