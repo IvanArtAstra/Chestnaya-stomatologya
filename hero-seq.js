@@ -11,7 +11,7 @@
     var canvas = document.getElementById("seqCanvas");
     if (!section || !canvas) return;
 
-    var COUNT = 11;
+    var COUNT = 9;
     var BASE = "hero-seq/";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var ctx = canvas.getContext("2d");
