@@ -22,26 +22,21 @@ const I18N = {
   "hero.stat1":     { ru: "рейтинг в 2ГИС", en: "rating on 2GIS", ar: "التقييم على 2GIS" },
   "hero.stat2":     { ru: "отзывов пациентов", en: "patient reviews", ar: "تقييمات المرضى" },
   "hero.stat3":     { ru: "скрытых доплат", en: "hidden charges", ar: "رسوم خفية" },
-  "hero.hint":      { ru: "листайте — погружаемся", en: "scroll — let's dive", ar: "مرر — لننغمس" },
 
   /* — девиз — */
   "motto.w1":       { ru: "Честно.", en: "Honestly.", ar: "بصدق." },
   "motto.w2":       { ru: "Профессионально.", en: "Professionally.", ar: "باحترافية." },
   "motto.w3":       { ru: "С заботой о вас.", en: "With care for you.", ar: "برعاية لكم." },
 
-  /* — погружение — */
-  "dive.d1":        { ru: "−5 м", en: "−5 m", ar: "−٥ م" },
-  "dive.h1":        { ru: "Показываем, а не пугаем", en: "We show, not scare", ar: "نعرض لك الحقيقة دون تخويف" },
-  "dive.p1":        { ru: "Состояние зубов показываем на фото и объясняем каждый этап. Никаких «у вас всё плохо» без доказательств.", en: "We show the condition of your teeth in photos and explain every step. No scare tactics without evidence.", ar: "نعرض حالة أسنانك بالصور ونشرح كل خطوة. لا تخويف بدون أدلة." },
-  "dive.d2":        { ru: "−10 м", en: "−10 m", ar: "−١٠ م" },
-  "dive.h2":        { ru: "План и цена — до начала", en: "Plan and price — upfront", ar: "الخطة والسعر — مقدماً" },
-  "dive.p2":        { ru: "Перед началом лечения вы получаете понятный план и честную стоимость. Она не вырастет в кресле.", en: "Before treatment starts you get a clear plan and an honest price. It won't grow in the chair.", ar: "قبل بدء العلاج تحصل على خطة واضحة وسعر صادق لن يرتفع أثناء العلاج." },
-  "dive.d3":        { ru: "−15 м", en: "−15 m", ar: "−١٥ م" },
-  "dive.h3":        { ru: "Только то, что необходимо", en: "Only what is necessary", ar: "فقط ما هو ضروري" },
-  "dive.p3":        { ru: "Без «лишних» назначений и навязанных процедур. Предлагаем только то, что действительно нужно вашим зубам.", en: "No unnecessary prescriptions or pushed procedures. We offer only what your teeth really need.", ar: "بدون وصفات زائدة أو إجراءات مفروضة. نقدم فقط ما تحتاجه أسنانك فعلاً." },
-  "dive.d4":        { ru: "−20 м", en: "−20 m", ar: "−٢٠ م" },
-  "dive.h4":        { ru: "Здоровье на первом месте", en: "Your health comes first", ar: "صحتك أولاً" },
-  "dive.p4":        { ru: "Мы создали клинику, в которой на первом месте — здоровье пациента, прозрачность и доверие.", en: "We built a clinic where patient health, transparency and trust come first.", ar: "أنشأنا عيادة تضع صحة المريض والشفافية والثقة في المقام الأول." },
+  /* — секвенция «в наших руках» — */
+  "care.h1":        { ru: "Здоровье ваших зубов — в наших руках", en: "The health of your teeth is in our hands", ar: "صحة أسنانك بين أيدينا" },
+  "care.p1":        { ru: "Бережный подход на каждом этапе: осматриваем, показываем на фото и объясняем.", en: "A gentle approach at every step: we examine, show you the photos and explain.", ar: "نهج لطيف في كل خطوة: نفحص ونعرض الصور ونشرح." },
+  "care.h2":        { ru: "План и цена — до начала", en: "Plan and price — upfront", ar: "الخطة والسعر — مقدماً" },
+  "care.p2":        { ru: "Понятный план и честная стоимость. Она не вырастет в кресле.", en: "A clear plan and an honest price. It won't grow in the chair.", ar: "خطة واضحة وسعر صادق لن يرتفع أثناء العلاج." },
+  "care.h3":        { ru: "Только то, что необходимо", en: "Only what is necessary", ar: "فقط ما هو ضروري" },
+  "care.p3":        { ru: "Без лишних назначений и навязанных процедур.", en: "No unnecessary prescriptions or pushed procedures.", ar: "بدون وصفات زائدة أو إجراءات مفروضة." },
+  "care.h4":        { ru: "Здоровье — на первом месте", en: "Your health comes first", ar: "صحتك أولاً" },
+  "care.p4":        { ru: "Прозрачность и доверие — основа нашей работы.", en: "Transparency and trust are the basis of our work.", ar: "الشفافية والثقة أساس عملنا." },
 
   /* — услуги — */
   "svc.tag":        { ru: "Услуги и цены", en: "Services & Prices", ar: "الخدمات والأسعار" },

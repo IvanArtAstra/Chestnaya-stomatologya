@@ -179,24 +179,7 @@
   addEventListener("scroll", updateDepth, { passive: true });
   updateDepth();
 
-  /* ══════════ Sticky-сцена «Погружение» ══════════ */
-  const dive = $("#dive");
-  const diveTooth = $("#diveTooth");
-  const steps = $$(".dive__step");
-  const updateDive = () => {
-    const rect = dive.getBoundingClientRect();
-    const total = rect.height - innerHeight;
-    const p = Math.min(Math.max(-rect.top / total, 0), 1);
-    const idx = Math.min(Math.floor(p * steps.length), steps.length - 1);
-    steps.forEach((s, i) => s.classList.toggle("is-active", i === idx));
-    if (!reduceMotion) {
-      const scale = 0.7 + p * 2.6;
-      diveTooth.style.transform = `translateY(${(0.5 - p) * 12}vh) scale(${scale}) rotate(${p * 14 - 7}deg)`;
-      diveTooth.style.opacity = String(Math.max(0.12, 0.95 - p * 0.75));
-    }
-  };
-  addEventListener("scroll", updateDive, { passive: true });
-  updateDive();
+  /* Секвенцию «в наших руках» ведёт hero-seq.js */
 
   /* ══════════ Бегущая лента команды (marquee) ══════════ */
   function renderDoctors() {

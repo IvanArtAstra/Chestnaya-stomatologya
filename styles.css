@@ -129,44 +129,45 @@ h3 { font-size: 1.25rem; }
 .hero__stats { display: flex; gap: clamp(24px, 5vw, 64px); justify-content: center; list-style: none; flex-wrap: wrap; }
 .hero__stats b { display: block; font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 800; color: var(--aqua-soft); }
 .hero__stats span { font-size: 0.85rem; color: var(--ink-dim); }
-.hero__scroll-hint {
-  position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  color: var(--ink-dim); font-size: 0.78rem; letter-spacing: 0.08em;
-}
-.hero__mouse { width: 24px; height: 38px; border: 1.5px solid var(--ink-dim); border-radius: 14px; position: relative; }
-.hero__mouse::after {
-  content: ""; position: absolute; top: 7px; left: 50%; margin-left: -2px;
-  width: 4px; height: 8px; border-radius: 4px; background: var(--aqua);
-  animation: wheel 1.6s ease-in-out infinite;
-}
-@keyframes wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(12px); opacity: 0; } 100% { opacity: 0; } }
-
-/* ═══════════════ ПОГРУЖЕНИЕ (sticky-сцена) ═══════════════ */
-.dive { height: 420vh; position: relative; }
-.dive__sticky {
+/* ═══════════════ СЕКВЕНЦИЯ «в наших руках» (sticky-скролл) ═══════════════ */
+.reveal-seq { height: 520vh; position: relative; }
+.reveal-seq__sticky {
   position: sticky; top: 0; height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
+  background: var(--deep-0);
 }
-.dive__tooth {
-  position: absolute; width: clamp(180px, 26vw, 340px); opacity: 0.9;
-  filter: drop-shadow(0 24px 80px rgba(122, 108, 240, 0.35));
-  will-change: transform;
+.reveal-seq__canvas,
+.reveal-seq__fallback {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 0;
 }
-.dive__step {
-  position: absolute; max-width: 560px; text-align: center; padding: 0 24px;
-  opacity: 0; transform: translateY(50px) scale(0.96);
-  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
-  pointer-events: none;
+.reveal-seq__canvas { z-index: 1; opacity: 0; transition: opacity 0.5s ease; }
+.reveal-seq.is-ready .reveal-seq__canvas { opacity: 1; }
+.reveal-seq.is-ready .reveal-seq__fallback { visibility: hidden; }
+/* мягкое затемнение снизу — под подписи */
+.reveal-seq__sticky::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(to top, rgba(10, 8, 40, 0.34) 0%, rgba(10, 8, 40, 0.08) 26%, transparent 48%);
 }
-.dive__step.is-active { opacity: 1; transform: translateY(0) scale(1); }
-.dive__step h2 { margin: 10px 0 16px; text-shadow: 0 4px 40px rgba(2, 18, 28, 0.8); }
-.dive__step p { color: var(--ink-dim); font-size: clamp(1rem, 1.9vw, 1.18rem); line-height: 1.65; text-shadow: 0 2px 24px rgba(2, 18, 28, 0.9); }
-.dive__depth {
-  display: inline-block; padding: 6px 16px; border-radius: 999px;
-  border: 1px solid var(--card-line); color: var(--aqua-soft);
-  font-weight: 800; font-size: 0.85rem; letter-spacing: 0.1em;
-  background: rgba(20, 18, 58, 0.6); backdrop-filter: blur(6px);
+.reveal-seq__steps {
+  position: absolute; z-index: 3; left: 0; right: 0; bottom: clamp(48px, 9vh, 120px);
+  display: flex; justify-content: center; pointer-events: none; padding: 0 24px;
+}
+.reveal-seq__step {
+  position: absolute; max-width: 620px; text-align: center;
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal-seq__step.is-active { opacity: 1; transform: translateY(0); }
+.reveal-seq__step h2 {
+  margin: 0 0 12px; color: #fff;
+  font-size: clamp(1.5rem, 3.4vw, 2.5rem);
+  text-shadow: 0 3px 30px rgba(8, 6, 30, 0.6), 0 1px 3px rgba(8, 6, 30, 0.5);
+}
+.reveal-seq__step p {
+  margin: 0; color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(1rem, 1.9vw, 1.18rem); line-height: 1.6;
+  text-shadow: 0 2px 20px rgba(8, 6, 30, 0.7);
 }
 
 /* ═══════════════ СЕКЦИИ ═══════════════ */
@@ -512,7 +513,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__burger { display: flex; }
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
-  .dive { height: 380vh; }
+  .reveal-seq { height: 440vh; }
   .footer { padding-bottom: 130px; }
   .about__facts { grid-template-columns: 1fr 1fr; gap: 10px; }
   .fact { padding: 20px 12px; }
@@ -991,9 +992,6 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 }
 :root[data-theme="light"] .bubble { border-color: rgba(66, 57, 184, 0.12); background: radial-gradient(circle at 32% 30%, rgba(255,255,255,0.9), rgba(66, 57, 184,0.06) 60%, transparent); }
 :root[data-theme="light"] .depth-gauge__track { background: rgba(66, 57, 184, 0.15); }
-:root[data-theme="light"] .dive__depth { background: rgba(255, 255, 255, 0.65); }
-:root[data-theme="light"] .dive__step h2, :root[data-theme="light"] .dive__step p { text-shadow: none; }
-:root[data-theme="light"] .dive__tooth { filter: drop-shadow(0 24px 60px rgba(122, 108, 240, 0.3)); opacity: 0.55; }
 :root[data-theme="light"] .svc-card__icon { background: linear-gradient(140deg, rgba(66, 57, 184, 0.12), rgba(122, 108, 240, 0.08)); }
 :root[data-theme="light"] .calc__form { background: rgba(255, 255, 255, 0.45); }
 :root[data-theme="light"] .calc__result { background: rgba(255, 255, 255, 0.7); }
@@ -1029,7 +1027,6 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 :root[data-theme="light"] .post__ava, :root[data-theme="light"] .adm-head__ava { color: #ffffff; }
 :root[data-theme="light"] .fab__toggle { box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 10px 30px rgba(66, 57, 184, 0.4); }
 :root[data-theme="light"] .fab__toggle span::before { filter: none; }
-:root[data-theme="light"] .hero__mouse { border-color: var(--ink-dim); }
 :root[data-theme="light"] .nav__burger span { background: var(--ink); }
 :root[data-theme="light"] .footnotes__med .icon { color: var(--aqua-soft); }
 :root[data-theme="light"] .review__stars svg { color: var(--gold); }
@@ -1304,10 +1301,18 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 :root.bvi[data-a11y-images="off"] img,
 :root.bvi[data-a11y-images="off"] iframe,
 :root.bvi[data-a11y-images="off"] .ba,
-:root.bvi[data-a11y-images="off"] .doc-card__photo { display: none !important; }
+:root.bvi[data-a11y-images="off"] .doc-card__photo,
+:root.bvi[data-a11y-images="off"] .reveal-seq__fallback { display: none !important; }
+/* Секвенция: без sticky-«погружения» — обычный короткий блок с подписями */
+:root.bvi .reveal-seq { height: auto !important; }
+:root.bvi .reveal-seq__sticky { position: static !important; height: auto !important; padding: 40px 24px; }
+:root.bvi .reveal-seq__sticky::after, :root.bvi .reveal-seq__fallback { display: none !important; }
+:root.bvi .reveal-seq__steps { position: static; display: block; }
+:root.bvi .reveal-seq__step { position: static; max-width: none; opacity: 1 !important; transform: none !important; margin: 0 0 22px; text-align: left; }
+:root.bvi .reveal-seq__step h2, :root.bvi .reveal-seq__step p { color: var(--a-fg) !important; text-shadow: none !important; }
 
 /* Убираем декоративные слои */
-:root.bvi .hero__glow, :root.bvi canvas, :root.bvi .dive__depth,
+:root.bvi .hero__glow, :root.bvi canvas,
 :root.bvi .depth-gauge, :root.bvi .nav.is-scrolled::after { display: none !important; }
 :root.bvi .nav, :root.bvi .nav.is-scrolled, :root.bvi .footer,
 :root.bvi .mobile-cta, :root.bvi .fab__menu, :root.bvi .modal__card { background: var(--a-bg) !important; }
