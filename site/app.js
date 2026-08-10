@@ -30,6 +30,10 @@
       const t = PLACEHOLDERS[el.dataset.ph];
       if (t && t[code] != null) el.placeholder = t[code];
     });
+    $$("[data-i18n-aria]").forEach((el) => {
+      const t = I18N[el.dataset.i18nAria];
+      if (t && t[code] != null) el.setAttribute("aria-label", t[code]);
+    });
     renderNews();
     renderDoctors();
     renderReviews();
@@ -244,23 +248,52 @@
     }).join("");
   }
 
-  /* ══════════ До/после ══════════ */
+  /* ══════════ До/после ══════════
+     Шторкой управляет нативный <input type="range">: мышь, палец и
+     клавиатура (стрелки, Home/End) работают без своей логики drag.
+     При первом появлении карточка сама «показывает» ход ползунка. */
   $$("[data-ba]").forEach((fig) => {
     const frame = $(".ba__frame", fig);
-    const setPos = (clientX) => {
-      const r = frame.getBoundingClientRect();
-      const p = Math.min(Math.max(((clientX - r.left) / r.width) * 100, 2), 98);
-      frame.style.setProperty("--pos", p + "%");
+    const range = $(".ba__range", fig);
+    if (!frame || !range) return;
+
+    let hinted = false, hintRaf = 0;
+    const apply = (v) => {
+      frame.style.setProperty("--pos", v + "%");
+      range.setAttribute("aria-valuetext", Math.round(v) + "% «до»");
     };
-    let dragging = false;
-    frame.addEventListener("pointerdown", (e) => {
-      /* пользователь взял управление — останавливаем автоплей навсегда */
-      frame.classList.add("is-manual");
-      dragging = true; frame.setPointerCapture(e.pointerId); setPos(e.clientX);
-    });
-    frame.addEventListener("pointermove", (e) => dragging && setPos(e.clientX));
-    frame.addEventListener("pointerup", () => (dragging = false));
-    frame.addEventListener("pointercancel", () => (dragging = false));
+    apply(+range.value);
+
+    const stopHint = () => {
+      hinted = true;
+      if (hintRaf) { cancelAnimationFrame(hintRaf); hintRaf = 0; }
+    };
+    range.addEventListener("input", () => { stopHint(); apply(+range.value); });
+    range.addEventListener("pointerdown", stopHint);
+
+    /* подсказка: плавный проход шторки туда-обратно, один раз */
+    const hint = () => {
+      if (hinted || reduceMotion) return;
+      hinted = true;
+      const KEYS = [50, 76, 26, 50], STEP = 700;
+      const t0 = performance.now();
+      const ease = (t) => t * t * (3 - 2 * t);
+      const tick = (now) => {
+        const el = now - t0;
+        const i = Math.min(Math.floor(el / STEP), KEYS.length - 2);
+        const v = KEYS[i] + (KEYS[i + 1] - KEYS[i]) * ease((el - i * STEP) / STEP);
+        apply(v); range.value = v;
+        if (el < STEP * (KEYS.length - 1)) hintRaf = requestAnimationFrame(tick);
+        else { apply(50); range.value = 50; hintRaf = 0; }
+      };
+      hintRaf = requestAnimationFrame(tick);
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((en) => {
+        if (en[0].isIntersecting) { hint(); io.disconnect(); }
+      }, { threshold: 0.55 });
+      io.observe(fig);
+    }
   });
 
   /* ══════════ Калькулятор (на базе реального прайса) ══════════ */

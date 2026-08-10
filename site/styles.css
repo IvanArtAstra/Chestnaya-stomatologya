@@ -281,31 +281,42 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 
 /* ═══════════════ ДО/ПОСЛЕ ═══════════════ */
 .cases__grid { display: grid; gap: 26px; max-width: 1080px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+@property --pos { syntax: "<percentage>"; inherits: true; initial-value: 50%; }
 .ba__frame {
   position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 400/260;
-  border: 1px solid var(--card-line); cursor: ew-resize; touch-action: none; user-select: none;
+  border: 1px solid var(--card-line); --pos: 50%; isolation: isolate;
 }
-.ba__before, .ba__after { position: absolute; inset: 0; }
-.ba__before { clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); z-index: 2; }
-.ba__before span, .ba__after span {
+.ba__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.ba__clip { position: absolute; inset: 0; z-index: 2; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.ba__tag {
   position: absolute; top: 14px; padding: 5px 12px; border-radius: 8px; z-index: 3;
-  font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; backdrop-filter: blur(6px);
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; pointer-events: none;
 }
-.ba__before span { left: 14px; background: rgba(2, 18, 28, 0.7); color: #ffd98a; }
-.ba__after span { right: 14px; background: rgba(66, 57, 184, 0.85); color: #ffffff; }
-.ba__before svg, .ba__after svg { width: 100%; height: 100%; }
+.ba__tag--before { left: 14px; background: rgba(36, 31, 92, 0.82); color: #ffd98a; }
+.ba__tag--after { right: 14px; background: rgba(66, 57, 184, 0.88); color: #ffffff; z-index: 3; }
 .ba__handle {
-  position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 2px; z-index: 4;
-  background: var(--aqua); transform: translateX(-1px);
+  position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; z-index: 4;
+  background: var(--aqua); transform: translateX(-1px); pointer-events: none;
 }
-.ba__handle span {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 40px; height: 40px; border-radius: 50%;
+.ba__handle::after {
+  content: "⟷"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
   background: linear-gradient(120deg, var(--aqua), var(--cyan));
   box-shadow: 0 6px 24px rgba(66, 57, 184, 0.5);
+  color: #ffffff; font-weight: 800;
 }
-.ba__handle span::before { content: "⟷"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; }
+/* Нативный слайдер поверх кадра: мышь, палец и клавиатура (стрелки/Home/End) */
+.ba__range {
+  position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%;
+  margin: 0; padding: 0; opacity: 0; background: none; border: none;
+  -webkit-appearance: none; appearance: none; cursor: ew-resize; touch-action: pan-y;
+}
+.ba__range::-webkit-slider-thumb { -webkit-appearance: none; width: 46px; height: 100vh; }
+.ba__range::-moz-range-thumb { width: 46px; height: 100vh; border: none; opacity: 0; }
+.ba__frame:focus-within .ba__handle::after { box-shadow: 0 0 0 4px var(--deep-0), 0 0 0 7px var(--aqua); }
 .ba figcaption { margin-top: 14px; color: var(--ink-dim); font-size: 0.9rem; text-align: center; }
+.cases__note { max-width: 760px; margin: 26px auto 0; text-align: center; color: var(--ink-dim); font-size: 0.82rem; line-height: 1.6; }
 
 /* ═══════════════ АКЦИИ ═══════════════ */
 .promo__row { display: grid; gap: 20px; max-width: 1120px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
@@ -663,8 +674,8 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 [dir="rtl"] .svc-card__cta, [dir="rtl"] .about__list li { text-align: start; }
 [dir="rtl"] .about__list li { padding-left: 0; padding-right: 32px; }
 [dir="rtl"] .about__list li::before { left: auto; right: 0; }
-[dir="rtl"] .ba__before span { left: auto; right: 14px; }
-[dir="rtl"] .ba__after span { right: auto; left: 14px; }
+[dir="rtl"] .ba__tag--before { left: auto; right: 14px; }
+[dir="rtl"] .ba__tag--after { right: auto; left: 14px; }
 @media (max-width: 640px) {
   [dir="rtl"] .fab { left: 14px; bottom: 84px; }
 }
@@ -1239,32 +1250,9 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 }
 .nav__links-phone .icon { width: 16px; height: 16px; }
 
-/* ═══════════════ ДО/ПОСЛЕ: АВТОПЛЕЙ ПОЛЗУНКА ═══════════════
-   Ползунок сам плавно ездит туда-обратно (зацикленно, как GIF),
-   пока пользователь не наведёт курсор или не начнёт тянуть сам. */
-@property --pos {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 50%;
-}
-@supports (animation-timeline: none) or (background: paint(x)) {
-  /* современные браузеры с поддержкой @property-анимаций */
-}
-.ba__frame {
-  animation: baSweep 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-@keyframes baSweep {
-  0%   { --pos: 18%; }
-  50%  { --pos: 82%; }
-  100% { --pos: 18%; }
-}
-.ba__frame:hover,
-.ba__frame.is-manual { animation-play-state: paused; }
-.ba__frame.is-manual { animation: none; }
-/* плавность ручного ведения сохраняется: inline --pos применяется после animation:none */
-@media (prefers-reduced-motion: reduce) {
-  .ba__frame { animation: none; }
-}
+/* Шторку «до/после» ведёт app.js: --pos пишется инлайном.
+   Свойство объявлено один раз выше (@property --pos, inherits: true) —
+   второе объявление с inherits:false ломало наследование в потомках. */
 
 /* ═══════════════ ВЕРСИЯ ДЛЯ СЛАБОВИДЯЩИХ (ГОСТ Р 52872-2019) ═══════════════ */
 /* Цветовые схемы */

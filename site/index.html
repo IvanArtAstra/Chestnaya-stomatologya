@@ -445,21 +445,38 @@ try {
   <div class="cases__grid">
     <figure class="ba reveal" data-ba>
       <div class="ba__frame">
-        <div class="ba__before"><span data-i18n="cases.before">ДО</span><svg viewBox="0 0 400 260" preserveAspectRatio="none"><rect width="400" height="260" fill="#0d3b4a"/><g fill="#c9a24b"><ellipse cx="120" cy="150" rx="26" ry="38"/><ellipse cx="180" cy="145" rx="26" ry="42"/><ellipse cx="240" cy="150" rx="26" ry="38"/><ellipse cx="295" cy="158" rx="22" ry="32"/></g></svg></div>
-        <div class="ba__after"><span data-i18n="cases.after">ПОСЛЕ</span><svg viewBox="0 0 400 260" preserveAspectRatio="none"><rect width="400" height="260" fill="#0d4a5e"/><g fill="#f2fbff"><ellipse cx="120" cy="150" rx="26" ry="38"/><ellipse cx="180" cy="145" rx="26" ry="42"/><ellipse cx="240" cy="150" rx="26" ry="38"/><ellipse cx="295" cy="158" rx="22" ry="32"/></g></svg></div>
-        <div class="ba__handle"><span></span></div>
+        <img class="ba__img" src="cases/case1-after.svg" width="400" height="260" loading="lazy"
+             alt="После профессиональной гигиены: зубы очищены от налёта, эмаль натурального светлого оттенка, десна спокойного розового цвета.">
+        <div class="ba__clip">
+          <img class="ba__img" src="cases/case1-before.svg" width="400" height="260" loading="lazy"
+               alt="До гигиены: на эмали желтоватый налёт, у линии десны заметны мягкие отложения.">
+          <span class="ba__tag ba__tag--before" data-i18n="cases.before">ДО</span>
+        </div>
+        <span class="ba__tag ba__tag--after" data-i18n="cases.after">ПОСЛЕ</span>
+        <span class="ba__handle" aria-hidden="true"></span>
+        <input class="ba__range" type="range" min="0" max="100" value="50" step="0.5"
+               data-i18n-aria="cases.slider" aria-label="Профгигиена: шторка сравнения «до» и «после»">
       </div>
       <figcaption data-i18n="cases.c1">Профессиональная гигиена + реминерализация · 1 визит</figcaption>
     </figure>
     <figure class="ba reveal" data-ba>
       <div class="ba__frame">
-        <div class="ba__before"><span data-i18n="cases.before">ДО</span><svg viewBox="0 0 400 260" preserveAspectRatio="none"><rect width="400" height="260" fill="#0d3b4a"/><g fill="#e8f6fb"><ellipse cx="120" cy="150" rx="26" ry="38"/><ellipse cx="240" cy="150" rx="26" ry="38"/><ellipse cx="300" cy="155" rx="22" ry="34"/></g></svg></div>
-        <div class="ba__after"><span data-i18n="cases.after">ПОСЛЕ</span><svg viewBox="0 0 400 260" preserveAspectRatio="none"><rect width="400" height="260" fill="#0d4a5e"/><g fill="#f2fbff"><ellipse cx="120" cy="150" rx="26" ry="38"/><ellipse cx="180" cy="147" rx="26" ry="40"/><ellipse cx="240" cy="150" rx="26" ry="38"/><ellipse cx="300" cy="155" rx="22" ry="34"/></g></svg></div>
-        <div class="ba__handle"><span></span></div>
+        <img class="ba__img" src="cases/case2-after.svg" width="400" height="260" loading="lazy"
+             alt="После реставрации: форма передних зубов восстановлена, промежуток закрыт, край ровный.">
+        <div class="ba__clip">
+          <img class="ba__img" src="cases/case2-before.svg" width="400" height="260" loading="lazy"
+               alt="До реставрации: между передними зубами промежуток, на углу одного зуба небольшой скол.">
+          <span class="ba__tag ba__tag--before" data-i18n="cases.before">ДО</span>
+        </div>
+        <span class="ba__tag ba__tag--after" data-i18n="cases.after">ПОСЛЕ</span>
+        <span class="ba__handle" aria-hidden="true"></span>
+        <input class="ba__range" type="range" min="0" max="100" value="50" step="0.5"
+               data-i18n-aria="cases.slider2" aria-label="Реставрация: шторка сравнения «до» и «после»">
       </div>
       <figcaption data-i18n="cases.c2">Эстетическая реставрация передних зубов · 2 визита</figcaption>
     </figure>
   </div>
+  <p class="cases__note" data-i18n="cases.note">Выше — схематичные иллюстрации: они показывают суть работ, а не результат конкретного пациента. Реальные фотографии добавим из архива клиники — с письменного согласия. Результат лечения индивидуален и зависит от исходного состояния зубов.</p>
 </section>
 
 <!-- ══════════ ЭКСКУРСИЯ ПО КЛИНИКЕ (рендерится из tour.js) ══════════ -->
