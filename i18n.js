@@ -106,7 +106,10 @@ const I18N = {
   /* — до/после — */
   "cases.tag":      { ru: "Работы", en: "Cases", ar: "الحالات" },
   "cases.title":    { ru: "До / после — двигайте ползунок", en: "Before / after — drag the slider", ar: "قبل / بعد — حرك المؤشر" },
-  "cases.sub":      { ru: "Кейсы публикуются с письменного согласия пациентов. Реальные фото добавим из архива клиники.", en: "Cases are published with written patient consent. Real photos will be added from the clinic archive.", ar: "تنشر الحالات بموافقة خطية من المرضى. ستضاف الصور الحقيقية من أرشيف العيادة." },
+  "cases.sub":      { ru: "Потяните ползунок в стороны, чтобы сравнить состояние до и после.", en: "Drag the slider sideways to compare the before and after states.", ar: "اسحب المؤشر جانباً لمقارنة الحالة قبل وبعد." },
+  "cases.note":     { ru: "Выше — схематичные иллюстрации: они показывают суть работ, а не результат конкретного пациента. Реальные фотографии добавим из архива клиники — с письменного согласия. Результат лечения индивидуален и зависит от исходного состояния зубов.", en: "The images above are schematic illustrations: they show the nature of the work, not the outcome of a specific patient. Real photos will be added from the clinic archive with written consent. Treatment results are individual and depend on the initial condition of the teeth.", ar: "الصور أعلاه رسوم توضيحية تبيّن طبيعة العمل وليست نتيجة مريض بعينه. ستضاف الصور الحقيقية من أرشيف العيادة بموافقة خطية. نتائج العلاج فردية وتعتمد على الحالة الأولية للأسنان." },
+  "cases.slider":   { ru: "Профгигиена: шторка сравнения «до» и «после»", en: "Hygiene: before/after comparison slider", ar: "التنظيف: شريط مقارنة قبل/بعد" },
+  "cases.slider2":  { ru: "Реставрация: шторка сравнения «до» и «после»", en: "Restoration: before/after comparison slider", ar: "الترميم: شريط مقارنة قبل/بعد" },
   "cases.before":   { ru: "ДО", en: "BEFORE", ar: "قبل" },
   "cases.after":    { ru: "ПОСЛЕ", en: "AFTER", ar: "بعد" },
   "cases.c1":       { ru: "Профессиональная гигиена + реминерализация · 1 визит", en: "Professional hygiene + remineralization · 1 visit", ar: "تنظيف احترافي + علاج معزز · زيارة واحدة" },
