@@ -56,17 +56,35 @@
 .tm-scheme svg { display: block; width: 100%; height: auto; }
 .tm-jaw-label { font-size: 12px; fill: var(--ink-dim); letter-spacing: 0.08em; text-transform: uppercase; }
 
+/* .btn задаёт display:flex и перебивает атрибут hidden — кнопки сметы
+   показывались бы всегда, поэтому гасим скрытое явно */
+.tm-card [hidden] { display: none !important; }
+
+.tm-midline { stroke: var(--aqua); stroke-opacity: 0.22; stroke-width: 1.5; stroke-dasharray: 3 9; stroke-linecap: round; }
+
+.tm-rows { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.tm-row {
+  padding: 9px 16px; border-radius: 999px; font: inherit; font-size: 0.85rem; font-weight: 600;
+  border: 1.5px solid var(--card-line); background: none; color: var(--ink-dim);
+  cursor: pointer; transition: 0.2s;
+}
+.tm-row:hover { border-color: var(--aqua); color: var(--ink); }
+.tm-row[aria-pressed="true"] { border-color: var(--aqua); background: rgba(66, 57, 184, 0.1); color: var(--aqua); }
+
 .tm-tooth { cursor: pointer; outline: none; }
 .tm-tooth .tm-hit { fill: transparent; }
 .tm-tooth .tm-shape {
-  fill: rgba(255, 255, 255, 0.08); stroke: var(--card-line); stroke-width: 1.5;
-  transition: fill 0.2s, stroke 0.2s, filter 0.2s;
+  fill: #fff; stroke: var(--aqua); stroke-width: 1.9; stroke-opacity: 0.72;
+  stroke-linejoin: round;
+  transition: fill 0.18s, stroke-opacity 0.18s, filter 0.18s;
 }
 .tm-tooth:hover .tm-shape,
-.tm-tooth:focus-visible .tm-shape { stroke: var(--aqua); fill: rgba(66, 57, 184, 0.16); }
+.tm-tooth:focus-visible .tm-shape {
+  stroke-opacity: 1; fill: rgba(66, 57, 184, 0.12);
+}
 .tm-tooth:focus-visible .tm-shape { filter: drop-shadow(0 0 6px rgba(66, 57, 184, 0.6)); }
 .tm-tooth[aria-pressed="true"] .tm-shape {
-  fill: url(#tmGrad); stroke: var(--aqua);
+  fill: url(#tmGrad); stroke: var(--aqua); stroke-opacity: 1;
   animation: tmPulse 1.6s ease-in-out infinite;
 }
 @keyframes tmPulse {
@@ -106,9 +124,10 @@
 .tm-summary .btn { width: 100%; text-align: center; justify-content: center; }
 .tm-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 4px; }
 
-:root[data-theme="light"] .tm-tooth .tm-shape { fill: #fff; stroke: rgba(11, 69, 96, 0.25); }
+/* цвет контура — фирменный индиго (прежний бирюзовый остался от старой палитры) */
+:root[data-theme="light"] .tm-tooth .tm-shape { fill: #fff; stroke: var(--aqua); stroke-opacity: 0.7; }
 :root[data-theme="light"] .tm-tooth:hover .tm-shape,
-:root[data-theme="light"] .tm-tooth:focus-visible .tm-shape { stroke: var(--aqua); fill: rgba(66, 57, 184, 0.18); }
+:root[data-theme="light"] .tm-tooth:focus-visible .tm-shape { stroke: var(--aqua); stroke-opacity: 1; fill: rgba(66, 57, 184, 0.18); }
 :root[data-theme="light"] .tm-tooth[aria-pressed="true"] .tm-shape { fill: url(#tmGrad); stroke: var(--aqua); }
 :root[data-theme="light"] .tm-summary { background: rgba(255, 255, 255, 0.7); }
 
@@ -136,28 +155,34 @@
   const typeByDist = (d) =>
     d < 2 ? "incisor" : d < 3 ? "canine" : d < 5 ? "premolar" : "molar";
 
-  /* ── Генерация SVG: две дуги по 14 зубов по эллипсу ── */
+  /* ── Генерация SVG: две подковы по 14 зубов ──
+     Челюсти разведены по вертикали, коронки повёрнуты внутрь — к линии
+     смыкания, как в стоматологической карте (раньше дуги замыкались в
+     кольцо и боковые зубы лежали на боку). */
   const NS = "http://www.w3.org/2000/svg";
   const TEETH = 14;
   const buildJaw = (upper) => {
-    const cx = 250, a = 205, b = 155;
-    const cy = upper ? 205 : 235; /* центры эллипсов */
+    const cx = 250, a = 158, b = 118;
+    const cy = upper ? 178 : 292;
     let out = "";
     for (let i = 0; i < TEETH; i++) {
-      /* угол от -76° до +76° равномерно */
-      const ang = -76 + (152 * i) / (TEETH - 1);
+      const ang = -84 + (168 * i) / (TEETH - 1);
       const rad = (ang * Math.PI) / 180;
       const x = +(cx + a * Math.sin(rad)).toFixed(1);
       const y = +(upper ? cy - b * Math.cos(rad) : cy + b * Math.cos(rad)).toFixed(1);
-      const rot = +(upper ? ang : 180 - ang).toFixed(1);
+      /* коронка нарисована к −y; доворачиваем её внутрь дуги */
+      const rot = +(upper ? 180 + ang : -ang).toFixed(1);
       const type = typeByDist(Math.abs(i - (TEETH - 1) / 2));
       const num = i + 1;
-      const label = `Зуб ${num}, ${upper ? "верхняя" : "нижняя"} челюсть`;
+      const side = i < TEETH / 2 ? "справа" : "слева";
+      const label = `Зуб ${num}, ${upper ? "верхняя" : "нижняя"} челюсть, ${side}`;
       out +=
         `<g class="tm-tooth" tabindex="0" role="button" aria-pressed="false"` +
-        ` data-tooth="${upper ? "u" : "l"}${num}" aria-label="${label}"` +
-        ` transform="translate(${x} ${y}) rotate(${rot})">` +
-        `<circle class="tm-hit" cx="0" cy="0" r="25"></circle>` +
+        ` data-tooth="${upper ? "u" : "l"}${num}" data-row="${upper ? "u" : "l"}"` +
+        ` aria-label="${label}"` +
+        ` transform="translate(${x} ${y}) rotate(${rot}) scale(1.12)">` +
+        `<title>${label}</title>` +
+        `<circle class="tm-hit" cx="0" cy="0" r="22"></circle>` +
         `<path class="tm-shape" d="${SHAPES[type]}"></path>` +
         `</g>`;
     }
@@ -165,13 +190,15 @@
   };
 
   const svg =
-    `<svg viewBox="0 0 500 460" xmlns="${NS}" role="group" aria-label="Схема зубов: верхняя и нижняя челюсть">` +
+    `<svg viewBox="0 0 500 470" xmlns="${NS}" role="group" aria-label="Схема зубов: верхняя и нижняя челюсть">` +
     `<defs><linearGradient id="tmGrad" x1="0" y1="0" x2="1" y2="1">` +
     `<stop offset="0" stop-color="var(--aqua)"></stop>` +
     `<stop offset="1" stop-color="var(--cyan)"></stop>` +
     `</linearGradient></defs>` +
-    `<text class="tm-jaw-label" x="250" y="88" text-anchor="middle">Верхняя</text>` +
-    `<text class="tm-jaw-label" x="250" y="352" text-anchor="middle">Нижняя</text>` +
+    /* линия смыкания — ориентир между челюстями */
+    `<line class="tm-midline" x1="60" y1="235" x2="440" y2="235"></line>` +
+    `<text class="tm-jaw-label" x="250" y="26" text-anchor="middle">Верхняя челюсть</text>` +
+    `<text class="tm-jaw-label" x="250" y="458" text-anchor="middle">Нижняя челюсть</text>` +
     buildJaw(true) + buildJaw(false) +
     `</svg>`;
 
@@ -187,7 +214,12 @@
     `<h3>Покажите, что беспокоит</h3>` +
     `<p>Выберите зубы на схеме — посчитаем ориентировочную стоимость.</p>` +
     `<div class="tm-grid">` +
-    `<div class="tm-scheme">${svg}` +
+    `<div class="tm-scheme">` +
+    `<div class="tm-rows">` +
+    `<button class="tm-row" type="button" data-row="u" aria-pressed="false">Выбрать верхний ряд</button>` +
+    `<button class="tm-row" type="button" data-row="l" aria-pressed="false">Выбрать нижний ряд</button>` +
+    `</div>` +
+    `${svg}` +
     `<div class="tm-chips" role="radiogroup" aria-label="Тип проблемы">${chips}</div>` +
     `</div>` +
     `<div class="tm-summary" aria-live="polite">` +
@@ -239,13 +271,38 @@
     bookBtn.dataset.service = `Карта зубов: ${n} ${plural(n)}, ${problemLabel(pid)}`;
   };
 
+  /* кнопки «весь ряд» подсвечиваются, когда ряд выбран целиком */
+  const rowBtns = Array.from(host.querySelectorAll(".tm-row"));
+  const syncRows = () => {
+    rowBtns.forEach((b) => {
+      const inRow = teeth.filter((g) => g.dataset.row === b.dataset.row);
+      const all = inRow.length > 0 && inRow.every((g) => selected.has(g.dataset.tooth));
+      b.setAttribute("aria-pressed", String(all));
+    });
+  };
+
   const toggle = (g) => {
     const id = g.dataset.tooth;
     const on = !selected.has(id);
     if (on) selected.add(id); else selected.delete(id);
     g.setAttribute("aria-pressed", String(on));
+    syncRows();
     render();
   };
+
+  rowBtns.forEach((b) => {
+    b.addEventListener("click", () => {
+      const inRow = teeth.filter((g) => g.dataset.row === b.dataset.row);
+      /* ряд выбран целиком — снимаем, иначе добираем недостающие */
+      const on = !inRow.every((g) => selected.has(g.dataset.tooth));
+      inRow.forEach((g) => {
+        if (on) selected.add(g.dataset.tooth); else selected.delete(g.dataset.tooth);
+        g.setAttribute("aria-pressed", String(on));
+      });
+      syncRows();
+      render();
+    });
+  });
 
   teeth.forEach((g) => {
     g.addEventListener("click", () => toggle(g));
@@ -264,6 +321,7 @@
   resetBtn.addEventListener("click", () => {
     selected.clear();
     teeth.forEach((g) => g.setAttribute("aria-pressed", "false"));
+    syncRows();
     render();
   });
 
