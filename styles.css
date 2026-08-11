@@ -58,15 +58,6 @@ h3 { font-size: 1.25rem; }
 .btn--lg { padding: 17px 34px; font-size: 1.05rem; }
 .btn--sm { padding: 10px 20px; font-size: 0.9rem; }
 
-/* ═══════════════ ШКАЛА ГЛУБИНЫ ═══════════════ */
-.depth-gauge {
-  position: fixed; right: 22px; top: 50%; transform: translateY(-50%);
-  z-index: 60; display: flex; flex-direction: column; align-items: center; gap: 10px;
-}
-.depth-gauge__track { width: 3px; height: 180px; background: rgba(255,255,255,0.12); border-radius: 3px; overflow: hidden; }
-.depth-gauge__fill { width: 100%; height: 0%; background: linear-gradient(180deg, var(--aqua), var(--cyan)); border-radius: 3px; transition: height 0.1s linear; }
-.depth-gauge__label { font-size: 0.72rem; font-weight: 700; color: var(--aqua-soft); letter-spacing: 0.06em; writing-mode: vertical-rl; }
-
 /* ═══════════════ ШАПКА ═══════════════ */
 .nav {
   position: fixed; inset: 0 0 auto 0; z-index: 50;
@@ -185,6 +176,25 @@ h3 { font-size: 1.25rem; }
 .reveal-seq__step h2 {
   margin: 0 0 8px; color: var(--ink);
   font-size: clamp(1.3rem, 2.8vw, 2rem); line-height: 1.22;
+}
+/* ── Первый экран: визитка клиники ── */
+.reveal-seq__step--brand { max-width: 760px; padding: 26px clamp(24px, 4vw, 40px); }
+.seq-eyebrow {
+  margin: 0 0 12px; color: var(--aqua-soft);
+  font-size: clamp(0.68rem, 1.2vw, 0.8rem); font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.5;
+}
+.seq-title {
+  margin: 0 0 14px; color: var(--ink);
+  font-family: "Unbounded", system-ui, sans-serif; font-weight: 700;
+  font-size: clamp(1.65rem, 4.2vw, 3.1rem); line-height: 1.08; letter-spacing: -0.01em;
+}
+.seq-title span { display: block; }
+.seq-title em { color: var(--aqua); font-style: normal; }
+.seq-motto {
+  margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center;
+  color: var(--aqua-soft); font-weight: 700;
+  font-size: clamp(0.9rem, 1.7vw, 1.08rem);
 }
 /* ── Предложения на ресепшене: свайп справа налево по прогрессу ── */
 .reveal-seq__offers {
@@ -569,7 +579,6 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 }
 @media (max-width: 860px) {
   .calc__card, .about__grid, .contacts__grid { grid-template-columns: 1fr; }
-  .depth-gauge { display: none; }
   .nav__phone { display: none; }
 }
 @media (max-width: 640px) {
@@ -725,7 +734,6 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .footer__admin .icon { width: 14px; height: 14px; }
 
 /* ═══════════════ RTL ═══════════════ */
-[dir="rtl"] .depth-gauge { right: auto; left: 22px; }
 [dir="rtl"] .fab { right: auto; left: 22px; align-items: flex-start; }
 [dir="rtl"] .fab__menu { align-items: flex-start; }
 [dir="rtl"] .hero__title em { letter-spacing: 0; }
@@ -1060,7 +1068,6 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
     radial-gradient(35% 30% at 18% 75%, rgba(66, 57, 184, 0.12), transparent 70%);
 }
 :root[data-theme="light"] .bubble { border-color: rgba(66, 57, 184, 0.12); background: radial-gradient(circle at 32% 30%, rgba(255,255,255,0.9), rgba(66, 57, 184,0.06) 60%, transparent); }
-:root[data-theme="light"] .depth-gauge__track { background: rgba(66, 57, 184, 0.15); }
 :root[data-theme="light"] .svc-card__icon { background: linear-gradient(140deg, rgba(66, 57, 184, 0.12), rgba(122, 108, 240, 0.08)); }
 :root[data-theme="light"] .calc__form { background: rgba(255, 255, 255, 0.45); }
 :root[data-theme="light"] .calc__result { background: rgba(255, 255, 255, 0.7); }
@@ -1361,11 +1368,14 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
   margin: 0 0 22px; text-align: left; padding: 0;
   background: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
 }
-:root.bvi .reveal-seq__step h2, :root.bvi .reveal-seq__step p { color: var(--a-fg) !important; text-shadow: none !important; }
+:root.bvi .reveal-seq__step h2, :root.bvi .reveal-seq__step p,
+:root.bvi .seq-title, :root.bvi .seq-title em,
+:root.bvi .seq-eyebrow, :root.bvi .seq-motto { color: var(--a-fg) !important; text-shadow: none !important; }
+:root.bvi .seq-motto { justify-content: flex-start; }
 
 /* Убираем декоративные слои */
 :root.bvi .hero__glow, :root.bvi canvas,
-:root.bvi .depth-gauge, :root.bvi .nav.is-scrolled::after { display: none !important; }
+:root.bvi .nav.is-scrolled::after { display: none !important; }
 :root.bvi .nav, :root.bvi .nav.is-scrolled, :root.bvi .footer,
 :root.bvi .mobile-cta, :root.bvi .fab__menu, :root.bvi .modal__card { background: var(--a-bg) !important; }
 
