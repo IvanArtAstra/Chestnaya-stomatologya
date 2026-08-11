@@ -67,10 +67,15 @@
     function smooth(t) { return t * t * (3 - 2 * t); } // smoothstep
 
     var lastP = -1;
+    /* Кадры зума в начале почти одинаковы, поэтому линейный прогресс
+       ощущается вязким. Степень < 1 «разгоняет» начало и оставляет
+       больше хода на финал — ресепшн и карточки акций. */
+    var EASE = 0.68;
     function progress() {
       var r = section.getBoundingClientRect();
       var total = Math.max(r.height - window.innerHeight, 1);
-      return Math.min(Math.max(-r.top / total, 0), 1);
+      var p = Math.min(Math.max(-r.top / total, 0), 1);
+      return Math.pow(p, EASE);
     }
 
     function draw(p) {

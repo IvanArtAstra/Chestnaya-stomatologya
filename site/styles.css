@@ -130,7 +130,7 @@ h3 { font-size: 1.25rem; }
 .hero__stats b { display: block; font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 800; color: var(--aqua-soft); }
 .hero__stats span { font-size: 0.85rem; color: var(--ink-dim); }
 /* ═══════════════ СЕКВЕНЦИЯ «в наших руках» (sticky-скролл) ═══════════════ */
-.reveal-seq { height: 760vh; position: relative; }
+.reveal-seq { height: 560vh; position: relative; }
 .reveal-seq__sticky {
   position: sticky; top: 0; height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -158,20 +158,22 @@ h3 { font-size: 1.25rem; }
   pointer-events: none; padding: 0 24px;
 }
 .reveal-seq__step {
+  /* та же «стеклянная» плашка, что у карточек на ресепшене */
   grid-area: 1 / 1; max-width: 620px; text-align: center;
-  padding: 18px clamp(20px, 3vw, 30px);
+  padding: 20px clamp(22px, 3vw, 32px);
   border-radius: 20px;
-  background: rgba(23, 18, 62, 0.42);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  backdrop-filter: blur(12px) saturate(1.2);
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow: 0 18px 50px rgba(23, 18, 62, 0.18);
   opacity: 0; transform: translateY(28px);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .reveal-seq__step.is-active { opacity: 1; transform: translateY(0); }
 .reveal-seq__step h2 {
-  margin: 0 0 10px; color: #fff;
-  font-size: clamp(1.35rem, 3vw, 2.2rem); line-height: 1.2;
-  text-shadow: 0 3px 30px rgba(8, 6, 30, 0.6), 0 1px 3px rgba(8, 6, 30, 0.5);
+  margin: 0 0 8px; color: var(--ink);
+  font-size: clamp(1.3rem, 2.8vw, 2rem); line-height: 1.22;
 }
 /* ── Предложения на ресепшене: свайп справа налево по прогрессу ── */
 .reveal-seq__offers {
@@ -204,9 +206,8 @@ h3 { font-size: 1.25rem; }
 .seq-offer__till { font-size: 0.72rem; color: var(--ink-dim); opacity: 0.85; }
 
 .reveal-seq__step p {
-  margin: 0; color: rgba(255, 255, 255, 0.92);
-  font-size: clamp(1rem, 1.9vw, 1.18rem); line-height: 1.6;
-  text-shadow: 0 2px 20px rgba(8, 6, 30, 0.7);
+  margin: 0; color: var(--ink-dim);
+  font-size: clamp(0.95rem, 1.7vw, 1.08rem); line-height: 1.55;
 }
 
 /* ═══════════════ СЕКЦИИ ═══════════════ */
@@ -567,7 +568,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__burger { display: flex; }
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
-  .reveal-seq { height: 620vh; }
+  .reveal-seq { height: 460vh; }
   .seq-offer { padding: 16px 18px; }
   .seq-offer h3 { font-size: 1rem; }
   .reveal-seq__steps { padding: 0 16px; }
