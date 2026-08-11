@@ -43,7 +43,7 @@
 /* ── Свёрнутый блок ── */
 .tm-fold { max-width: 1080px; margin: 26px auto 0; }
 .tm-fold__head {
-  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  display: flex; align-items: center; gap: clamp(18px, 3vw, 34px);
   flex-wrap: wrap; cursor: pointer; list-style: none;
   border-radius: var(--radius, 22px); border: 1px solid var(--card-line);
   background: var(--card); padding: clamp(20px, 3vw, 30px) clamp(22px, 3.5vw, 38px);
@@ -52,24 +52,35 @@
 .tm-fold__head::-webkit-details-marker { display: none; }
 .tm-fold__head:hover { border-color: var(--aqua); box-shadow: 0 10px 34px rgba(66, 57, 184, 0.14); }
 .tm-fold__head:focus-visible { outline: 2px solid var(--aqua); outline-offset: 3px; }
-.tm-fold__text { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tm-fold__text { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1; align-items: flex-start; }
+/* превью челюсти: видно, что откроется, ещё до раскрытия */
+.tm-fold__preview {
+  flex: none; width: clamp(96px, 15vw, 140px); height: auto; border-radius: 16px;
+  background: #ececee; box-shadow: 0 8px 26px rgba(23, 18, 62, 0.12);
+  transition: transform 0.25s;
+}
+.tm-fold__head:hover .tm-fold__preview { transform: scale(1.04); }
+.tm-fold[open] .tm-fold__preview { display: none; }
 .tm-fold__text b {
   font-family: var(--font-display); font-weight: 700;
   font-size: clamp(1.2rem, 2.4vw, 1.65rem); letter-spacing: -0.01em; color: var(--ink);
 }
-.tm-fold__text span { color: var(--ink-dim); font-size: 0.94rem; line-height: 1.55; }
+.tm-fold__text > span:not(.tm-fold__btn) { color: var(--ink-dim); font-size: 0.94rem; line-height: 1.55; }
 .tm-fold__btn {
-  flex: none; padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 0.94rem;
-  background: linear-gradient(120deg, var(--aqua), var(--cyan)); color: #fff;
+  margin-top: 4px; padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 0.94rem;
+  background: linear-gradient(120deg, var(--aqua), var(--cyan));
   box-shadow: 0 8px 24px rgba(66, 57, 184, 0.32);
 }
+.tm-fold__btn, .tm-fold__btn span { color: #fff; }
 .tm-fold__close { display: none; }
 .tm-fold[open] .tm-fold__open { display: none; }
 .tm-fold[open] .tm-fold__close { display: inline; }
 .tm-fold[open] .tm-fold__head {
   border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent;
 }
-.tm-fold[open] .tm-fold__btn { background: none; color: var(--aqua); box-shadow: none; border: 1.5px solid var(--card-line); }
+.tm-fold[open] .tm-fold__btn,
+.tm-fold[open] .tm-fold__btn span { color: var(--aqua); }
+.tm-fold[open] .tm-fold__btn { background: none; box-shadow: none; border: 1.5px solid var(--card-line); }
 
 .tm-card {
   border-radius: var(--radius, 22px); border-top-left-radius: 0; border-top-right-radius: 0;
@@ -232,13 +243,14 @@
   host.innerHTML =
     `<details class="tm-fold">` +
     `<summary class="tm-fold__head">` +
+    `<img class="tm-fold__preview" src="jaws.jpg" alt="" width="1024" height="1024" loading="lazy">` +
     `<span class="tm-fold__text">` +
     `<b>Покажите, что беспокоит</b>` +
     `<span>Отметьте зубы на схеме — посчитаем ориентировочную стоимость</span>` +
-    `</span>` +
     `<span class="tm-fold__btn">` +
     `<span class="tm-fold__open">Рассчитать стоимость</span>` +
     `<span class="tm-fold__close">Свернуть схему</span>` +
+    `</span>` +
     `</span>` +
     `</summary>` +
     `<div class="tm-card">` +
