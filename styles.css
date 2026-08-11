@@ -150,18 +150,27 @@ h3 { font-size: 1.25rem; }
   background: linear-gradient(to top, rgba(10, 8, 40, 0.34) 0%, rgba(10, 8, 40, 0.08) 26%, transparent 48%);
 }
 .reveal-seq__steps {
-  position: absolute; z-index: 3; left: 0; right: 0; bottom: clamp(48px, 9vh, 120px);
-  display: flex; justify-content: center; pointer-events: none; padding: 0 24px;
+  /* grid c одной ячейкой: шаги накладываются друг на друга, но остаются
+     в потоке — контейнер получает высоту самого высокого из них.
+     С position:absolute у шагов контейнер схлопывался в 0 и текст уезжал за экран. */
+  position: absolute; z-index: 3; left: 0; right: 0; bottom: clamp(40px, 7vh, 96px);
+  display: grid; justify-items: center; align-items: end;
+  pointer-events: none; padding: 0 24px;
 }
 .reveal-seq__step {
-  position: absolute; max-width: 620px; text-align: center;
+  grid-area: 1 / 1; max-width: 620px; text-align: center;
+  padding: 18px clamp(20px, 3vw, 30px);
+  border-radius: 20px;
+  background: rgba(23, 18, 62, 0.42);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
   opacity: 0; transform: translateY(28px);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .reveal-seq__step.is-active { opacity: 1; transform: translateY(0); }
 .reveal-seq__step h2 {
-  margin: 0 0 12px; color: #fff;
-  font-size: clamp(1.5rem, 3.4vw, 2.5rem);
+  margin: 0 0 10px; color: #fff;
+  font-size: clamp(1.35rem, 3vw, 2.2rem); line-height: 1.2;
   text-shadow: 0 3px 30px rgba(8, 6, 30, 0.6), 0 1px 3px rgba(8, 6, 30, 0.5);
 }
 .reveal-seq__step p {
@@ -529,6 +538,8 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
   .reveal-seq { height: 440vh; }
+  /* запас снизу, чтобы подписи не уходили под мобильную панель «Позвонить/Записаться» */
+  .reveal-seq__steps { bottom: 104px; padding: 0 16px; }
   .footer { padding-bottom: 130px; }
   .about__facts { grid-template-columns: 1fr 1fr; gap: 10px; }
   .fact { padding: 20px 12px; }
@@ -1300,7 +1311,11 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 :root.bvi .reveal-seq__sticky { position: static !important; height: auto !important; padding: 40px 24px; }
 :root.bvi .reveal-seq__sticky::after, :root.bvi .reveal-seq__fallback { display: none !important; }
 :root.bvi .reveal-seq__steps { position: static; display: block; }
-:root.bvi .reveal-seq__step { position: static; max-width: none; opacity: 1 !important; transform: none !important; margin: 0 0 22px; text-align: left; }
+:root.bvi .reveal-seq__step {
+  position: static; max-width: none; opacity: 1 !important; transform: none !important;
+  margin: 0 0 22px; text-align: left; padding: 0;
+  background: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
 :root.bvi .reveal-seq__step h2, :root.bvi .reveal-seq__step p { color: var(--a-fg) !important; text-shadow: none !important; }
 
 /* Убираем декоративные слои */
