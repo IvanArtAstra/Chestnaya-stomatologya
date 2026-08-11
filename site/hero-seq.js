@@ -11,9 +11,15 @@
     var canvas = document.getElementById("seqCanvas");
     if (!section || !canvas) return;
 
-    var COUNT = 9;
+    var COUNT = 15;                 /* 1–9 зум к зубу, 10–12 свет, 13–15 ресепшн */
     var BASE = "hero-seq/";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
+    var offers = Array.prototype.slice.call(section.querySelectorAll(".seq-offer"));
+
+    /* Подписи держатся на «зумной» части, дальше кадр уходит в свет */
+    var STEP_END = 0.56;
+    /* Предложения выезжают на ресепшене: центр показа каждого + полуокно */
+    var OFFER_START = 0.78, OFFER_AT = [0.845, 0.915, 0.985], OFFER_HALF = 0.075;
     var ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -82,10 +88,32 @@
     }
 
     function updateSteps(p) {
-      if (!steps.length) return;
-      var active = p < 0.30 ? 0 : p < 0.52 ? 1 : p < 0.74 ? 2 : 3;
-      for (var k = 0; k < steps.length; k++) {
-        steps[k].classList.toggle("is-active", k === active);
+      if (steps.length) {
+        /* после STEP_END подписи гаснут — начинается свет и ресепшн */
+        var active = p >= STEP_END ? -1
+          : p < STEP_END * 0.25 ? 0
+          : p < STEP_END * 0.50 ? 1
+          : p < STEP_END * 0.75 ? 2 : 3;
+        for (var k = 0; k < steps.length; k++) {
+          steps[k].classList.toggle("is-active", k === active);
+        }
+      }
+      updateOffers(p);
+    }
+
+    /* Карточки предложений проезжают справа налево, сменяя друг друга.
+       Последняя доезжает до центра и остаётся — ею заканчивается сегмент. */
+    function updateOffers(p) {
+      if (!offers.length) return;
+      var last = offers.length - 1;
+      for (var i = 0; i < offers.length; i++) {
+        var d = (OFFER_AT[i] - p) / OFFER_HALF;       /* >0 — ещё справа, <0 — уехала влево */
+        if (i === last && d < 0) d = 0;               /* финальная не уезжает */
+        var off = Math.max(-1.6, Math.min(1.6, d));
+        var vis = p >= OFFER_START ? Math.max(0, 1 - Math.abs(off) * 1.15) : 0;
+        offers[i].style.transform =
+          "translate(calc(-50% + " + (off * 62).toFixed(2) + "vw), -50%)";
+        offers[i].style.opacity = vis.toFixed(3);
       }
     }
 
