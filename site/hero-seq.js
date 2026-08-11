@@ -16,8 +16,10 @@
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var offers = Array.prototype.slice.call(section.querySelectorAll(".seq-offer"));
 
-    /* Подписи держатся на «зумной» части, дальше кадр уходит в свет */
-    var STEP_END = 0.56;
+    /* Первые проценты прокрутки кадр идёт чистым — сцена успевает
+       «прочитаться», и только потом выходит визитка клиники.
+       Дальше подписи-ценности, после STEP_END кадр уходит в свет. */
+    var STEP_START = 0.05, STEP_END = 0.56;
     /* Предложения выезжают на ресепшене: центр показа каждого + полуокно */
     var OFFER_START = 0.78, OFFER_AT = [0.845, 0.915, 0.985], OFFER_HALF = 0.075;
     var ctx = canvas.getContext("2d");
@@ -32,8 +34,15 @@
         im.decoding = "async";
         im.onload = function () {
           loaded++;
-          if (idx === 0 && !ready) { setup(); render(); } // покажем первый кадр сразу
-          if (loaded === COUNT) { section.classList.add("is-ready"); }
+          /* Сброс lastP обязателен: первый render() отрабатывает ещё до
+             загрузки картинок и запоминает прогресс, из-за чего повторный
+             вызов считает, что перерисовывать нечего, и кадр не появляется. */
+          lastP = -1;
+          if (idx === 0) {
+            /* canvas показываем только с готовым кадром, иначе фолбэк
+               спрячется раньше времени и мелькнёт пустой экран */
+            setup(); render(); section.classList.add("is-ready");
+          } else { schedule(); }
         };
         im.onerror = function () { loaded++; };
         im.src = BASE + (idx + 1 < 10 ? "0" : "") + (idx + 1) + ".jpg";
@@ -50,7 +59,7 @@
       canvas.width = Math.round(cw * dpr);
       canvas.height = Math.round(ch * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (!ready) { ready = true; section.classList.add("is-ready"); }
+      ready = true;
     }
 
     /* cover-отрисовка одного кадра */
@@ -96,8 +105,9 @@
       if (steps.length) {
         /* равные доли на каждую подпись; после STEP_END они гаснут —
            дальше идёт свет и ресепшн с карточками предложений */
-        var active = p >= STEP_END ? -1
-          : Math.min(steps.length - 1, Math.floor((p / STEP_END) * steps.length));
+        var active = (p < STEP_START || p >= STEP_END) ? -1
+          : Math.min(steps.length - 1,
+              Math.floor(((p - STEP_START) / (STEP_END - STEP_START)) * steps.length));
         for (var k = 0; k < steps.length; k++) {
           steps[k].classList.toggle("is-active", k === active);
         }

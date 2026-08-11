@@ -12,7 +12,7 @@ const I18N = {
   "nav.book":       { ru: "Записаться", en: "Book now", ar: "احجز الآن" },
 
   /* — герой — */
-  "hero.eyebrow":   { ru: "Стоматологическая клиника · Пермь, ул. Танкистов, 68", en: "Dental clinic · Perm, Tankistov st., 68", ar: "عيادة أسنان · بيرم، شارع تانكيستوف، 68" },
+  "hero.eyebrow":   { ru: "Стоматологическая клиника · Пермь, ул. Танкистов, 68", en: "Dental clinic · Perm, Tankistov st., 68", ar: "عيادة أسنان · بيرم، شارع تانكيستوف، 68" },
   "hero.t1":        { ru: "Погрузитесь", en: "Dive into", ar: "انغمس في" },
   "hero.t2":        { ru: "в мир <em>честной</em>", en: "the world of <em>honest</em>", ar: "عالم طب الأسنان" },
   "hero.t3":        { ru: "стоматологии", en: "dentistry", ar: "<em>الصادق</em>" },
