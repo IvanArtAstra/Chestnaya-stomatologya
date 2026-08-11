@@ -80,10 +80,10 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260811f">
-<link rel="stylesheet" href="effects.css?v=20260811f">
-<link rel="stylesheet" href="cards-fx.css?v=20260811f">
-<link rel="stylesheet" href="polish.css?v=20260811f">
+<link rel="stylesheet" href="styles.css?v=20260811h">
+<link rel="stylesheet" href="effects.css?v=20260811h">
+<link rel="stylesheet" href="cards-fx.css?v=20260811h">
+<link rel="stylesheet" href="polish.css?v=20260811h">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -223,7 +223,7 @@ try {
 
 <!-- ══════════ ШАПКА ══════════ -->
 <header class="nav" id="nav">
-  <a class="nav__logo" href="#top">
+  <a class="nav__logo" href="#care">
     <img class="nav__logo-img" src="logo.png" alt="Честная стоматология">
     <span>Ч<em class="logo-e">е</em>стная <b>стоматология</b></span>
   </a>
@@ -256,41 +256,6 @@ try {
     <button class="nav__burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
   </div>
 </header>
-
-<!-- ══════════ ГЕРОЙ ══════════ -->
-<section class="hero" id="top">
-  <div class="hero__bubbles" id="bubbles" aria-hidden="true"></div>
-  <div class="hero__glow" aria-hidden="true"></div>
-  <div class="hero__inner">
-    <p class="hero__eyebrow reveal" data-i18n="hero.eyebrow">Стоматологическая клиника · Пермь, ул. Танкистов, 68</p>
-    <h1 class="hero__title">
-      <span class="hero__line"><span data-i18n="hero.t1">Погрузитесь</span></span>
-      <span class="hero__line"><span data-i18n-html="hero.t2">в&nbsp;мир&nbsp;<em>честной</em></span></span>
-      <span class="hero__line"><span data-i18n-html="hero.t3">стоматологии</span></span>
-    </h1>
-
-    <!-- девиз-анимация -->
-    <div class="motto" role="text" aria-label="Честно. Профессионально. С заботой о вас.">
-      <span class="motto__word" data-i18n="motto.w1">Честно.</span>
-      <span class="motto__word" data-i18n="motto.w2">Профессионально.</span>
-      <span class="motto__word" data-i18n="motto.w3">С заботой о вас.</span>
-      <svg class="motto__wave" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 6 Q 12.5 0, 25 6 T 50 6 T 75 6 T 100 6 T 125 6 T 150 6 T 175 6 T 200 6 T 225 6 T 250 6 T 275 6 T 300 6" fill="none" stroke="url(#iconGrad)" stroke-width="2.4" stroke-linecap="round"/>
-      </svg>
-    </div>
-
-    <p class="hero__sub reveal" data-i18n="hero.sub">Лечение без скрытых услуг и навязанных процедур. Понятный план и честная стоимость — до начала лечения.</p>
-    <div class="hero__cta reveal">
-      <button class="btn btn--primary btn--lg" data-open-booking data-i18n="hero.book">Записаться на приём</button>
-      <a class="btn btn--ghost btn--lg" href="#care" data-i18n="hero.prices">Смотреть цены</a>
-    </div>
-    <ul class="hero__stats reveal">
-      <li><b>5,0<svg class="icon icon--star" aria-hidden="true"><use href="#i-star"/></svg></b><span data-i18n="hero.stat1">рейтинг в 2ГИС</span></li>
-      <li><b data-count="59">0</b><span data-i18n="hero.stat2">отзывов пациентов</span></li>
-      <li><b data-count="0">0</b><span data-i18n="hero.stat3">скрытых доплат</span></li>
-    </ul>
-  </div>
-</section>
 
 <!-- ══════════ СЕКВЕНЦИЯ «в наших руках» (скролл-погружение) ══════════ -->
 <section class="reveal-seq" id="care" aria-label="Здоровье ваших зубов — в наших руках">
@@ -338,6 +303,41 @@ try {
         <span class="seq-offer__till" data-i18n="promo.till">до 31.08.2026</span>
       </article>
     </div>
+  </div>
+</section>
+
+<!-- ══════════ ГЕРОЙ ══════════ -->
+<section class="hero" id="intro">
+  <div class="hero__bubbles" id="bubbles" aria-hidden="true"></div>
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="hero__inner">
+    <p class="hero__eyebrow reveal" data-i18n="hero.eyebrow">Стоматологическая клиника · Пермь, ул. Танкистов, 68</p>
+    <h1 class="hero__title">
+      <span class="hero__line"><span data-i18n="hero.t1">Погрузитесь</span></span>
+      <span class="hero__line"><span data-i18n-html="hero.t2">в&nbsp;мир&nbsp;<em>честной</em></span></span>
+      <span class="hero__line"><span data-i18n-html="hero.t3">стоматологии</span></span>
+    </h1>
+
+    <!-- девиз-анимация -->
+    <div class="motto" role="text" aria-label="Честно. Профессионально. С заботой о вас.">
+      <span class="motto__word" data-i18n="motto.w1">Честно.</span>
+      <span class="motto__word" data-i18n="motto.w2">Профессионально.</span>
+      <span class="motto__word" data-i18n="motto.w3">С заботой о вас.</span>
+      <svg class="motto__wave" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 6 Q 12.5 0, 25 6 T 50 6 T 75 6 T 100 6 T 125 6 T 150 6 T 175 6 T 200 6 T 225 6 T 250 6 T 275 6 T 300 6" fill="none" stroke="url(#iconGrad)" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <p class="hero__sub reveal" data-i18n="hero.sub">Лечение без скрытых услуг и навязанных процедур. Понятный план и честная стоимость — до начала лечения.</p>
+    <div class="hero__cta reveal">
+      <button class="btn btn--primary btn--lg" data-open-booking data-i18n="hero.book">Записаться на приём</button>
+      <a class="btn btn--ghost btn--lg" href="#care" data-i18n="hero.prices">Смотреть цены</a>
+    </div>
+    <ul class="hero__stats reveal">
+      <li><b>5,0<svg class="icon icon--star" aria-hidden="true"><use href="#i-star"/></svg></b><span data-i18n="hero.stat1">рейтинг в 2ГИС</span></li>
+      <li><b data-count="59">0</b><span data-i18n="hero.stat2">отзывов пациентов</span></li>
+      <li><b data-count="0">0</b><span data-i18n="hero.stat3">скрытых доплат</span></li>
+    </ul>
   </div>
 </section>
 
@@ -623,7 +623,7 @@ try {
 <footer class="footer">
   <div class="footer__grid">
     <div class="footer__col footer__col--brand">
-      <a class="nav__logo" href="#top">
+      <a class="nav__logo" href="#care">
         <img class="nav__logo-img" src="logo.png" alt="Честная стоматология">
         <span>Ч<em class="logo-e">е</em>стная <b>стоматология</b></span>
       </a>
@@ -703,20 +703,20 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260811f"></script>
-<script src="db.js?v=20260811f"></script>
-<script src="auth.js?v=20260811f"></script>
-<script src="md.js?v=20260811f"></script>
-<script src="ux.js?v=20260811f"></script>
-<script src="app.js?v=20260811f"></script>
-<script src="water.js?v=20260811f" defer></script>
-<script src="effects.js?v=20260811f" defer></script>
-<script src="teeth-map.js?v=20260811f" defer></script>
-<script src="hero-seq.js?v=20260811f" defer></script>
-<script src="tour.js?v=20260811f" defer></script>
-<script src="cards-fx.js?v=20260811f" defer></script>
-<script src="motion-fx.js?v=20260811f" defer></script>
-<script src="polish.js?v=20260811f" defer></script>
-<script src="a11y.js?v=20260811f"></script>
+<script src="i18n.js?v=20260811h"></script>
+<script src="db.js?v=20260811h"></script>
+<script src="auth.js?v=20260811h"></script>
+<script src="md.js?v=20260811h"></script>
+<script src="ux.js?v=20260811h"></script>
+<script src="app.js?v=20260811h"></script>
+<script src="water.js?v=20260811h" defer></script>
+<script src="effects.js?v=20260811h" defer></script>
+<script src="teeth-map.js?v=20260811h" defer></script>
+<script src="hero-seq.js?v=20260811h" defer></script>
+<script src="tour.js?v=20260811h" defer></script>
+<script src="cards-fx.js?v=20260811h" defer></script>
+<script src="motion-fx.js?v=20260811h" defer></script>
+<script src="polish.js?v=20260811h" defer></script>
+<script src="a11y.js?v=20260811h"></script>
 </body>
 </html>

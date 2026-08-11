@@ -75,6 +75,17 @@ h3 { font-size: 1.25rem; }
   transition: background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s;
 }
 .nav.is-scrolled { background: rgba(3, 20, 30, 0.82); backdrop-filter: blur(16px); box-shadow: 0 6px 30px rgba(0,0,0,0.35); }
+/* Первый экран занимает фотосцена скролла, поэтому у нескролленной шапки
+   есть лёгкая стеклянная подложка — иначе пункты меню тонут в кадре. */
+.nav:not(.is-scrolled)::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom, var(--deep-0), transparent);
+  opacity: 0.82;
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
 .nav__logo { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 1.02rem; color: var(--ink); flex: none; }
 .nav__logo b { color: var(--ink); }
 .nav__logo .icon--lg { width: 34px; height: 34px; color: var(--aqua); }
