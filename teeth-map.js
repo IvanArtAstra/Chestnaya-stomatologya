@@ -73,9 +73,17 @@
 
 .tm-tooth { cursor: pointer; outline: none; }
 .tm-tooth .tm-hit { fill: transparent; }
+.tm-gum {
+  fill: none; stroke-width: 26; stroke-linecap: round;
+  pointer-events: none; opacity: 0.9;
+}
+.tm-gloss { fill: #fff; opacity: 0.5; pointer-events: none; transition: opacity 0.18s; }
+.tm-tooth[aria-pressed="true"] .tm-gloss { opacity: 0.32; }
+
 .tm-tooth .tm-shape {
-  fill: #fff; stroke: var(--aqua); stroke-width: 1.9; stroke-opacity: 0.72;
+  fill: url(#tmEnamel); stroke: var(--aqua); stroke-width: 1.6; stroke-opacity: 0.5;
   stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1px rgba(36, 31, 92, 0.16));
   transition: fill 0.18s, stroke-opacity 0.18s, filter 0.18s;
 }
 .tm-tooth:hover .tm-shape,
@@ -125,9 +133,12 @@
 .tm-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 4px; }
 
 /* цвет контура — фирменный индиго (прежний бирюзовый остался от старой палитры) */
-:root[data-theme="light"] .tm-tooth .tm-shape { fill: #fff; stroke: var(--aqua); stroke-opacity: 0.7; }
+:root[data-theme="light"] .tm-tooth .tm-shape { fill: url(#tmEnamel); stroke: var(--aqua); stroke-opacity: 0.5; }
 :root[data-theme="light"] .tm-tooth:hover .tm-shape,
-:root[data-theme="light"] .tm-tooth:focus-visible .tm-shape { stroke: var(--aqua); stroke-opacity: 1; fill: rgba(66, 57, 184, 0.18); }
+:root[data-theme="light"] .tm-tooth:focus-visible .tm-shape {
+  stroke-opacity: 1; fill: #eef0ff;
+  filter: drop-shadow(0 2px 5px rgba(66, 57, 184, 0.34));
+}
 :root[data-theme="light"] .tm-tooth[aria-pressed="true"] .tm-shape { fill: url(#tmGrad); stroke: var(--aqua); }
 :root[data-theme="light"] .tm-summary { background: rgba(255, 255, 255, 0.7); }
 
@@ -161,12 +172,31 @@
      кольцо и боковые зубы лежали на боку). */
   const NS = "http://www.w3.org/2000/svg";
   const TEETH = 14;
+  const ARC = { cx: 250, a: 158, b: 118, cyU: 178, cyL: 292, span: 84 };
+
+  /* Дуга десны — тот же эллипс, что у зубов, но шире на толщину корня */
+  const gumArc = (upper) => {
+    const { cx, a, b, span } = ARC;
+    const cy = upper ? ARC.cyU : ARC.cyL;
+    /* лента идёт по корням: коронки остаются открытыми, десна
+       прикрывает только шейку (полуширина обводки — 13) */
+    const A = a + 21, B = b + 21;
+    const rad = (span * Math.PI) / 180;
+    const dx = +(A * Math.sin(rad)).toFixed(1);
+    const dy = +(B * Math.cos(rad)).toFixed(1);
+    const y = upper ? cy - dy : cy + dy;
+    const sweep = upper ? 1 : 0;
+    return (
+      `<path class="tm-gum" d="M ${cx - dx} ${y} A ${A} ${B} 0 0 ${sweep} ${cx + dx} ${y}"` +
+      ` stroke="url(#${upper ? "tmGumU" : "tmGumL"})"></path>`
+    );
+  };
   const buildJaw = (upper) => {
-    const cx = 250, a = 158, b = 118;
-    const cy = upper ? 178 : 292;
+    const { cx, a, b, span } = ARC;
+    const cy = upper ? ARC.cyU : ARC.cyL;
     let out = "";
     for (let i = 0; i < TEETH; i++) {
-      const ang = -84 + (168 * i) / (TEETH - 1);
+      const ang = -span + (2 * span * i) / (TEETH - 1);
       const rad = (ang * Math.PI) / 180;
       const x = +(cx + a * Math.sin(rad)).toFixed(1);
       const y = +(upper ? cy - b * Math.cos(rad) : cy + b * Math.cos(rad)).toFixed(1);
@@ -180,10 +210,11 @@
         `<g class="tm-tooth" tabindex="0" role="button" aria-pressed="false"` +
         ` data-tooth="${upper ? "u" : "l"}${num}" data-row="${upper ? "u" : "l"}"` +
         ` aria-label="${label}"` +
-        ` transform="translate(${x} ${y}) rotate(${rot}) scale(1.12)">` +
+        ` transform="translate(${x} ${y}) rotate(${rot}) scale(1.22)">` +
         `<title>${label}</title>` +
         `<circle class="tm-hit" cx="0" cy="0" r="22"></circle>` +
         `<path class="tm-shape" d="${SHAPES[type]}"></path>` +
+        `<rect class="tm-gloss" x="-3.6" y="-14" width="4.6" height="12" rx="2.3"></rect>` +
         `</g>`;
     }
     return out;
@@ -194,12 +225,28 @@
     `<defs><linearGradient id="tmGrad" x1="0" y1="0" x2="1" y2="1">` +
     `<stop offset="0" stop-color="var(--aqua)"></stop>` +
     `<stop offset="1" stop-color="var(--cyan)"></stop>` +
-    `</linearGradient></defs>` +
+    `</linearGradient>` +
+    /* эмаль и десна — чтобы схема читалась как челюсть, а не как чертёж */
+    `<linearGradient id="tmEnamel" x1="0" y1="0" x2="0" y2="1">` +
+    `<stop offset="0" stop-color="#ffffff"></stop>` +
+    `<stop offset="0.6" stop-color="#fbf9f4"></stop>` +
+    `<stop offset="1" stop-color="#eee7d9"></stop>` +
+    `</linearGradient>` +
+    `<linearGradient id="tmGumU" x1="0" y1="0" x2="0" y2="1">` +
+    `<stop offset="0" stop-color="#e7a8b1"></stop><stop offset="1" stop-color="#d68d97"></stop>` +
+    `</linearGradient>` +
+    `<linearGradient id="tmGumL" x1="0" y1="0" x2="0" y2="1">` +
+    `<stop offset="0" stop-color="#d68d97"></stop><stop offset="1" stop-color="#e7a8b1"></stop>` +
+    `</linearGradient>` +
+    `</defs>` +
     /* линия смыкания — ориентир между челюстями */
     `<line class="tm-midline" x1="60" y1="235" x2="440" y2="235"></line>` +
     `<text class="tm-jaw-label" x="250" y="26" text-anchor="middle">Верхняя челюсть</text>` +
     `<text class="tm-jaw-label" x="250" y="458" text-anchor="middle">Нижняя челюсть</text>` +
     buildJaw(true) + buildJaw(false) +
+    /* дёсны рисуем последними: они прикрывают шейки зубов.
+       Клики сквозь них проходят — у дуг отключены события мыши. */
+    gumArc(true) + gumArc(false) +
     `</svg>`;
 
   /* ── Разметка карточки ─────────────────────────────── */
