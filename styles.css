@@ -153,8 +153,8 @@ h3 { font-size: 1.25rem; }
   /* grid c одной ячейкой: шаги накладываются друг на друга, но остаются
      в потоке — контейнер получает высоту самого высокого из них.
      С position:absolute у шагов контейнер схлопывался в 0 и текст уезжал за экран. */
-  position: absolute; z-index: 3; left: 0; right: 0; bottom: clamp(40px, 7vh, 96px);
-  display: grid; justify-items: center; align-items: end;
+  position: absolute; z-index: 3; inset: 0;
+  display: grid; justify-items: center; align-items: center;
   pointer-events: none; padding: 0 24px;
 }
 .reveal-seq__step {
@@ -538,8 +538,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
   .reveal-seq { height: 440vh; }
-  /* запас снизу, чтобы подписи не уходили под мобильную панель «Позвонить/Записаться» */
-  .reveal-seq__steps { bottom: 104px; padding: 0 16px; }
+  .reveal-seq__steps { padding: 0 16px; }
   .footer { padding-bottom: 130px; }
   .about__facts { grid-template-columns: 1fr 1fr; gap: 10px; }
   .fact { padding: 20px 12px; }
