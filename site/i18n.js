@@ -61,29 +61,6 @@ const I18N = {
   "svc.calc.p":     { ru: "Ответьте на 4 вопроса — покажем ориентировочную смету за 30 секунд.", en: "Answer 4 questions and get an estimate in 30 seconds.", ar: "أجب عن ٤ أسئلة واحصل على تقدير خلال ٣٠ ثانية." },
   "svc.calc.btn":   { ru: "Рассчитать стоимость", en: "Calculate cost", ar: "احسب التكلفة" },
 
-  /* — калькулятор — */
-  "calc.tag":       { ru: "Калькулятор", en: "Calculator", ar: "الحاسبة" },
-  "calc.title":     { ru: "Смета за 30 секунд", en: "Estimate in 30 seconds", ar: "تقدير خلال ٣٠ ثانية" },
-  "calc.sub":       { ru: "Ориентировочный расчёт. Точную смету зафиксируем после консультации — всего 600 ₽.", en: "A rough estimate. The exact quote is fixed after a consultation — just 600 ₽.", ar: "تقدير تقريبي. يتم تحديد السعر النهائي بعد الاستشارة — فقط ٦٠٠ روبل." },
-  "calc.res":       { ru: "Ориентировочная стоимость", en: "Estimated cost", ar: "التكلفة التقديرية" },
-  "calc.resbtn":    { ru: "Записаться на консультацию", en: "Book a consultation", ar: "احجز استشارة" },
-  "calc.q1":        { ru: "1. Что беспокоит?", en: "1. What's bothering you?", ar: "١. ما الذي يزعجك؟" },
-  "calc.q1a":       { ru: "Хочу чистку / профилактику", en: "Cleaning / prevention", ar: "تنظيف / وقاية" },
-  "calc.q1b":       { ru: "Болит или потемнел зуб", en: "Tooth hurts or darkened", ar: "ألم أو اسوداد في السن" },
-  "calc.q1c":       { ru: "Нужно протезирование", en: "Need prosthetics", ar: "أحتاج تركيبات" },
-  "calc.q1d":       { ru: "Хочу красивую улыбку", en: "Want a beautiful smile", ar: "أريد ابتسامة جميلة" },
-  "calc.q2":        { ru: "2. Сколько зубов затронуто?", en: "2. How many teeth?", ar: "٢. كم عدد الأسنان؟" },
-  "calc.q2a":       { ru: "Один", en: "One", ar: "واحد" },
-  "calc.q2b":       { ru: "2–3", en: "2–3", ar: "٢–٣" },
-  "calc.q2c":       { ru: "Больше трёх", en: "More than three", ar: "أكثر من ثلاثة" },
-  "calc.q3":        { ru: "3. Как давно были у стоматолога?", en: "3. Last dental visit?", ar: "٣. متى كانت آخر زيارة لطبيب الأسنان؟" },
-  "calc.q3a":       { ru: "Меньше года назад", en: "Less than a year ago", ar: "قبل أقل من سنة" },
-  "calc.q3b":       { ru: "1–3 года назад", en: "1–3 years ago", ar: "قبل ١–٣ سنوات" },
-  "calc.q3c":       { ru: "Больше 3 лет", en: "Over 3 years ago", ar: "قبل أكثر من ٣ سنوات" },
-  "calc.q4":        { ru: "4. Что важнее?", en: "4. What matters more?", ar: "٤. ما الأهم؟" },
-  "calc.q4a":       { ru: "Оптимально по цене", en: "Best value", ar: "أفضل سعر" },
-  "calc.q4b":       { ru: "Премиальные материалы", en: "Premium materials", ar: "مواد فاخرة" },
-  "calc.show":      { ru: "Показать смету", en: "Show estimate", ar: "أظهر التقدير" },
 
   /* — команда — */
   "team.tag":       { ru: "Команда", en: "Team", ar: "الفريق" },
@@ -210,7 +187,6 @@ const I18N = {
   "fn.title":       { ru: "Примечания", en: "Notes", ar: "ملاحظات" },
   "fn.prices":      { ru: "Информация о ценах носит справочный характер и не является публичной офертой. Точная стоимость определяется после осмотра и фиксируется в договоре.", en: "Price information is for reference only and does not constitute a public offer. The exact cost is determined after examination and fixed in the contract.", ar: "معلومات الأسعار للاسترشاد فقط وليست عرضاً ملزماً. تُحدد التكلفة الدقيقة بعد الفحص وتُثبت في العقد." },
   "fn.promo":       { ru: "Акции действуют до 31.08.2026 и не суммируются с другими скидками. Подробности — по телефону +7 999 115-24-19.", en: "Offers are valid until 31.08.2026 and cannot be combined with other discounts. Details by phone +7 999 115-24-19.", ar: "العروض سارية حتى ٣١/٠٨/٢٠٢٦ ولا تُجمع مع خصومات أخرى. التفاصيل عبر الهاتف." },
-  "fn.calc":        { ru: "Расчёт калькулятора является предварительным. Итоговая смета формируется врачом после консультации и не меняется в процессе лечения.", en: "The calculator gives a preliminary estimate. The final quote is prepared by the dentist after a consultation and does not change during treatment.", ar: "حساب الحاسبة تقديري. يُعد الطبيب التكلفة النهائية بعد الاستشارة ولا تتغير أثناء العلاج." },
   "fn.med":         { ru: "Имеются противопоказания. Необходима консультация специалиста.", en: "Contraindications exist. Specialist consultation is required.", ar: "توجد موانع استعمال. استشارة الأخصائي مطلوبة." },
 
   /* — футер — */

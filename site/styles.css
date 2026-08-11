@@ -285,36 +285,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .svc-card--accent .btn { align-self: flex-start; }
 
 /* ═══════════════ КАЛЬКУЛЯТОР ═══════════════ */
-.calc__card {
-  max-width: 1080px; margin: 0 auto; border-radius: 28px; overflow: hidden;
-  display: grid; grid-template-columns: 1fr 1.2fr;
-  background: linear-gradient(140deg, rgba(66, 57, 184, 0.14), rgba(122, 108, 240, 0.08));
-  border: 1px solid var(--card-line); backdrop-filter: blur(12px);
-}
-.calc__left { padding: clamp(28px, 4vw, 52px); display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
-.calc__left p { color: var(--ink-dim); line-height: 1.6; }
-.calc__result {
-  margin-top: 8px; padding: 24px; border-radius: 18px; width: 100%;
-  background: rgba(2, 18, 28, 0.55); border: 1px solid var(--card-line);
-  display: flex; flex-direction: column; gap: 12px; align-items: flex-start;
-  animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.2);
-}
 @keyframes popIn { from { transform: scale(0.92); opacity: 0; } }
-.calc__result span { color: var(--ink-dim); font-size: 0.88rem; }
-.calc__result b { font-size: clamp(1.8rem, 3.4vw, 2.6rem); color: var(--aqua-soft); }
-.calc__form { padding: clamp(28px, 4vw, 52px); background: rgba(2, 18, 28, 0.35); display: flex; flex-direction: column; gap: 22px; }
-.calc__form fieldset { border: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.calc__form legend { font-weight: 700; margin-bottom: 12px; font-size: 0.98rem; }
-.calc__form label { position: relative; }
-.calc__form input[type="radio"] { position: absolute; opacity: 0; }
-.calc__form label span {
-  display: inline-block; padding: 10px 18px; border-radius: 999px; font-size: 0.9rem;
-  border: 1.5px solid var(--card-line); color: var(--ink-dim); cursor: pointer;
-  transition: 0.25s;
-}
-.calc__form input:checked + span { background: linear-gradient(120deg, var(--aqua), var(--cyan)); color: #ffffff; border-color: transparent; font-weight: 700; }
-.calc__form label span:hover { border-color: var(--aqua); color: var(--ink); }
-.calc__form input:checked + span:hover { color: #ffffff; }
 
 /* ═══════════════ ВРАЧИ ═══════════════ */
 .doctors { overflow: hidden; }
@@ -580,7 +551,6 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__links.is-open a { padding: 13px 0; font-size: 1.05rem; border-bottom: 1px solid rgba(139, 130, 245, 0.08); }
 }
 @media (max-width: 860px) {
-  .calc__card, .about__grid, .contacts__grid { grid-template-columns: 1fr; }
   .nav__phone { display: none; }
 }
 @media (max-width: 640px) {
@@ -1016,16 +986,6 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 .nav__links.is-open,
 .contacts__map-link,
 .booking-form,
-.calc__card {
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(24px) saturate(1.7);
-  backdrop-filter: blur(24px) saturate(1.7);
-  border-color: var(--glass-line);
-  box-shadow:
-    inset 0 1px 0 var(--glass-hi),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.03),
-    0 14px 44px rgba(2, 18, 28, 0.25);
-}
 .nav.is-scrolled { box-shadow: inset 0 -1px 0 var(--glass-line), 0 8px 34px rgba(2, 18, 28, 0.22); }
 .modal__card { box-shadow: inset 0 1px 0 var(--glass-hi), 0 40px 100px rgba(2, 14, 22, 0.45); }
 
@@ -1071,12 +1031,9 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 }
 :root[data-theme="light"] .bubble { border-color: rgba(66, 57, 184, 0.12); background: radial-gradient(circle at 32% 30%, rgba(255,255,255,0.9), rgba(66, 57, 184,0.06) 60%, transparent); }
 :root[data-theme="light"] .svc-card__icon { background: linear-gradient(140deg, rgba(66, 57, 184, 0.12), rgba(122, 108, 240, 0.08)); }
-:root[data-theme="light"] .calc__form { background: rgba(255, 255, 255, 0.45); }
-:root[data-theme="light"] .calc__result { background: rgba(255, 255, 255, 0.7); }
 :root[data-theme="light"] .booking-form input,
 :root[data-theme="light"] .booking-form select,
 :root[data-theme="light"] .modal__card input,
-:root[data-theme="light"] .calc__form label span { background: rgba(255, 255, 255, 0.75); }
 :root[data-theme="light"] .promo-card { background: linear-gradient(140deg, #ffffff, #efedfb); }
 :root[data-theme="light"] .promo-card__badge { background: rgba(66, 57, 184, 0.08); color: var(--aqua-soft); }
 :root[data-theme="light"] .promo-card__price b { color: var(--aqua-soft); }
