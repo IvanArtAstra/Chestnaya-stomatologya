@@ -1,0 +1,72 @@
+<!-- ═══════════════════════════════════════════════════════════════════
+     ЗАГОТОВКА: «Услуги и цены» — снята с главной страницы.
+     Раздел переезжает в инверсионный скролл: карточки будут
+     накладываться на кадры продолжения сегмента (кабинет и далее).
+
+     Этот файл НЕ подключается к сайту — он хранит готовую разметку
+     и тексты, чтобы при монтаже скролла ничего не восстанавливать
+     заново. Переводы живут в i18n.js (ключи svc.*), цены
+     подставляются из services-data.js по data-price-id.
+
+     Ссылки «Услуги и цены» в шапке и футере, кнопка «Смотреть цены»
+     в первом экране и skip-link временно ведут на #care (секцию
+     скролла) — там услуги и появятся.
+     ═══════════════════════════════════════════════════════════════ -->
+<!-- ══════════ УСЛУГИ И ЦЕНЫ (реальный прайс) ══════════ -->
+<section class="section services" id="services">
+  <div class="section__head reveal">
+    <span class="section__tag" data-i18n="svc.tag">Услуги и цены</span>
+    <h2 data-i18n-html="svc.title">Честный прайс.<br>Цена «от» = цена «до»</h2>
+    <p><span data-i18n="svc.sub">Реальные цены клиники. Анестезия, материалы и работа врача уже включены.</span><a class="fn-ref" href="#footnotes" aria-label="Примечание 1"><sup>1</sup></a></p>
+  </div>
+  <div class="services__grid">
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-exam"/></svg></span>
+      <h3 data-i18n="svc.1.h">Приём и консультация</h3>
+      <p data-i18n="svc.1.p">Осмотр врача-стоматолога, фото состояния зубов, понятный план лечения.</p>
+      <div class="svc-card__price"><b data-price-id="exam">600 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Консультация"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="konsultatsiya.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-tooth"/></svg></span>
+      <h3 data-i18n="svc.2.h">Лечение кариеса</h3>
+      <p data-i18n="svc.2.p">Лечение кариеса и пульпита с фотопротоколом. Глубокий кариес — 4 500 ₽.</p>
+      <div class="svc-card__price"><b data-price-id="caries">4 000–4 500 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Лечение кариеса"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="lechenie-kariesa.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-shine"/></svg></span>
+      <h3 data-i18n="svc.3.h">Профессиональная гигиена</h3>
+      <p data-i18n="svc.3.p">Ультразвук + Air-Flow + реминерализующая терапия за один визит.</p>
+      <div class="svc-card__price"><b data-price-id="hygiene">4 900 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Профгигиена"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="profgigiena.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-restore"/></svg></span>
+      <h3 data-i18n="svc.4.h">Эстетическая реставрация</h3>
+      <p data-i18n="svc.4.p">Восстановление формы и цвета зубов. Красивая улыбка без коронок.</p>
+      <div class="svc-card__price"><span data-i18n="svc.from">от</span>&nbsp;<b data-price-id="restore">3 500 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Реставрация"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="restavratsiya.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-crown"/></svg></span>
+      <h3 data-i18n="svc.5.h">Протезирование</h3>
+      <p data-i18n="svc.5.p">Коронка цельнолитая «под ключ» — 10 440 ₽, съёмный протез (7+ зубов) — 26 025 ₽.</p>
+      <div class="svc-card__price"><span data-i18n="svc.from">от</span>&nbsp;<b data-price-id="prosthetics">10 440 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Протезирование"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="protezirovanie.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-extract"/></svg></span>
+      <h3 data-i18n="svc.6.h">Удаление зубов</h3>
+      <p data-i18n="svc.6.p">Бережное удаление, в том числе неотложная помощь для взрослых.</p>
+      <div class="svc-card__price"><span data-i18n="svc.from">от</span>&nbsp;<b data-price-id="extraction">2 500 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Удаление зуба"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="udalenie-zubov.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card svc-card--accent svc-card--wide reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-calc"/></svg></span>
+      <h3 data-i18n="svc.calc.h">Не знаете, сколько будет стоить?</h3>
+      <p data-i18n="svc.calc.p">Ответьте на 4 вопроса — покажем ориентировочную смету за 30 секунд.</p>
+      <button class="btn btn--light" data-open-calc data-i18n="svc.calc.btn">Рассчитать стоимость</button>
+    </article>
+  </div>
+</section>
