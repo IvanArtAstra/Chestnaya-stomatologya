@@ -130,11 +130,14 @@
       var overlay = document.createElement("div");
       overlay.id = "preloader";
       overlay.setAttribute("aria-hidden", "true");
+      /* Настоящий логотип клиники, разобранный на слои: ладони сходятся
+         с боков, следом в центре проявляется зуб. */
       overlay.innerHTML =
-        '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">' +
-        '<path class="pl-tooth" d="M32 12c-8.5 0-14 5.6-14 12.4 0 5.5 2.8 8.3 4 13.8 1 4.3 1.9 12 4.7 12 3.2 0 2.1-9.3 5.3-9.3s2.1 9.3 5.3 9.3c2.8 0 3.7-7.7 4.7-12 1.2-5.5 4-8.3 4-13.8C46 17.6 40.5 12 32 12z"/>' +
-        '<path class="pl-pulse" d="M24.5 26h4.2l2-3.4 2.9 6 2-2.6h4"/>' +
-        "</svg>";
+        '<div class="pl-logo">' +
+        '<img class="pl-l" src="logo-hand-l.png" alt="" width="549" height="438">' +
+        '<img class="pl-r" src="logo-hand-r.png" alt="" width="549" height="438">' +
+        '<img class="pl-t" src="logo-tooth.png" alt="" width="549" height="438">' +
+        "</div>";
       document.body.appendChild(overlay);
 
       var removed = false;
@@ -148,8 +151,8 @@
         window.setTimeout(removeOverlay, 450);
       };
 
-      // прорисовка ~0.8s (+задержка пульса) → скрываем
-      window.setTimeout(hideOverlay, 1100);
+      // сборка ≈ 0.82s (ладони 0.55s + зуб с задержкой 0.32s) → пауза → уход
+      window.setTimeout(hideOverlay, 1250);
       // страховка: в любом случае убрать через 2.5s
       window.setTimeout(removeOverlay, 2500);
     }
