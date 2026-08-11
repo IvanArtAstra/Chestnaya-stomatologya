@@ -130,7 +130,7 @@ h3 { font-size: 1.25rem; }
 .hero__stats b { display: block; font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 800; color: var(--aqua-soft); }
 .hero__stats span { font-size: 0.85rem; color: var(--ink-dim); }
 /* ═══════════════ СЕКВЕНЦИЯ «в наших руках» (sticky-скролл) ═══════════════ */
-.reveal-seq { height: 520vh; position: relative; }
+.reveal-seq { height: 760vh; position: relative; }
 .reveal-seq__sticky {
   position: sticky; top: 0; height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -173,6 +173,36 @@ h3 { font-size: 1.25rem; }
   font-size: clamp(1.35rem, 3vw, 2.2rem); line-height: 1.2;
   text-shadow: 0 3px 30px rgba(8, 6, 30, 0.6), 0 1px 3px rgba(8, 6, 30, 0.5);
 }
+/* ── Предложения на ресепшене: свайп справа налево по прогрессу ── */
+.reveal-seq__offers {
+  position: absolute; inset: 0; z-index: 3; overflow: hidden;
+  pointer-events: none;
+}
+.seq-offer {
+  /* чуть ниже центра — на уровне стойки, логотип на стене остаётся открытым */
+  position: absolute; top: 62%; left: 50%;
+  width: min(340px, 78vw); padding: 20px 22px;
+  border-radius: 18px; text-align: left;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow: 0 18px 50px rgba(23, 18, 62, 0.18);
+  opacity: 0; will-change: transform, opacity;
+  transform: translate(-50%, -50%);
+}
+.seq-offer__tag {
+  display: inline-block; margin-bottom: 8px;
+  font-size: 0.66rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--aqua);
+}
+.seq-offer h3 {
+  margin: 0 0 6px; color: var(--ink);
+  font-size: 1.08rem; line-height: 1.25;
+}
+.seq-offer p { margin: 0 0 10px; color: var(--ink-dim); font-size: 0.86rem; line-height: 1.5; }
+.seq-offer__till { font-size: 0.72rem; color: var(--ink-dim); opacity: 0.85; }
+
 .reveal-seq__step p {
   margin: 0; color: rgba(255, 255, 255, 0.92);
   font-size: clamp(1rem, 1.9vw, 1.18rem); line-height: 1.6;
@@ -537,7 +567,9 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__burger { display: flex; }
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
-  .reveal-seq { height: 440vh; }
+  .reveal-seq { height: 620vh; }
+  .seq-offer { padding: 16px 18px; }
+  .seq-offer h3 { font-size: 1rem; }
   .reveal-seq__steps { padding: 0 16px; }
   .footer { padding-bottom: 130px; }
   .about__facts { grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -1308,7 +1340,9 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 /* Секвенция: без sticky-«погружения» — обычный короткий блок с подписями */
 :root.bvi .reveal-seq { height: auto !important; }
 :root.bvi .reveal-seq__sticky { position: static !important; height: auto !important; padding: 40px 24px; }
-:root.bvi .reveal-seq__sticky::after, :root.bvi .reveal-seq__fallback { display: none !important; }
+:root.bvi .reveal-seq__sticky::after, :root.bvi .reveal-seq__fallback,
+/* карточки-предложения — дубль раздела «Акции», в упрощённой версии не нужны */
+:root.bvi .reveal-seq__offers { display: none !important; }
 :root.bvi .reveal-seq__steps { position: static; display: block; }
 :root.bvi .reveal-seq__step {
   position: static; max-width: none; opacity: 1 !important; transform: none !important;
