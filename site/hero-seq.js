@@ -94,11 +94,10 @@
 
     function updateSteps(p) {
       if (steps.length) {
-        /* после STEP_END подписи гаснут — начинается свет и ресепшн */
+        /* равные доли на каждую подпись; после STEP_END они гаснут —
+           дальше идёт свет и ресепшн с карточками предложений */
         var active = p >= STEP_END ? -1
-          : p < STEP_END * 0.25 ? 0
-          : p < STEP_END * 0.50 ? 1
-          : p < STEP_END * 0.75 ? 2 : 3;
+          : Math.min(steps.length - 1, Math.floor((p / STEP_END) * steps.length));
         for (var k = 0; k < steps.length; k++) {
           steps[k].classList.toggle("is-active", k === active);
         }

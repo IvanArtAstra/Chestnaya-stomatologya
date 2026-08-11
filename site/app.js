@@ -171,18 +171,6 @@
   }, { threshold: 0.6 });
   $$("[data-count]").forEach((el) => counterIO.observe(el));
 
-  /* ══════════ Шкала глубины ══════════ */
-  const depthFill = $("#depthFill");
-  const depthLabel = $("#depthLabel");
-  const updateDepth = () => {
-    const max = document.documentElement.scrollHeight - innerHeight;
-    const p = max > 0 ? scrollY / max : 0;
-    depthFill.style.height = `${p * 100}%`;
-    depthLabel.textContent = `−${Math.round(p * 20)} м`;
-  };
-  addEventListener("scroll", updateDepth, { passive: true });
-  updateDepth();
-
   /* Секвенцию «в наших руках» ведёт hero-seq.js */
 
   /* ══════════ Бегущая лента команды (marquee) ══════════ */

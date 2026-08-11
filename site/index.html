@@ -80,10 +80,10 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260811h">
-<link rel="stylesheet" href="effects.css?v=20260811h">
-<link rel="stylesheet" href="cards-fx.css?v=20260811h">
-<link rel="stylesheet" href="polish.css?v=20260811h">
+<link rel="stylesheet" href="styles.css?v=20260811i">
+<link rel="stylesheet" href="effects.css?v=20260811i">
+<link rel="stylesheet" href="cards-fx.css?v=20260811i">
+<link rel="stylesheet" href="polish.css?v=20260811i">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -215,11 +215,6 @@ try {
   </symbol>
 </svg>
 
-<!-- ══════════ ПРОГРЕСС ПОГРУЖЕНИЯ ══════════ -->
-<div class="depth-gauge" aria-hidden="true">
-  <div class="depth-gauge__track"><div class="depth-gauge__fill" id="depthFill"></div></div>
-  <span class="depth-gauge__label" id="depthLabel">0 м</span>
-</div>
 
 <!-- ══════════ ШАПКА ══════════ -->
 <header class="nav" id="nav">
@@ -264,19 +259,33 @@ try {
     <img class="reveal-seq__fallback" src="hero-seq/06.jpg" width="1600" height="893"
          alt="Руки бережно держат здоровый зуб — символ заботы клиники о здоровье пациента" loading="lazy">
     <div class="reveal-seq__steps">
-      <div class="reveal-seq__step is-active" data-step="0">
+      <!-- Первый экран: визитка клиники — заголовок страницы живёт здесь -->
+      <div class="reveal-seq__step reveal-seq__step--brand is-active" data-step="0">
+        <p class="seq-eyebrow" data-i18n="hero.eyebrow">Стоматологическая клиника · Пермь, ул. Танкистов, 68</p>
+        <h1 class="seq-title">
+          <span data-i18n="hero.t1">Погрузитесь</span>
+          <span data-i18n-html="hero.t2">в&nbsp;мир&nbsp;<em>честной</em></span>
+          <span data-i18n="hero.t3">стоматологии</span>
+        </h1>
+        <p class="seq-motto">
+          <span data-i18n="motto.w1">Честно.</span>
+          <span data-i18n="motto.w2">Профессионально.</span>
+          <span data-i18n="motto.w3">С заботой о вас.</span>
+        </p>
+      </div>
+      <div class="reveal-seq__step" data-step="1">
         <h2 data-i18n="care.h1">Сначала — диагностика</h2>
         <p data-i18n="care.p1">Показываем состояние зубов на фото.</p>
       </div>
-      <div class="reveal-seq__step" data-step="1">
+      <div class="reveal-seq__step" data-step="2">
         <h2 data-i18n="care.h2">План и цена — до начала</h2>
         <p data-i18n="care.p2">Стоимость фиксируем в договоре.</p>
       </div>
-      <div class="reveal-seq__step" data-step="2">
+      <div class="reveal-seq__step" data-step="3">
         <h2 data-i18n="care.h3">Только то, что нужно</h2>
         <p data-i18n="care.p3">Не назначаем процедуры без показаний.</p>
       </div>
-      <div class="reveal-seq__step" data-step="3">
+      <div class="reveal-seq__step" data-step="4">
         <h2 data-i18n="care.h4">Решение принимаете вы</h2>
         <p data-i18n="care.p4">Объясняем варианты и отвечаем на вопросы.</p>
       </div>
@@ -311,23 +320,8 @@ try {
   <div class="hero__bubbles" id="bubbles" aria-hidden="true"></div>
   <div class="hero__glow" aria-hidden="true"></div>
   <div class="hero__inner">
-    <p class="hero__eyebrow reveal" data-i18n="hero.eyebrow">Стоматологическая клиника · Пермь, ул. Танкистов, 68</p>
-    <h1 class="hero__title">
-      <span class="hero__line"><span data-i18n="hero.t1">Погрузитесь</span></span>
-      <span class="hero__line"><span data-i18n-html="hero.t2">в&nbsp;мир&nbsp;<em>честной</em></span></span>
-      <span class="hero__line"><span data-i18n-html="hero.t3">стоматологии</span></span>
-    </h1>
-
-    <!-- девиз-анимация -->
-    <div class="motto" role="text" aria-label="Честно. Профессионально. С заботой о вас.">
-      <span class="motto__word" data-i18n="motto.w1">Честно.</span>
-      <span class="motto__word" data-i18n="motto.w2">Профессионально.</span>
-      <span class="motto__word" data-i18n="motto.w3">С заботой о вас.</span>
-      <svg class="motto__wave" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 6 Q 12.5 0, 25 6 T 50 6 T 75 6 T 100 6 T 125 6 T 150 6 T 175 6 T 200 6 T 225 6 T 250 6 T 275 6 T 300 6" fill="none" stroke="url(#iconGrad)" stroke-width="2.4" stroke-linecap="round"/>
-      </svg>
-    </div>
-
+    <!-- Название, заголовок и девиз показываются на первом экране скролла,
+         здесь их не повторяем -->
     <p class="hero__sub reveal" data-i18n="hero.sub">Лечение без скрытых услуг и навязанных процедур. Понятный план и честная стоимость — до начала лечения.</p>
     <div class="hero__cta reveal">
       <button class="btn btn--primary btn--lg" data-open-booking data-i18n="hero.book">Записаться на приём</button>
@@ -703,20 +697,20 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260811h"></script>
-<script src="db.js?v=20260811h"></script>
-<script src="auth.js?v=20260811h"></script>
-<script src="md.js?v=20260811h"></script>
-<script src="ux.js?v=20260811h"></script>
-<script src="app.js?v=20260811h"></script>
-<script src="water.js?v=20260811h" defer></script>
-<script src="effects.js?v=20260811h" defer></script>
-<script src="teeth-map.js?v=20260811h" defer></script>
-<script src="hero-seq.js?v=20260811h" defer></script>
-<script src="tour.js?v=20260811h" defer></script>
-<script src="cards-fx.js?v=20260811h" defer></script>
-<script src="motion-fx.js?v=20260811h" defer></script>
-<script src="polish.js?v=20260811h" defer></script>
-<script src="a11y.js?v=20260811h"></script>
+<script src="i18n.js?v=20260811i"></script>
+<script src="db.js?v=20260811i"></script>
+<script src="auth.js?v=20260811i"></script>
+<script src="md.js?v=20260811i"></script>
+<script src="ux.js?v=20260811i"></script>
+<script src="app.js?v=20260811i"></script>
+<script src="water.js?v=20260811i" defer></script>
+<script src="effects.js?v=20260811i" defer></script>
+<script src="teeth-map.js?v=20260811i" defer></script>
+<script src="hero-seq.js?v=20260811i" defer></script>
+<script src="tour.js?v=20260811i" defer></script>
+<script src="cards-fx.js?v=20260811i" defer></script>
+<script src="motion-fx.js?v=20260811i" defer></script>
+<script src="polish.js?v=20260811i" defer></script>
+<script src="a11y.js?v=20260811i"></script>
 </body>
 </html>
