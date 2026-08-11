@@ -284,22 +284,7 @@
     }
   });
 
-  /* ══════════ Калькулятор (на базе реального прайса) ══════════ */
-  const PRICES = { clean: 4900, caries: 4250, prosthetics: 10440, smile: 3500 };
-  $("#calcForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const f = new FormData(e.target);
-    const base = PRICES[f.get("q1")];
-    const teeth = +f.get("q2");
-    const neglect = +f.get("q3");
-    const premium = f.get("q4") === "premium" ? 1.35 : 1;
-    const low = Math.round((base * teeth * neglect * premium) / 100) * 100;
-    const high = Math.round((low * 1.4) / 100) * 100;
-    $("#calcSum").textContent = `${fmt.format(low)} – ${fmt.format(high)} ₽`;
-    const res = $("#calcResult");
-    res.hidden = false;
-    res.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
-  });
+  /* Смету считает карта зубов (teeth-map.js) — анкета калькулятора убрана */
 
   /* ══════════ FAB ══════════ */
   const fab = $("#fab");
