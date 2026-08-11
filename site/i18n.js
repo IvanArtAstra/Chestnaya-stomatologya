@@ -29,14 +29,14 @@ const I18N = {
   "motto.w3":       { ru: "С заботой о вас.", en: "With care for you.", ar: "برعاية لكم." },
 
   /* — секвенция «в наших руках» — */
-  "care.h1":        { ru: "Здоровье ваших зубов — в наших руках", en: "The health of your teeth is in our hands", ar: "صحة أسنانك بين أيدينا" },
-  "care.p1":        { ru: "Бережный подход на каждом этапе: осматриваем, показываем на фото и объясняем.", en: "A gentle approach at every step: we examine, show you the photos and explain.", ar: "نهج لطيف في كل خطوة: نفحص ونعرض الصور ونشرح." },
-  "care.h2":        { ru: "План и цена — до начала", en: "Plan and price — upfront", ar: "الخطة والسعر — مقدماً" },
-  "care.p2":        { ru: "Понятный план и честная стоимость. Она не вырастет в кресле.", en: "A clear plan and an honest price. It won't grow in the chair.", ar: "خطة واضحة وسعر صادق لن يرتفع أثناء العلاج." },
-  "care.h3":        { ru: "Только то, что необходимо", en: "Only what is necessary", ar: "فقط ما هو ضروري" },
-  "care.p3":        { ru: "Без лишних назначений и навязанных процедур.", en: "No unnecessary prescriptions or pushed procedures.", ar: "بدون وصفات زائدة أو إجراءات مفروضة." },
-  "care.h4":        { ru: "Здоровье — на первом месте", en: "Your health comes first", ar: "صحتك أولاً" },
-  "care.p4":        { ru: "Прозрачность и доверие — основа нашей работы.", en: "Transparency and trust are the basis of our work.", ar: "الشفافية والثقة أساس عملنا." },
+  "care.h1":        { ru: "Сначала — диагностика", en: "Diagnosis first", ar: "نبدأ بالتشخيص" },
+  "care.p1":        { ru: "Показываем состояние зубов на фото.", en: "We show the condition of your teeth in photos.", ar: "نعرض حالة أسنانك بالصور." },
+  "care.h2":        { ru: "План и цена — до начала", en: "Plan and price upfront", ar: "الخطة والسعر مقدماً" },
+  "care.p2":        { ru: "Стоимость фиксируем в договоре.", en: "The cost is fixed in the contract.", ar: "نثبّت التكلفة في العقد." },
+  "care.h3":        { ru: "Только то, что нужно", en: "Only what is needed", ar: "فقط ما هو ضروري" },
+  "care.p3":        { ru: "Не назначаем процедуры без показаний.", en: "No procedures without medical indications.", ar: "لا إجراءات بلا دواعٍ طبية." },
+  "care.h4":        { ru: "Решение принимаете вы", en: "The decision is yours", ar: "القرار قرارك" },
+  "care.p4":        { ru: "Объясняем варианты и отвечаем на вопросы.", en: "We explain the options and answer your questions.", ar: "نشرح الخيارات ونجيب عن أسئلتك." },
 
   /* — услуги — */
   "svc.tag":        { ru: "Услуги и цены", en: "Services & Prices", ar: "الخدمات والأسعار" },
