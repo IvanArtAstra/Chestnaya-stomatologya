@@ -177,8 +177,10 @@ h3 { font-size: 1.25rem; }
   margin: 0 0 8px; color: var(--ink);
   font-size: clamp(1.3rem, 2.8vw, 2rem); line-height: 1.22;
 }
-/* ── Первый экран: визитка клиники ── */
+/* ── Визитка клиники: выходит вторым планом, после чистого кадра ── */
 .reveal-seq__step--brand { max-width: 760px; padding: 26px clamp(24px, 4vw, 40px); }
+/* без JS плашками никто не управляет — показываем визитку сразу */
+html:not(.js) .reveal-seq__step--brand { opacity: 1; transform: none; }
 .seq-eyebrow {
   margin: 0 0 12px; color: var(--aqua-soft);
   font-size: clamp(0.68rem, 1.2vw, 0.8rem); font-weight: 800;
