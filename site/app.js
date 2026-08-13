@@ -37,6 +37,9 @@
     renderNews();
     renderDoctors();
     renderReviews();
+    /* строки, которые собираются в других модулях (счётчик и смета в карте
+       зубов), data-i18n не покрывает — сообщаем им о смене языка */
+    document.dispatchEvent(new CustomEvent("chestom:lang", { detail: code }));
   };
 
   /* ══════════ Тема (светлая/тёмная) ══════════ */

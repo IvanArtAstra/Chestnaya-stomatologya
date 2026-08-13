@@ -10,11 +10,23 @@
 
   /* ── Данные ─────────────────────────────────────────── */
   const PROBLEMS = [
-    { id: "caries",      label: "Болит / кариес" },
-    { id: "prosthetics", label: "Разрушен / нужна коронка" },
-    { id: "extraction",  label: "Удалить" },
-    { id: "restore",     label: "Эстетика" }
+    { id: "caries",      key: "tm.p.caries" },
+    { id: "prosthetics", key: "tm.p.prosth" },
+    { id: "extraction",  key: "tm.p.extract" },
+    { id: "restore",     key: "tm.p.restore" }
   ];
+
+  /* Текущий перевод по ключу. i18n.js объявляет I18N через const —
+     это лексическая привязка, не свойство window, поэтому typeof. */
+  const lang = () => {
+    try { return localStorage.getItem("chestom_lang") || "ru"; } catch (e) { return "ru"; }
+  };
+  const t = (key, fallback) => {
+    try {
+      if (typeof I18N !== "undefined" && I18N[key]) return I18N[key][lang()] || I18N[key].ru;
+    } catch (e) { /* noop */ }
+    return fallback || "";
+  };
 
   const prices = (() => {
     /* db.js объявляет ChestomDB через const — это глобальная лексическая
@@ -32,6 +44,7 @@
   const fmt = (n) => n.toLocaleString("ru-RU");
   const roundH = (n) => Math.round(n / 100) * 100;
   const plural = (n) => {
+    if (lang() !== "ru") return lang() === "en" ? (n === 1 ? "tooth" : "teeth") : "سن";
     const d = n % 10, h = n % 100;
     if (d === 1 && h !== 11) return "зуб";
     if (d >= 2 && d <= 4 && (h < 10 || h > 20)) return "зуба";
@@ -197,8 +210,9 @@
   };
   const nameByIndex = (i) => {
     const d = Math.abs(i - (TEETH - 1) / 2);
-    return d < 1 ? "центральный резец" : d < 2 ? "боковой резец"
-         : d < 3 ? "клык" : d < 5 ? "премоляр" : "моляр";
+    const key = d < 1 ? "tm.t.central" : d < 2 ? "tm.t.lateral"
+              : d < 3 ? "tm.t.canine" : d < 5 ? "tm.t.premolar" : "tm.t.molar";
+    return t(key);
   };
 
   const buildJaw = (upper) => {
@@ -206,8 +220,8 @@
     let out = "";
     POS[key].forEach(([x, y], i) => {
       const num = i + 1;
-      const side = i < TEETH / 2 ? "справа" : "слева";
-      const label = `${nameByIndex(i)}, ${upper ? "верхняя" : "нижняя"} челюсть, ${side}`;
+      const side = t(i < TEETH / 2 ? "tm.side.r" : "tm.side.l");
+      const label = `${nameByIndex(i)}, ${t(upper ? "tm.jawU" : "tm.jawL")}, ${side}`;
       out +=
         `<g class="tm-tooth" tabindex="0" role="button" aria-pressed="false"` +
         ` data-tooth="${key}${num}" data-row="${key}" aria-label="${label}">` +
@@ -225,8 +239,8 @@
     `<stop offset="1" stop-color="var(--cyan)"></stop>` +
     `</linearGradient></defs>` +
     `<image href="jaws.jpg" x="0" y="0" width="512" height="512"></image>` +
-    `<text class="tm-jaw-label" x="256" y="14" text-anchor="middle">Верхняя челюсть</text>` +
-    `<text class="tm-jaw-label" x="256" y="504" text-anchor="middle">Нижняя челюсть</text>` +
+    `<text class="tm-jaw-label" x="256" y="14" text-anchor="middle" data-i18n="tm.jawU">${t("tm.jawU")}</text>` +
+    `<text class="tm-jaw-label" x="256" y="504" text-anchor="middle" data-i18n="tm.jawL">${t("tm.jawL")}</text>` +
     buildJaw(true) + buildJaw(false) +
     `</svg>`;
 
@@ -234,7 +248,7 @@
   const chips = PROBLEMS.map(
     (p, i) =>
       `<label><input type="radio" name="tmProblem" value="${p.id}"${i === 0 ? " checked" : ""}>` +
-      `<span>${p.label}</span></label>`
+      `<span data-i18n="${p.key}">${t(p.key)}</span></label>`
   ).join("");
 
   /* Блок свёрнут: снимок челюстей крупный, поэтому раскрывается по кнопке.
@@ -245,11 +259,11 @@
     `<summary class="tm-fold__head">` +
     `<img class="tm-fold__preview" src="jaws.jpg" alt="" width="1024" height="1024" loading="lazy">` +
     `<span class="tm-fold__text">` +
-    `<b>Покажите, что беспокоит</b>` +
-    `<span>Отметьте зубы на схеме — посчитаем ориентировочную стоимость</span>` +
+    `<b data-i18n="tm.title">${t("tm.title")}</b>` +
+    `<span data-i18n="tm.sub">${t("tm.sub")}</span>` +
     `<span class="tm-fold__btn">` +
-    `<span class="tm-fold__open">Рассчитать стоимость</span>` +
-    `<span class="tm-fold__close">Свернуть схему</span>` +
+    `<span class="tm-fold__open" data-i18n="tm.open">${t("tm.open")}</span>` +
+    `<span class="tm-fold__close" data-i18n="tm.close">${t("tm.close")}</span>` +
     `</span>` +
     `</span>` +
     `</summary>` +
@@ -257,21 +271,21 @@
     `<div class="tm-grid">` +
     `<div class="tm-scheme">` +
     `<div class="tm-rows">` +
-    `<button class="tm-row" type="button" data-row="u" aria-pressed="false">Выбрать верхний ряд</button>` +
-    `<button class="tm-row" type="button" data-row="l" aria-pressed="false">Выбрать нижний ряд</button>` +
+    `<button class="tm-row" type="button" data-row="u" aria-pressed="false" data-i18n="tm.rowU">${t("tm.rowU")}</button>` +
+    `<button class="tm-row" type="button" data-row="l" aria-pressed="false" data-i18n="tm.rowL">${t("tm.rowL")}</button>` +
     `</div>` +
     `${svg}` +
-    `<div class="tm-chips" role="radiogroup" aria-label="Тип проблемы">${chips}</div>` +
+    `<div class="tm-chips" role="radiogroup" data-i18n-aria="tm.problem" aria-label="${t('tm.problem')}">${chips}</div>` +
     `</div>` +
     `<div class="tm-summary" aria-live="polite">` +
-    `<span class="tm-summary__count" id="tmCount">Выбрано зубов: 0</span>` +
+    `<span class="tm-summary__count" id="tmCount">${t("tm.count")} 0</span>` +
     `<b class="tm-summary__sum" id="tmSum" hidden></b>` +
-    `<span class="tm-summary__hint" id="tmHint">Нажмите на зуб на схеме</span>` +
+    `<span class="tm-summary__hint" id="tmHint" data-i18n="tm.hint">${t("tm.hint")}</span>` +
     `<div class="tm-actions">` +
-    `<button class="btn btn--primary" id="tmBook" data-open-booking hidden>Записаться с этой сметой</button>` +
-    `<button class="btn btn--ghost" id="tmReset" type="button" hidden>Сбросить</button>` +
+    `<button class="btn btn--primary" id="tmBook" data-open-booking hidden data-i18n="tm.book">${t("tm.book")}</button>` +
+    `<button class="btn btn--ghost" id="tmReset" type="button" hidden data-i18n="tm.reset">${t("tm.reset")}</button>` +
     `</div>` +
-    `<span class="tm-summary__note">Расчёт предварительный. Точную смету зафиксирует врач после осмотра — она не изменится в процессе лечения.</span>` +
+    `<span class="tm-summary__note" data-i18n="tm.note">${t("tm.note")}</span>` +
     `</div>` +
     `</div>` +
     `</div>` +
@@ -289,12 +303,12 @@
   const problem = () =>
     host.querySelector('input[name="tmProblem"]:checked')?.value || "caries";
   const problemLabel = (id) =>
-    (PROBLEMS.find((p) => p.id === id) || PROBLEMS[0]).label;
+    t((PROBLEMS.find((p) => p.id === id) || PROBLEMS[0]).key);
 
   const render = () => {
     const n = selected.size;
     const pid = problem();
-    countEl.textContent = `Выбрано зубов: ${n}`;
+    countEl.textContent = `${t("tm.count")} ${n}`;
     if (!n) {
       sumEl.hidden = true;
       bookBtn.hidden = true;
@@ -305,12 +319,12 @@
     const base = parseLow(prices[pid]) || 0;
     const low = roundH(base * n);
     const high = roundH(base * 1.35 * n);
-    sumEl.textContent = `Ориентировочно: ${fmt(low)} – ${fmt(high)} ₽`;
+    sumEl.textContent = `${t("tm.approx")} ${fmt(low)} – ${fmt(high)} ₽`;
     sumEl.hidden = false;
     hintEl.hidden = true;
     bookBtn.hidden = false;
     resetBtn.hidden = false;
-    bookBtn.dataset.service = `Карта зубов: ${n} ${plural(n)}, ${problemLabel(pid)}`;
+    bookBtn.dataset.service = `${t("tm.title")}: ${n} ${plural(n)}, ${problemLabel(pid)}`;
   };
 
   /* кнопки «весь ряд» подсвечиваются, когда ряд выбран целиком */
@@ -368,4 +382,19 @@
   });
 
   render();
+
+  /* app.js переводит всё, что помечено data-i18n; строки, собранные здесь
+     (подсказки зубов, счётчик, смета), обновляем сами */
+  document.addEventListener("chestom:lang", () => {
+    teeth.forEach((g) => {
+      const upper = g.dataset.row === "u";
+      const i = +g.dataset.tooth.slice(1) - 1;
+      const side = t(i < TEETH / 2 ? "tm.side.r" : "tm.side.l");
+      const label = `${nameByIndex(i)}, ${t(upper ? "tm.jawU" : "tm.jawL")}, ${side}`;
+      g.setAttribute("aria-label", label);
+      const ttl = g.querySelector("title");
+      if (ttl) ttl.textContent = label;
+    });
+    render();
+  });
 })();
