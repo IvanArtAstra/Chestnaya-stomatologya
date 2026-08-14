@@ -66,6 +66,13 @@ h3 { font-size: 1.25rem; }
   transition: background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s;
 }
 .nav.is-scrolled { background: rgba(3, 20, 30, 0.82); backdrop-filter: blur(16px); box-shadow: 0 6px 30px rgba(0,0,0,0.35); }
+/* уезжает вверх на время сцены скролла */
+.nav.is-away {
+  transform: translateY(-100%); opacity: 0; pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease;
+}
+.nav { transition: background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s,
+       transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease; }
 /* Первый экран занимает фотосцена скролла, поэтому у нескролленной шапки
    есть лёгкая стеклянная подложка — иначе пункты меню тонут в кадре. */
 .nav:not(.is-scrolled)::before {
@@ -1066,6 +1073,8 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 :root[data-theme="light"] .footnotes__med .icon { color: var(--aqua-soft); }
 :root[data-theme="light"] .review__stars svg { color: var(--gold); }
 :root[data-theme="light"] .glass-shadow, :root[data-theme="light"] .nav.is-scrolled { box-shadow: inset 0 -1px 0 var(--glass-line), 0 8px 30px rgba(66, 57, 184, 0.12); }
+/* фон прокрученной шапки остался от тёмной темы и темнил светлую страницу */
+:root[data-theme="light"] .nav.is-scrolled { background: rgba(255, 255, 255, 0.82); }
 :root[data-theme="light"] .modal__backdrop { background: rgba(190, 220, 232, 0.55); }
 :root[data-theme="light"] .modal__card { box-shadow: inset 0 1px 0 var(--glass-hi), 0 40px 100px rgba(66, 57, 184, 0.25); }
 :root[data-theme="light"] .booking-form small a, :root[data-theme="light"] .post__body a { color: var(--aqua-soft); }
