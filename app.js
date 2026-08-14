@@ -120,10 +120,20 @@
   }
   renderBanners();
 
-  /* ══════════ Шапка ══════════ */
+  /* ══════════ Шапка ══════════
+     Во время сцены скролла шапка уезжает вверх, чтобы не спорить с кадром;
+     возвращается в самом верху страницы и после того, как сцена закончилась. */
   const nav = $("#nav");
-  const onNavScroll = () => nav.classList.toggle("is-scrolled", scrollY > 30);
+  const seq = $(".reveal-seq");
+  const onNavScroll = () => {
+    nav.classList.toggle("is-scrolled", scrollY > 30);
+    if (!seq) return;
+    const start = seq.offsetTop;
+    const end = start + seq.offsetHeight - innerHeight;
+    nav.classList.toggle("is-away", scrollY > start + 40 && scrollY < end);
+  };
   addEventListener("scroll", onNavScroll, { passive: true });
+  addEventListener("resize", onNavScroll);
   onNavScroll();
 
   const burger = $("#burger");
