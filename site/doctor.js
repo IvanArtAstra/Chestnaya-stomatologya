@@ -24,13 +24,16 @@
   };
 
   /* ── профиль ── */
+  /* В команде есть не только врачи: ассистенты и администратор. Для них
+     нельзя ни размечать Physician, ни звать «записаться к врачу». */
+  const isDoctor = !/ассистент|администратор/i.test(doc.role || "");
   document.title = `${doc.name} — Честная стоматология, Пермь`;
-  /* Schema.org Physician для поисковиков */
+  /* Schema.org: Physician для врачей, Person для остальных сотрудников */
   const ld = document.createElement("script");
   ld.type = "application/ld+json";
   ld.textContent = JSON.stringify({
     "@context": "https://schema.org",
-    "@type": "Physician",
+    "@type": isDoctor ? "Physician" : "Person",
     "name": doc.fullName || doc.name,
     "jobTitle": doc.role,
     "description": doc.desc,
@@ -39,12 +42,25 @@
   });
   document.head.appendChild(ld);
   const ava = $("#docAva");
-  ava.textContent = ChestomDB.initials(doc.name);
+  if (doc.photo) {
+    const img = document.createElement("img");
+    img.src = doc.photo;
+    img.width = 896; img.height = 1200;
+    img.decoding = "async";
+    img.alt = `${doc.name} — ${doc.role}, «Честная стоматология»`;
+    ava.replaceChildren(img);
+  } else {
+    ava.textContent = ChestomDB.initials(doc.name);
+  }
   ava.style.setProperty("--hue", doc.hue || 190);
   $("#docName").textContent = doc.fullName || doc.name;
   $("#docRole").textContent = doc.role;
   $("#docDesc").textContent = doc.desc;
-  $("#docBook").dataset.doctor = doc.name;
+  const book = $("#docBook");
+  book.dataset.doctor = doc.name;
+  if (!isDoctor) book.textContent = "Записаться на приём";
+  const postsHead = $("#docPostsHead");
+  if (postsHead && !isDoctor) postsHead.textContent = "Публикации";
 
   /* ── отзывы ── */
   const reviews = ChestomDB.reviewsFor(db, doc.id);
@@ -72,7 +88,7 @@
         <h3>${MD.inlineHtml(n.title)}</h3>
         <div class="post__body">${MD.toHtml(n.text)}</div>
       </article>`).join("")
-    : `<p class="dpage__empty">Врач пока не публиковал постов. Новые записи появятся в <a href="index.html#news" style="color:var(--aqua-soft);text-decoration:underline">ленте клиники</a>.</p>`;
+    : `<p class="dpage__empty">Публикаций пока нет. Новые записи появятся в <a href="index.html#news" style="color:var(--aqua-soft);text-decoration:underline">ленте клиники</a>.</p>`;
 
   /* ── модалка записи ── */
   const modal = $("#bookingModal");

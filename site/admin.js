@@ -79,7 +79,11 @@
     $("#doctorsList").innerHTML = list.length ? list.map((d) => `
       <fieldset class="adm-doc" data-doc="${esc(d.id)}">
         <div class="adm-doc__head">
-          <span class="adm-doc__ava" style="--hue:${+d.hue || 190}">${esc(ChestomDB.initials(d.name))}</span>
+          <span class="adm-doc__ava" style="--hue:${+d.hue || 190}">${
+            d.photo
+              ? `<img src="${esc(d.photo)}" alt="" loading="lazy">`
+              : esc(ChestomDB.initials(d.name))
+          }</span>
           <a class="adm-doc__link" href="doctor.html?id=${esc(d.id)}" target="_blank" rel="noopener">Открыть страницу →</a>
           ${isAdmin ? `<button type="button" class="adm-post__del adm-doc__del" data-del-doc="${esc(d.id)}" title="Удалить врача" aria-label="Удалить врача"><svg class="icon"><use href="#i-trash"/></svg></button>` : ""}
         </div>

@@ -194,7 +194,12 @@
     const cardHtml = (d) => {
       const revCount = ChestomDB.reviewsFor(db, d.id).length;
       return `<a class="doc-card" href="doctor.html?id=${esc(d.id)}" aria-label="${esc(d.name)}">
-        <div class="doc-card__photo" style="--hue:${+d.hue || 190}"><span>${ChestomDB.initials(d.name)}</span></div>
+        <div class="doc-card__photo" style="--hue:${+d.hue || 190}">${
+          d.photo
+            ? `<img src="${esc(d.photo)}" width="896" height="1200" loading="lazy" decoding="async"
+                    alt="${esc(d.name)} — ${esc(d.role)}, «Честная стоматология»">`
+            : `<span>${ChestomDB.initials(d.name)}</span>`
+        }</div>
         <h3>${esc(d.name)}</h3>
         <p class="doc-card__role">${esc(d.role)}</p>
         <p class="doc-card__exp">${esc(d.desc)}</p>
