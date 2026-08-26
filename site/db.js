@@ -10,6 +10,7 @@ const ChestomDB = (() => {
     prices: {
       exam:        "600 ₽",
       caries:      "4 000–4 500 ₽",
+      pulpitis:    "11 500–28 100 ₽",
       hygiene:     "4 900 ₽",
       restore:     "3 500 ₽",
       prosthetics: "10 440 ₽",

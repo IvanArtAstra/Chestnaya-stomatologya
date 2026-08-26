@@ -196,6 +196,7 @@ const I18N = {
   "tm.jawL":        { ru: "Нижняя челюсть", en: "Lower jaw", ar: "الفك السفلي" },
   "tm.problem":     { ru: "Тип проблемы", en: "Type of issue", ar: "نوع المشكلة" },
   "tm.p.caries":    { ru: "Болит / кариес", en: "Pain / caries", ar: "ألم / تسوس" },
+  "tm.p.pulp":      { ru: "Лечение каналов", en: "Root canal treatment", ar: "علاج قنوات الجذر" },
   "tm.p.prosth":    { ru: "Разрушен / нужна коронка", en: "Damaged / needs a crown", ar: "متضرر / يحتاج تاجاً" },
   "tm.p.extract":   { ru: "Удалить", en: "Extraction", ar: "خلع" },
   "tm.p.restore":   { ru: "Эстетика", en: "Aesthetics", ar: "تجميل" },
