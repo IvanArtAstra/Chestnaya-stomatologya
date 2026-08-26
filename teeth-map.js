@@ -11,6 +11,7 @@
   /* ── Данные ─────────────────────────────────────────── */
   const PROBLEMS = [
     { id: "caries",      key: "tm.p.caries" },
+    { id: "pulpitis",    key: "tm.p.pulp" },
     { id: "prosthetics", key: "tm.p.prosth" },
     { id: "extraction",  key: "tm.p.extract" },
     { id: "restore",     key: "tm.p.restore" }
@@ -35,10 +36,15 @@
     catch (e) { return {}; }
   })();
 
-  /* «4 000–4 500 ₽» → 4000 (нижняя граница) */
-  const parseLow = (str) => {
-    const m = String(str || "").replace(/[\s  ]/g, "").match(/\d+/);
-    return m ? parseInt(m[0], 10) : 0;
+  /* «4 000–4 500 ₽» → [4000, 4500]; «10 440 ₽» → [10440, 10440].
+     Обе границы берём из самого прайса: домножать нижнюю на коэффициент
+     значило бы показывать пациенту цену, которой в прайсе нет. */
+  const parseRange = (str) => {
+    const nums = String(str || "").replace(/[^0-9–—-]/g, "").match(/\d+/g) || [];
+    if (!nums.length) return [0, 0];
+    const a = parseInt(nums[0], 10);
+    const b = nums.length > 1 ? parseInt(nums[1], 10) : a;
+    return [Math.min(a, b), Math.max(a, b)];
   };
 
   const fmt = (n) => n.toLocaleString("ru-RU");
@@ -53,56 +59,56 @@
 
   /* ── Стили ──────────────────────────────────────────── */
   const css = `
-/* ── Свёрнутый блок ── */
+/* ── Вводный экран: сомкнутая челюсть + кнопка расчёта ── */
 .tm-fold { max-width: 1080px; margin: 26px auto 0; }
-.tm-fold__head {
-  display: flex; align-items: center; gap: clamp(18px, 3vw, 34px);
-  flex-wrap: wrap; cursor: pointer; list-style: none;
+.tm-intro {
+  display: flex; align-items: center; gap: clamp(20px, 4vw, 48px); flex-wrap: wrap;
   border-radius: var(--radius, 22px); border: 1px solid var(--card-line);
-  background: var(--card); padding: clamp(20px, 3vw, 30px) clamp(22px, 3.5vw, 38px);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: var(--card); padding: clamp(22px, 3.4vw, 40px) clamp(24px, 4vw, 46px);
 }
-.tm-fold__head::-webkit-details-marker { display: none; }
-.tm-fold__head:hover { border-color: var(--aqua); box-shadow: 0 10px 34px rgba(66, 57, 184, 0.14); }
-.tm-fold__head:focus-visible { outline: 2px solid var(--aqua); outline-offset: 3px; }
-.tm-fold__text { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1; align-items: flex-start; }
-/* превью челюсти: видно, что откроется, ещё до раскрытия */
-.tm-fold__preview {
-  flex: none; width: clamp(96px, 15vw, 140px); height: auto; border-radius: 16px;
-  background: #ececee; box-shadow: 0 8px 26px rgba(23, 18, 62, 0.12);
-  transition: transform 0.25s;
+.tm-intro__pic {
+  flex: none; width: clamp(190px, 30vw, 300px); height: auto; border-radius: 20px;
+  background: #ececee; box-shadow: 0 14px 40px rgba(23, 18, 62, 0.16);
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.35s;
 }
-.tm-fold__head:hover .tm-fold__preview { transform: scale(1.04); }
-.tm-fold[open] .tm-fold__preview { display: none; }
-.tm-fold__text b {
+.tm-intro__text { display: flex; flex-direction: column; gap: 10px; min-width: 240px; flex: 1; align-items: flex-start; }
+.tm-intro__text b {
   font-family: var(--font-display); font-weight: 700;
-  font-size: clamp(1.2rem, 2.4vw, 1.65rem); letter-spacing: -0.01em; color: var(--ink);
+  font-size: clamp(1.25rem, 2.6vw, 1.75rem); letter-spacing: -0.01em; color: var(--ink);
 }
-.tm-fold__text > span:not(.tm-fold__btn) { color: var(--ink-dim); font-size: 0.94rem; line-height: 1.55; }
-.tm-fold__btn {
-  margin-top: 4px; padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 0.94rem;
+.tm-intro__text > span { color: var(--ink-dim); font-size: 0.96rem; line-height: 1.55; }
+.tm-intro__btn {
+  margin-top: 6px; padding: 14px 28px; border-radius: 999px; border: none; cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: 0.96rem; color: #fff;
   background: linear-gradient(120deg, var(--aqua), var(--cyan));
   box-shadow: 0 8px 24px rgba(66, 57, 184, 0.32);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.tm-fold__btn, .tm-fold__btn span { color: #fff; }
-.tm-fold__close { display: none; }
-.tm-fold[open] .tm-fold__open { display: none; }
-.tm-fold[open] .tm-fold__close { display: inline; }
-.tm-fold[open] .tm-fold__head {
-  border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent;
+.tm-intro__btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(66, 57, 184, 0.4); }
+.tm-intro__btn:focus-visible { outline: 2px solid var(--aqua); outline-offset: 3px; }
+
+/* раскрытие: сомкнутые челюсти расходятся и уступают место схеме */
+.tm-fold.is-open .tm-intro { display: none; }
+.tm-fold.is-opening .tm-intro__pic { transform: scale(1.12); opacity: 0; }
+
+.tm-collapse {
+  margin-top: 16px; padding: 11px 22px; border-radius: 999px; cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: 0.9rem;
+  color: var(--aqua); background: none; border: 1.5px solid var(--card-line);
+  transition: border-color 0.2s;
 }
-.tm-fold[open] .tm-fold__btn,
-.tm-fold[open] .tm-fold__btn span { color: var(--aqua); }
-.tm-fold[open] .tm-fold__btn { background: none; box-shadow: none; border: 1.5px solid var(--card-line); }
+.tm-collapse:hover { border-color: var(--aqua); }
+.tm-collapse:focus-visible { outline: 2px solid var(--aqua); outline-offset: 3px; }
+.tm-fold:not(.is-open) .tm-card, .tm-fold:not(.is-open) .tm-collapse { display: none; }
 
 .tm-card {
-  border-radius: var(--radius, 22px); border-top-left-radius: 0; border-top-right-radius: 0;
-  background: var(--card); border: 1px solid var(--card-line); border-top: none;
+  border-radius: var(--radius, 22px);
+  background: var(--card); border: 1px solid var(--card-line);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   padding: clamp(24px, 4vw, 44px);
   animation: tmFoldIn 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-@keyframes tmFoldIn { from { opacity: 0; transform: translateY(-8px); } }
+@keyframes tmFoldIn { from { opacity: 0; transform: translateY(10px) scale(0.985); } }
 @media (prefers-reduced-motion: reduce) { .tm-card { animation: none; } }
 .tm-card h3 {
   font-family: var(--font-display); font-weight: 700; font-size: clamp(1.3rem, 2.6vw, 1.8rem);
@@ -238,7 +244,7 @@
     `<stop offset="0" stop-color="var(--aqua)"></stop>` +
     `<stop offset="1" stop-color="var(--cyan)"></stop>` +
     `</linearGradient></defs>` +
-    `<image href="jaws.jpg" x="0" y="0" width="512" height="512"></image>` +
+    `<image x="0" y="0" width="512" height="512"></image>` +
     `<text class="tm-jaw-label" x="256" y="14" text-anchor="middle" data-i18n="tm.jawU">${t("tm.jawU")}</text>` +
     `<text class="tm-jaw-label" x="256" y="504" text-anchor="middle" data-i18n="tm.jawL">${t("tm.jawL")}</text>` +
     buildJaw(true) + buildJaw(false) +
@@ -251,22 +257,19 @@
       `<span data-i18n="${p.key}">${t(p.key)}</span></label>`
   ).join("");
 
-  /* Блок свёрнут: снимок челюстей крупный, поэтому раскрывается по кнопке.
-     <details> выбран намеренно — раскрытие работает и без JS, а браузер
-     не грузит изображение, пока блок закрыт. */
+  /* Раздел открыт сразу: сначала — сомкнутые челюсти и кнопка расчёта,
+     по нажатию челюсть «раскрывается» в схему с выбором зубов.
+     Тяжёлый снимок схемы грузим лениво, до раскрытия он не нужен. */
   host.innerHTML =
-    `<details class="tm-fold">` +
-    `<summary class="tm-fold__head">` +
-    `<img class="tm-fold__preview" src="jaws.jpg" alt="" width="1024" height="1024" loading="lazy">` +
-    `<span class="tm-fold__text">` +
+    `<div class="tm-fold">` +
+    `<div class="tm-intro">` +
+    `<img class="tm-intro__pic" src="jaws-closed.jpg" alt="" width="1024" height="1024" loading="lazy" decoding="async">` +
+    `<div class="tm-intro__text">` +
     `<b data-i18n="tm.title">${t("tm.title")}</b>` +
     `<span data-i18n="tm.sub">${t("tm.sub")}</span>` +
-    `<span class="tm-fold__btn">` +
-    `<span class="tm-fold__open" data-i18n="tm.open">${t("tm.open")}</span>` +
-    `<span class="tm-fold__close" data-i18n="tm.close">${t("tm.close")}</span>` +
-    `</span>` +
-    `</span>` +
-    `</summary>` +
+    `<button class="tm-intro__btn" type="button" id="tmOpen" data-i18n="tm.open">${t("tm.open")}</button>` +
+    `</div>` +
+    `</div>` +
     `<div class="tm-card">` +
     `<div class="tm-grid">` +
     `<div class="tm-scheme">` +
@@ -289,7 +292,31 @@
     `</div>` +
     `</div>` +
     `</div>` +
-    `</details>`;
+    `<button class="tm-collapse" type="button" id="tmCollapse" data-i18n="tm.close">${t("tm.close")}</button>` +
+    `</div>`;
+
+  /* ── Раскрытие / сворачивание ───────────────────────── */
+  const fold = host.querySelector(".tm-fold");
+  const openBtn = host.querySelector("#tmOpen");
+  const collapseBtn = host.querySelector("#tmCollapse");
+  const jawImg = host.querySelector(".tm-scheme image");
+
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  openBtn.addEventListener("click", () => {
+    /* схему подставляем в момент раскрытия — до него файл не грузится */
+    if (jawImg && !jawImg.getAttribute("href")) jawImg.setAttribute("href", "jaws.jpg");
+    if (reduced) { fold.classList.add("is-open"); return; }
+    fold.classList.add("is-opening");
+    setTimeout(() => {
+      fold.classList.remove("is-opening");
+      fold.classList.add("is-open");
+      host.querySelector(".tm-row")?.focus();
+    }, 320);
+  });
+  collapseBtn.addEventListener("click", () => {
+    fold.classList.remove("is-open");
+    openBtn.focus();
+  });
 
   /* ── Логика ─────────────────────────────────────────── */
   const teeth = Array.from(host.querySelectorAll(".tm-tooth"));
@@ -316,10 +343,12 @@
       hintEl.hidden = false;
       return;
     }
-    const base = parseLow(prices[pid]) || 0;
-    const low = roundH(base * n);
-    const high = roundH(base * 1.35 * n);
-    sumEl.textContent = `${t("tm.approx")} ${fmt(low)} – ${fmt(high)} ₽`;
+    const [min, max] = parseRange(prices[pid]);
+    const low = roundH(min * n);
+    const high = roundH(max * n);
+    sumEl.textContent = low === high
+      ? `${t("tm.approx")} ${fmt(low)} ₽`
+      : `${t("tm.approx")} ${fmt(low)} – ${fmt(high)} ₽`;
     sumEl.hidden = false;
     hintEl.hidden = true;
     bookBtn.hidden = false;
