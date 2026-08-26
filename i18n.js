@@ -65,8 +65,9 @@ const I18N = {
   /* — команда — */
   "team.tag":       { ru: "Команда", en: "Team", ar: "الفريق" },
   "team.title":     { ru: "Люди, которым не страшно<br>доверить улыбку", en: "People you can trust<br>with your smile", ar: "أشخاص يمكنك أن تثق بهم<br>بابتسامتك" },
-  "team.sub":       { ru: "Лента бежит сама — наведите курсор, чтобы остановить. Нажмите на врача, чтобы открыть его личную страницу с отзывами.", en: "The ribbon runs by itself — hover to pause. Click a doctor to open their personal page with reviews.", ar: "الشريط يتحرك تلقائياً — مرر المؤشر لإيقافه. اضغط على الطبيب لفتح صفحته الشخصية مع التقييمات." },
-  "team.page":      { ru: "Страница врача →", en: "Doctor's page →", ar: "← صفحة الطبيب" },
+  "team.sub":       { ru: "Лента бежит сама — наведите курсор, чтобы остановить. Нажмите на сотрудника, чтобы открыть его страницу с отзывами.", en: "The ribbon runs by itself — hover to pause. Click a team member to open their page with reviews.", ar: "الشريط يتحرك تلقائياً — مرر المؤشر لإيقافه. اضغط على أحد أفراد الفريق لفتح صفحته مع التقييمات." },
+  "team.note":      { ru: "Портреты сотрудников обработаны нейросетью: приведены к единому фону и форме, лица не изменялись.", en: "Staff portraits were AI-processed: unified background and uniform; faces were not altered.", ar: "تمت معالجة صور الفريق بالذكاء الاصطناعي: خلفية وزي موحدان، دون تغيير الوجوه." },
+  "team.page":      { ru: "Подробнее →", en: "Details →", ar: "← التفاصيل" },
   "team.reviews":   { ru: "отзывов", en: "reviews", ar: "تقييمات" },
   "team.1.r":       { ru: "Стоматолог-терапевт", en: "General dentist", ar: "طبيب أسنان عام" },
   "team.1.d":       { ru: "Лечение кариеса и пульпита, эстетическая реставрация", en: "Caries and pulpitis treatment, aesthetic restoration", ar: "علاج التسوس والتهاب اللب، ترميم تجميلي" },
