@@ -11,7 +11,8 @@
     var canvas = document.getElementById("seqCanvas");
     if (!section || !canvas) return;
 
-    var COUNT = 15;                 /* 1–9 зум к зубу, 10–12 свет, 13–15 ресепшн */
+    var COUNT = 20;                 /* 1–9 зум к зубу, 10–12 свет, 13–15 ресепшн,
+                                       16–20 путь по клинике до кресла */
     var BASE = "hero-seq/";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var offers = Array.prototype.slice.call(section.querySelectorAll(".seq-offer"));
@@ -19,9 +20,12 @@
     /* Первые проценты прокрутки кадр идёт чистым — сцена успевает
        «прочитаться», и только потом выходит визитка клиники.
        Дальше подписи-ценности, после STEP_END кадр уходит в свет. */
-    var STEP_START = 0.05, STEP_END = 0.56;
-    /* Предложения выезжают на ресепшене: центр показа каждого + полуокно */
-    var OFFER_START = 0.78, OFFER_AT = [0.845, 0.915, 0.985], OFFER_HALF = 0.075;
+    var STEP_START = 0.05, STEP_END = 0.44;
+    /* Предложения выезжают на ресепшене — это кадры 13–15, то есть
+       прогресс 0.63…0.74. Раньше ресепшн был финалом секции и последняя
+       карточка оставалась висеть; теперь за ним идёт кабинет, поэтому
+       все три уезжают до его начала. */
+    var OFFER_START = 0.62, OFFER_AT = [0.665, 0.710, 0.755], OFFER_HALF = 0.045;
     var ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -115,14 +119,12 @@
       updateOffers(p);
     }
 
-    /* Карточки предложений проезжают справа налево, сменяя друг друга.
-       Последняя доезжает до центра и остаётся — ею заканчивается сегмент. */
+    /* Карточки предложений проезжают справа налево, сменяя друг друга,
+       и уходят перед тем, как начнётся кабинет. */
     function updateOffers(p) {
       if (!offers.length) return;
-      var last = offers.length - 1;
       for (var i = 0; i < offers.length; i++) {
         var d = (OFFER_AT[i] - p) / OFFER_HALF;       /* >0 — ещё справа, <0 — уехала влево */
-        if (i === last && d < 0) d = 0;               /* финальная не уезжает */
         var off = Math.max(-1.6, Math.min(1.6, d));
         var vis = p >= OFFER_START ? Math.max(0, 1 - Math.abs(off) * 1.15) : 0;
         offers[i].style.transform =
