@@ -11,8 +11,10 @@
     var canvas = document.getElementById("seqCanvas");
     if (!section || !canvas) return;
 
-    var COUNT = 20;                 /* 1–9 зум к зубу, 10–12 свет, 13–15 ресепшн,
-                                       16–20 путь по клинике до кресла */
+    var COUNT = 26;                 /* 1–9 зум к зубу, 10–13 свет и вход,
+                                       14–26 съёмка клиники: ресепшн → коридор →
+                                       кабинет. Кадры 14+ идут подряд из одного
+                                       дубля, поэтому проход читается слитно. */
     var BASE = "hero-seq/";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var offers = Array.prototype.slice.call(section.querySelectorAll(".seq-offer"));
@@ -25,7 +27,7 @@
        прогресс 0.63…0.74. Раньше ресепшн был финалом секции и последняя
        карточка оставалась висеть; теперь за ним идёт кабинет, поэтому
        все три уезжают до его начала. */
-    var OFFER_START = 0.62, OFFER_AT = [0.665, 0.710, 0.755], OFFER_HALF = 0.045;
+    var OFFER_START = 0.56, OFFER_AT = [0.600, 0.660, 0.720], OFFER_HALF = 0.05;
     var ctx = canvas.getContext("2d");
     if (!ctx) return;
 
