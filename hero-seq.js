@@ -11,24 +11,25 @@
     var canvas = document.getElementById("seqCanvas");
     if (!section || !canvas) return;
 
-    var COUNT = 26;                 /* 1–9 зум к зубу, 10–12 свет,
-                                       13–17 стойка регистрации, 18 — переход,
-                                       19–26 коридор и правый кабинет.
-                                       Горизонт у всех кадров выровнен, поэтому
-                                       при смене кадра картинка не «качается». */
+    var COUNT = 16;                 /* 1–12 зум к зубу и свет, дальше по одному
+                                       кадру на помещение: 13 стойка регистрации,
+                                       14 кабинет № 1, 15 кабинет № 2,
+                                       16 зона ожидания. */
+    /* Кадр помещения держится почти весь свой отрезок и меняется коротким
+       кроссфейдом на его конце — иначе четыре снимка «перетекали» бы друг в
+       друга непрерывно и ни один не читался бы как самостоятельный. */
+    var ROOM_FIRST = 12;            /* индекс первого кадра помещения (0-based) */
+    var ROOM_MIX = 0.28;            /* доля отрезка, отведённая на переход */
+    var ROOMS = ["room.1", "room.2", "room.3", "room.4"];
     var BASE = "hero-seq/";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var offers = Array.prototype.slice.call(section.querySelectorAll(".seq-offer"));
+    var roomEl = document.getElementById("seqRoom");
 
     /* Первые проценты прокрутки кадр идёт чистым — сцена успевает
        «прочитаться», и только потом выходит визитка клиники.
        Дальше подписи-ценности, после STEP_END кадр уходит в свет. */
-    var STEP_START = 0.05, STEP_END = 0.44;
-    /* Предложения выезжают на ресепшене — это кадры 13–15, то есть
-       прогресс 0.63…0.74. Раньше ресепшн был финалом секции и последняя
-       карточка оставалась висеть; теперь за ним идёт кабинет, поэтому
-       все три уезжают до его начала. */
-    var OFFER_START = 0.46, OFFER_AT = [0.500, 0.560, 0.620], OFFER_HALF = 0.055;
+    var STEP_START = 0.05, STEP_END = 0.62;
     var ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -100,12 +101,32 @@
       var i = Math.floor(f);
       if (i >= COUNT - 1) { i = COUNT - 1; ctx.clearRect(0, 0, cw, ch); cover(imgs[i], 1); }
       else {
-        var frac = smooth(f - i);
+        var t = f - i;
+        /* на кадрах помещений держим снимок и смешиваем только в конце */
+        if (i >= ROOM_FIRST) t = t < 1 - ROOM_MIX ? 0 : (t - (1 - ROOM_MIX)) / ROOM_MIX;
+        var frac = smooth(t);
         ctx.clearRect(0, 0, cw, ch);
         cover(imgs[i], 1);
         if (frac > 0) cover(imgs[i + 1], frac);
       }
       updateSteps(p);
+      updateRoom(f);
+    }
+
+    /* подпись помещения: показываем, начиная с первого кадра помещения */
+    var lastRoom = -2;
+    function updateRoom(f) {
+      if (!roomEl) return;
+      var k = Math.round(f) - ROOM_FIRST;
+      if (k < 0 || k >= ROOMS.length) k = -1;
+      if (k === lastRoom) return;
+      lastRoom = k;
+      if (k < 0) { roomEl.hidden = true; return; }
+      var dict = (typeof I18N !== "undefined" && I18N[ROOMS[k]]) || null;
+      var lang = "ru";
+      try { lang = localStorage.getItem("chestom_lang") || "ru"; } catch (e) {}
+      roomEl.textContent = dict ? (dict[lang] || dict.ru) : "";
+      roomEl.hidden = false;
     }
 
     function updateSteps(p) {
@@ -122,17 +143,24 @@
       updateOffers(p);
     }
 
-    /* Карточки предложений проезжают справа налево, сменяя друг друга,
-       и уходят перед тем, как начнётся кабинет. */
+    /* Раньше карточки проезжали по одной вдоль длинного прохода. Теперь на
+       клинику приходится четыре кадра-слайда, и на короткий отрезок стойки
+       три проезда не помещаются — поэтому показываем их группой, в ряд,
+       пока держится кадр стойки регистрации. */
     function updateOffers(p) {
       if (!offers.length) return;
+      var a = ROOM_FIRST / (COUNT - 1);              /* начало кадра стойки */
+      var b = (ROOM_FIRST + 1) / (COUNT - 1);        /* и его конец */
+      var fade = (b - a) * 0.3;
+      var vis = 0;
+      if (p > a - fade && p < b) {
+        vis = Math.min(1, (p - (a - fade)) / fade, (b - p) / fade);
+      }
       for (var i = 0; i < offers.length; i++) {
-        var d = (OFFER_AT[i] - p) / OFFER_HALF;       /* >0 — ещё справа, <0 — уехала влево */
-        var off = Math.max(-1.6, Math.min(1.6, d));
-        var vis = p >= OFFER_START ? Math.max(0, 1 - Math.abs(off) * 1.15) : 0;
+        var x = (i - 1) * 33;                        /* три карточки в ряд */
         offers[i].style.transform =
-          "translate(calc(-50% + " + (off * 62).toFixed(2) + "vw), -50%)";
-        offers[i].style.opacity = vis.toFixed(3);
+          "translate(calc(-50% + " + x + "vw), calc(-50% + " + ((1 - vis) * 14).toFixed(1) + "px))";
+        offers[i].style.opacity = Math.max(0, vis).toFixed(3);
       }
     }
 

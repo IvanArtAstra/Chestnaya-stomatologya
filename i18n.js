@@ -29,6 +29,10 @@ const I18N = {
   "motto.w3":       { ru: "С заботой о вас.", en: "With care for you.", ar: "برعاية لكم." },
 
   /* — секвенция «в наших руках» — */
+  "room.1":         { ru: "Стойка регистрации", en: "Reception", ar: "الاستقبال" },
+  "room.2":         { ru: "Кабинет № 1", en: "Treatment room 1", ar: "غرفة العلاج ١" },
+  "room.3":         { ru: "Кабинет № 2", en: "Treatment room 2", ar: "غرفة العلاج ٢" },
+  "room.4":         { ru: "Зона ожидания", en: "Waiting area", ar: "منطقة الانتظار" },
   "care.h1":        { ru: "Сначала — диагностика", en: "Diagnosis first", ar: "نبدأ بالتشخيص" },
   "care.p1":        { ru: "Показываем состояние зубов на фото.", en: "We show the condition of your teeth in photos.", ar: "نعرض حالة أسنانك بالصور." },
   "care.h2":        { ru: "План и цена — до начала", en: "Plan and price upfront", ar: "الخطة والسعر مقدماً" },
