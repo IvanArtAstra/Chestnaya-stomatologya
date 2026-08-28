@@ -26,6 +26,9 @@
     /* Подпись показываем только на самих помещениях, не на проходах */
     var ROOMS = { 1: "room.1", 3: "room.2", 5: "room.3", 7: "room.4" };
     var BASE = "hero-seq/";
+    /* Кадры менялись, а имена файлов оставались прежними — браузер отдавал
+       старые картинки из кэша. Версия в запросе это снимает. */
+    var VER = "?v=20260828i";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var offers = Array.prototype.slice.call(section.querySelectorAll(".seq-offer"));
     var roomEl = document.getElementById("seqRoom");
@@ -56,7 +59,7 @@
           } else { schedule(); }
         };
         im.onerror = function () { loaded++; };
-        im.src = BASE + (idx + 1 < 10 ? "0" : "") + (idx + 1) + ".jpg";
+        im.src = BASE + (idx + 1 < 10 ? "0" : "") + (idx + 1) + ".jpg" + VER;
         imgs[idx] = im;
       })(i);
     }
