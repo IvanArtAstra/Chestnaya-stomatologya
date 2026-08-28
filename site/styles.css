@@ -139,7 +139,7 @@ h3 { font-size: 1.25rem; }
 .hero__stats b { display: block; font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 800; color: var(--aqua-soft); }
 .hero__stats span { font-size: 0.85rem; color: var(--ink-dim); }
 /* ═══════════════ СЕКВЕНЦИЯ «в наших руках» (sticky-скролл) ═══════════════ */
-.reveal-seq { height: 780vh; position: relative; }
+.reveal-seq { height: 560vh; position: relative; }
 .reveal-seq__sticky {
   position: sticky; top: 0; height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -158,6 +158,20 @@ h3 { font-size: 1.25rem; }
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background: linear-gradient(to top, rgba(10, 8, 40, 0.34) 0%, rgba(10, 8, 40, 0.08) 26%, transparent 48%);
 }
+/* Метка помещения — левый нижний угол кадра */
+.seq-room {
+  position: absolute; z-index: 4; left: clamp(18px, 4vw, 54px); bottom: clamp(18px, 4vw, 46px);
+  margin: 0; padding: 10px 20px; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  letter-spacing: 0.02em; color: var(--ink);
+  background: rgba(255, 255, 255, 0.82); border: 1px solid var(--card-line);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(23, 18, 62, 0.14);
+  transition: opacity 0.45s ease;
+}
+.seq-room[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .seq-room { transition: none; } }
+
 .reveal-seq__steps {
   /* grid c одной ячейкой: шаги накладываются друг на друга, но остаются
      в потоке — контейнер получает высоту самого высокого из них.
@@ -576,7 +590,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__burger { display: flex; }
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
-  .reveal-seq { height: 650vh; }
+  .reveal-seq { height: 480vh; }
   .seq-offer { padding: 16px 18px; }
   .seq-offer h3 { font-size: 1rem; }
   .reveal-seq__steps { padding: 0 16px; }
