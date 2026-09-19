@@ -139,7 +139,7 @@ h3 { font-size: 1.25rem; }
 .hero__stats b { display: block; font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 800; color: var(--aqua-soft); }
 .hero__stats span { font-size: 0.85rem; color: var(--ink-dim); }
 /* ═══════════════ СЕКВЕНЦИЯ «в наших руках» (sticky-скролл) ═══════════════ */
-.reveal-seq { height: 900vh; position: relative; }
+.reveal-seq { height: 980vh; position: relative; }
 .reveal-seq__sticky {
   position: sticky; top: 0; height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -590,7 +590,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__burger { display: flex; }
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
-  .reveal-seq { height: 760vh; }
+  .reveal-seq { height: 830vh; }
   .seq-offer { padding: 16px 18px; }
   .seq-offer h3 { font-size: 1rem; }
   .reveal-seq__steps { padding: 0 16px; }
