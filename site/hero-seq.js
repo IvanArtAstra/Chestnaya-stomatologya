@@ -11,28 +11,31 @@
     var canvas = document.getElementById("seqCanvas");
     if (!section || !canvas) return;
 
-    var COUNT = 18;                 /* 1–11 зуб в ладонях и уход в свет,
-                                       12 рецепция, 13 кабинет № 2,
-                                       14 кабинет № 1, 15–16 рабочая зона,
-                                       17 кабинет № 2 ещё раз, 18 возвращение
-                                       к стойке. Порядок задан клиникой. */
+    var COUNT = 19;                 /* 1–11 зуб в ладонях и уход в свет,
+                                       12 рецепция, 13 кабинет № 2, 14–15 кабинет № 1,
+                                       16 рабочая зона, 17 автоклав, 18 запайщик,
+                                       19 возвращение к стойке. Повторов кадров
+                                       больше нет. Порядок задан клиникой. */
     var ROOM_MIX = 0.42;            /* доля отрезка комнаты, отданная под смену */
     /* Подпись показываем только на самих помещениях, не на проходах и не на
        зубе: ключ — индекс кадра (0-based) */
     /* Подпись помещения — по индексу кадра (0-based); на кадрах с зубом
        и на повторах подписи нет. */
-    var ROOMS = { 11: "room.1", 12: "room.3", 13: "room.2", 14: "room.5", 17: "room.1" };
+    var ROOMS = { 11: "room.1", 12: "room.3", 13: "room.2", 14: "room.2",
+                  15: "room.5", 16: "room.5", 17: "room.5", 18: "room.1" };
     var BASE = "hero-seq/";
     /* Кадры менялись, а имена файлов оставались прежними — браузер отдавал
        старые картинки из кэша. Версия в запросе это снимает. */
-    var VER = "?v=20260919b";
+    var VER = "?v=20260919c";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
-    var offers = Array.prototype.slice.call(section.querySelectorAll(".seq-offer"));
     var roomEl = document.getElementById("seqRoom");
 
-    /* Кадров стало восемь, и подписи распределяются по всей секции:
-       визитка клиники на заставке, дальше ценности по ходу прохода. */
-    var STEP_START = 0.02, STEP_END = 0.98;
+    /* Подписи привязаны к кадрам, а не к равным долям прокрутки: иначе текст
+       про стерилизацию оказывался не на автоклаве, а где придётся.
+       Диапазон кадров задан в разметке через data-from / data-to. */
+    var stepRange = steps.map(function (el) {
+      return [parseFloat(el.dataset.from), parseFloat(el.dataset.to)];
+    });
     var ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -114,7 +117,7 @@
         cover(imgs[i], 1);
         if (frac > 0) cover(imgs[i + 1], frac);
       }
-      updateSteps(p);
+      updateSteps(f);
       updateRoom(f);
     }
 
@@ -134,23 +137,13 @@
       roomEl.hidden = false;
     }
 
-    function updateSteps(p) {
-      if (steps.length) {
-        /* равные доли на каждую подпись; после STEP_END они гаснут —
-           дальше идёт свет и ресепшн с карточками предложений */
-        var active = (p < STEP_START || p >= STEP_END) ? -1
-          : Math.min(steps.length - 1,
-              Math.floor(((p - STEP_START) / (STEP_END - STEP_START)) * steps.length));
-        for (var k = 0; k < steps.length; k++) {
-          steps[k].classList.toggle("is-active", k === active);
-        }
+    function updateSteps(f) {
+      for (var k = 0; k < steps.length; k++) {
+        var r = stepRange[k];
+        var on = r && f >= r[0] && f < r[1];
+        steps[k].classList.toggle("is-active", !!on);
       }
-      updateOffers(p);
     }
-
-    /* Карточки акций из секции убраны: раздел «Акции» на странице
-       показывает их полностью, а поверх кадров они мешали смотреть клинику. */
-    function updateOffers() {}
 
     var raf = 0, near = true;
     function render() {

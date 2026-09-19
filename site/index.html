@@ -80,10 +80,10 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260919b">
-<link rel="stylesheet" href="effects.css?v=20260919b">
-<link rel="stylesheet" href="cards-fx.css?v=20260919b">
-<link rel="stylesheet" href="polish.css?v=20260919b">
+<link rel="stylesheet" href="styles.css?v=20260919c">
+<link rel="stylesheet" href="effects.css?v=20260919c">
+<link rel="stylesheet" href="cards-fx.css?v=20260919c">
+<link rel="stylesheet" href="polish.css?v=20260919c">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -258,11 +258,11 @@ try {
     <canvas class="reveal-seq__canvas" id="seqCanvas" aria-hidden="true"></canvas>
     <!-- Запасной кадр — первый в секвенции, иначе без JS страница открывалась бы
          сразу рецепцией, минуя заставку -->
-    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260919b" width="1920" height="1080"
+    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260919c" width="1920" height="1080"
          alt="Руки бережно держат здоровый зуб — символ заботы клиники о здоровье пациента" loading="lazy">
     <div class="reveal-seq__steps">
       <!-- Первый экран: визитка клиники — заголовок страницы живёт здесь -->
-      <div class="reveal-seq__step reveal-seq__step--brand" data-step="0">
+      <div class="reveal-seq__step reveal-seq__step--brand" data-step="0" data-from="0" data-to="3">
         <p class="seq-eyebrow" data-i18n="hero.eyebrow">Стоматологическая клиника · Пермь, ул. Танкистов, 68</p>
         <h1 class="seq-title">
           <span data-i18n="hero.t1">Погрузитесь</span>
@@ -275,21 +275,30 @@ try {
           <span data-i18n="motto.w3">С заботой о вас.</span>
         </p>
       </div>
-      <div class="reveal-seq__step" data-step="1">
+      <div class="reveal-seq__step" data-step="1" data-from="3" data-to="6">
         <h2 data-i18n="care.h1">Сначала — диагностика</h2>
         <p data-i18n="care.p1">Показываем состояние зубов на фото.</p>
       </div>
-      <div class="reveal-seq__step" data-step="2">
+      <div class="reveal-seq__step" data-step="2" data-from="6" data-to="9">
         <h2 data-i18n="care.h2">План и цена — до начала</h2>
         <p data-i18n="care.p2">Стоимость фиксируем в договоре.</p>
       </div>
-      <div class="reveal-seq__step" data-step="3">
+      <div class="reveal-seq__step" data-step="3" data-from="9" data-to="12">
         <h2 data-i18n="care.h3">Только то, что нужно</h2>
         <p data-i18n="care.p3">Не назначаем процедуры без показаний.</p>
       </div>
-      <div class="reveal-seq__step" data-step="4">
+      <div class="reveal-seq__step" data-step="4" data-from="12" data-to="15">
         <h2 data-i18n="care.h4">Решение принимаете вы</h2>
         <p data-i18n="care.p4">Объясняем варианты и отвечаем на вопросы.</p>
+      </div>
+      <!-- Подписи про стерилизацию привязаны к кадрам автоклава и запайщика -->
+      <div class="reveal-seq__step" data-step="5" data-from="15" data-to="17">
+        <h2 data-i18n="care.h5">Бор и наконечник — после каждого пациента</h2>
+        <p data-i18n="care.p5">Использованные уходят на дезинфекцию и в автоклав класса B.</p>
+      </div>
+      <div class="reveal-seq__step" data-step="6" data-from="17" data-to="17.75">
+        <h2 data-i18n="care.h6">Крафт-пакет вскрываем при вас</h2>
+        <p data-i18n="care.p6">На пакете индикатор стерильности и дата обработки.</p>
       </div>
     </div>
     <!-- Название зоны, в которой мы сейчас находимся: меняется вместе с кадром -->
@@ -677,19 +686,19 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260919b"></script>
-<script src="db.js?v=20260919b"></script>
-<script src="auth.js?v=20260919b"></script>
-<script src="md.js?v=20260919b"></script>
-<script src="ux.js?v=20260919b"></script>
-<script src="app.js?v=20260919b"></script>
-<script src="water.js?v=20260919b" defer></script>
-<script src="effects.js?v=20260919b" defer></script>
-<script src="teeth-map.js?v=20260919b" defer></script>
-<script src="hero-seq.js?v=20260919b" defer></script>
-<script src="cards-fx.js?v=20260919b" defer></script>
-<script src="motion-fx.js?v=20260919b" defer></script>
-<script src="polish.js?v=20260919b" defer></script>
-<script src="a11y.js?v=20260919b"></script>
+<script src="i18n.js?v=20260919c"></script>
+<script src="db.js?v=20260919c"></script>
+<script src="auth.js?v=20260919c"></script>
+<script src="md.js?v=20260919c"></script>
+<script src="ux.js?v=20260919c"></script>
+<script src="app.js?v=20260919c"></script>
+<script src="water.js?v=20260919c" defer></script>
+<script src="effects.js?v=20260919c" defer></script>
+<script src="teeth-map.js?v=20260919c" defer></script>
+<script src="hero-seq.js?v=20260919c" defer></script>
+<script src="cards-fx.js?v=20260919c" defer></script>
+<script src="motion-fx.js?v=20260919c" defer></script>
+<script src="polish.js?v=20260919c" defer></script>
+<script src="a11y.js?v=20260919c"></script>
 </body>
 </html>
