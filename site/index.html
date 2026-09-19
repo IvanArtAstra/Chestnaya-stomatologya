@@ -80,10 +80,10 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260828i">
-<link rel="stylesheet" href="effects.css?v=20260828i">
-<link rel="stylesheet" href="cards-fx.css?v=20260828i">
-<link rel="stylesheet" href="polish.css?v=20260828i">
+<link rel="stylesheet" href="styles.css?v=20260919a">
+<link rel="stylesheet" href="effects.css?v=20260919a">
+<link rel="stylesheet" href="cards-fx.css?v=20260919a">
+<link rel="stylesheet" href="polish.css?v=20260919a">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -258,8 +258,8 @@ try {
     <canvas class="reveal-seq__canvas" id="seqCanvas" aria-hidden="true"></canvas>
     <!-- Запасной кадр — первый в секвенции, иначе без JS страница открывалась бы
          сразу рецепцией, минуя заставку -->
-    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260828i" width="1920" height="1080"
-         alt="Мягкий свет — заставка, с которой начинается погружение в клинику" loading="lazy">
+    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260919a" width="1920" height="1080"
+         alt="Руки бережно держат здоровый зуб — символ заботы клиники о здоровье пациента" loading="lazy">
     <div class="reveal-seq__steps">
       <!-- Первый экран: визитка клиники — заголовок страницы живёт здесь -->
       <div class="reveal-seq__step reveal-seq__step--brand" data-step="0">
@@ -381,8 +381,41 @@ try {
   <p class="cases__note" data-i18n="cases.note">Выше — схематичные иллюстрации: они показывают суть работ, а не результат конкретного пациента. Реальные фотографии добавим из архива клиники — с письменного согласия. Результат лечения индивидуален и зависит от исходного состояния зубов.</p>
 </section>
 
-<!-- ══════════ ЭКСКУРСИЯ ПО КЛИНИКЕ (рендерится из tour.js) ══════════ -->
-<section class="tour-host" id="tour" aria-label="Экскурсия по клинике"></section>
+<!-- ══════════ СТЕРИЛИЗАЦИЯ ══════════ -->
+<section class="section sterile" id="sterile">
+  <div class="section__head reveal">
+    <span class="section__tag" data-i18n="ster.tag">Стерильность</span>
+    <h2 data-i18n="ster.title">Каждый инструмент — из крафт-пакета</h2>
+    <p data-i18n="ster.sub">Показываем, как устроена обработка: это та часть работы, которую пациент обычно не видит.</p>
+  </div>
+  <div class="sterile__grid">
+    <figure class="sterile__card reveal">
+      <img src="sterile/work.jpg" width="900" height="1200" loading="lazy" decoding="async"
+           alt="Рабочая зона кабинета: раковина, дозаторы антисептика и ультрафиолетовая камера для хранения стерильных инструментов">
+      <figcaption>
+        <b data-i18n="ster.1.h">Боры и насадки — только стерильные</b>
+        <span data-i18n="ster.1.p">Наконечник и боры меняем после каждого пациента. Использованные уходят на дезинфекцию, чистые лежат в УФ-камере.</span>
+      </figcaption>
+    </figure>
+    <figure class="sterile__card reveal">
+      <img src="sterile/autoclave.jpg" width="900" height="1200" loading="lazy" decoding="async"
+           alt="Автоклав класса B с открытой дверцей — стерилизация инструментов паром под давлением">
+      <figcaption>
+        <b data-i18n="ster.2.h">Автоклав класса B</b>
+        <span data-i18n="ster.2.p">Стерилизация паром под давлением при 134 °C — режим, который берёт в том числе полые и пористые инструменты.</span>
+      </figcaption>
+    </figure>
+    <figure class="sterile__card reveal">
+      <img src="sterile/sealer.jpg" width="900" height="1200" loading="lazy" decoding="async"
+           alt="Запайщик крафт-пакетов: рулоны упаковочного материала и запаянные пакеты с инструментами">
+      <figcaption>
+        <b data-i18n="ster.3.h">Запаянный пакет вскрывают при вас</b>
+        <span data-i18n="ster.3.p">После автоклава инструмент запаивается в крафт-пакет с индикатором. Пакет открывают в кабинете на ваших глазах.</span>
+      </figcaption>
+    </figure>
+  </div>
+  <p class="sterile__note" data-i18n="ster.note">Одноразовое — перчатки, маски, слюноотсосы, стаканы, салфетки — используется один раз и утилизируется.</p>
+</section>
 
 <!-- ══════════ АКЦИИ (реальные из ВК) ══════════ -->
 <section class="section promo" id="promo">
@@ -644,20 +677,19 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260828i"></script>
-<script src="db.js?v=20260828i"></script>
-<script src="auth.js?v=20260828i"></script>
-<script src="md.js?v=20260828i"></script>
-<script src="ux.js?v=20260828i"></script>
-<script src="app.js?v=20260828i"></script>
-<script src="water.js?v=20260828i" defer></script>
-<script src="effects.js?v=20260828i" defer></script>
-<script src="teeth-map.js?v=20260828i" defer></script>
-<script src="hero-seq.js?v=20260828i" defer></script>
-<script src="tour.js?v=20260828i" defer></script>
-<script src="cards-fx.js?v=20260828i" defer></script>
-<script src="motion-fx.js?v=20260828i" defer></script>
-<script src="polish.js?v=20260828i" defer></script>
-<script src="a11y.js?v=20260828i"></script>
+<script src="i18n.js?v=20260919a"></script>
+<script src="db.js?v=20260919a"></script>
+<script src="auth.js?v=20260919a"></script>
+<script src="md.js?v=20260919a"></script>
+<script src="ux.js?v=20260919a"></script>
+<script src="app.js?v=20260919a"></script>
+<script src="water.js?v=20260919a" defer></script>
+<script src="effects.js?v=20260919a" defer></script>
+<script src="teeth-map.js?v=20260919a" defer></script>
+<script src="hero-seq.js?v=20260919a" defer></script>
+<script src="cards-fx.js?v=20260919a" defer></script>
+<script src="motion-fx.js?v=20260919a" defer></script>
+<script src="polish.js?v=20260919a" defer></script>
+<script src="a11y.js?v=20260919a"></script>
 </body>
 </html>
