@@ -194,6 +194,15 @@
   .tm-grid { grid-template-columns: 1fr; }
   .tm-summary { position: static; }
 }
+/* На телефоне зуб на схеме получался 19 px — пальцем не попасть.
+   Отдаём схеме всю ширину карточки: зуб вырастает примерно до 25 px.
+   Больше сделать нельзя — соседние зубы стоят в 37 единицах друг от
+   друга, и зоны выбора начали бы перекрываться. */
+@media (max-width: 560px) {
+  .tm-card { padding: 20px 14px; }
+  .tm-scheme { margin: 0 -6px; }
+  .tm-row { padding: 11px 16px; }
+}
 `;
 
   if (!document.getElementById("teethMapStyles")) {
