@@ -89,6 +89,12 @@
     z-index: 0;
     border-radius: inherit;
     pointer-events: none;
+    /* color-mix знают Chrome 111+ / Safari 16.2+; до них — готовая rgba */
+    background: radial-gradient(
+      260px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(139, 130, 245, 0.12),
+      transparent 65%
+    );
     background: radial-gradient(
       260px circle at var(--mx, 50%) var(--my, 50%),
       color-mix(in srgb, var(--aqua) 12%, transparent),

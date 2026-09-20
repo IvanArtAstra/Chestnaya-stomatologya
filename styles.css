@@ -51,7 +51,7 @@ h3 { font-size: 1.25rem; }
   box-shadow: 0 8px 30px rgba(66, 57, 184, 0.35);
 }
 .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(66, 57, 184, 0.5); }
-.btn--ghost { border: 1.5px solid var(--card-line); color: var(--ink); background: rgba(255,255,255,0.04); backdrop-filter: blur(8px); }
+.btn--ghost { border: 1.5px solid var(--card-line); color: var(--ink); background: rgba(255,255,255,0.04); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .btn--ghost:hover { border-color: var(--aqua); color: var(--aqua-soft); }
 .btn--light { background: rgba(255,255,255,0.92); color: #241f5c; }
 .btn--light:hover { background: #fff; transform: translateY(-2px); }
@@ -65,7 +65,7 @@ h3 { font-size: 1.25rem; }
   padding: 14px clamp(16px, 4vw, 48px);
   transition: background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s;
 }
-.nav.is-scrolled { background: rgba(3, 20, 30, 0.82); backdrop-filter: blur(16px); box-shadow: 0 6px 30px rgba(0,0,0,0.35); }
+.nav.is-scrolled { background: rgba(3, 20, 30, 0.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 6px 30px rgba(0,0,0,0.35); }
 /* уезжает вверх на время сцены скролла */
 .nav.is-away {
   transform: translateY(-100%); opacity: 0; pointer-events: none;
@@ -99,7 +99,7 @@ h3 { font-size: 1.25rem; }
 
 /* ═══════════════ ГЕРОЙ ═══════════════ */
 .hero {
-  position: relative; min-height: 100svh;
+  position: relative; min-height: 100vh; min-height: 100svh;
   display: flex; align-items: center; justify-content: center;
   text-align: center; overflow: hidden; padding: 120px 20px 80px;
 }
@@ -141,7 +141,7 @@ h3 { font-size: 1.25rem; }
 /* ═══════════════ СЕКВЕНЦИЯ «в наших руках» (sticky-скролл) ═══════════════ */
 .reveal-seq { height: 980vh; position: relative; }
 .reveal-seq__sticky {
-  position: sticky; top: 0; height: 100svh; overflow: hidden;
+  position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
   background: var(--deep-0);
 }
@@ -283,12 +283,12 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 /* ═══════════════ УСЛУГИ ═══════════════ */
 .services__grid {
   display: grid; gap: 18px; max-width: 1180px; margin: 0 auto;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 }
 .svc-card {
   position: relative; padding: 30px 28px; border-radius: var(--radius);
   background: var(--card); border: 1px solid var(--card-line);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   display: flex; flex-direction: column; gap: 12px;
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.35s, box-shadow 0.35s;
 }
@@ -319,7 +319,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 }
 .doc-card {
   flex: 0 0 clamp(240px, 24vw, 300px); padding: 26px; border-radius: var(--radius);
-  background: var(--card); border: 1px solid var(--card-line); backdrop-filter: blur(10px);
+  background: var(--card); border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   display: flex; flex-direction: column; gap: 8px;
   transition: transform 0.35s, border-color 0.35s;
 }
@@ -344,7 +344,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .doc-card .btn { margin-top: 12px; align-self: flex-start; }
 
 /* ═══════════════ ДО/ПОСЛЕ ═══════════════ */
-.cases__grid { display: grid; gap: 26px; max-width: 1080px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.cases__grid { display: grid; gap: 26px; max-width: 1080px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
 @property --pos { syntax: "<percentage>"; inherits: true; initial-value: 50%; }
 .ba__frame {
   position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 400/260;
@@ -387,7 +387,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .cases__note { max-width: 760px; margin: 26px auto 0; text-align: center; color: var(--ink-dim); font-size: 0.82rem; line-height: 1.6; }
 
 /* ═══════════════ АКЦИИ ═══════════════ */
-.promo__row { display: grid; gap: 20px; max-width: 1120px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.promo__row { display: grid; gap: 20px; max-width: 1120px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); }
 .promo-card {
   padding: 32px 28px; border-radius: var(--radius); position: relative; overflow: hidden;
   background: linear-gradient(140deg, #2a2472, #3a32a0);
@@ -411,10 +411,10 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .promo-card .btn { align-self: flex-start; }
 
 /* ═══════════════ ОТЗЫВЫ ═══════════════ */
-.reviews__row { display: grid; gap: 20px; max-width: 1120px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.reviews__row { display: grid; gap: 20px; max-width: 1120px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
 .review {
   padding: 30px 28px; border-radius: var(--radius);
-  background: var(--card); border: 1px solid var(--card-line); backdrop-filter: blur(10px);
+  background: var(--card); border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   display: flex; flex-direction: column; gap: 14px;
 }
 .review__stars { color: #ffd98a; letter-spacing: 4px; }
@@ -438,7 +438,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .about__facts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .fact {
   padding: 28px 22px; border-radius: var(--radius); text-align: center;
-  background: var(--card); border: 1px solid var(--card-line); backdrop-filter: blur(10px);
+  background: var(--card); border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
 .fact b { display: block; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 800; color: var(--aqua-soft); margin-bottom: 6px; }
 .fact span { color: var(--ink-dim); font-size: 0.85rem; line-height: 1.4; display: block; }
@@ -478,7 +478,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 /* форма записи */
 .booking-form {
   padding: clamp(28px, 3.6vw, 46px); border-radius: 28px;
-  background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-line); backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   display: flex; flex-direction: column; gap: 16px;
 }
 .booking-form h3 { font-size: 1.5rem; }
@@ -509,7 +509,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .fab__menu { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none; }
 .fab__item {
   padding: 11px 18px; border-radius: 999px; font-weight: 700; font-size: 0.88rem;
-  background: rgba(3, 25, 38, 0.92); border: 1px solid var(--card-line); backdrop-filter: blur(10px);
+  background: rgba(3, 25, 38, 0.92); border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   opacity: 0; transform: translateY(14px) scale(0.9);
   transition: 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.2);
 }
@@ -539,7 +539,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .mobile-cta {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 65;
   display: none; gap: 10px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(3, 20, 30, 0.92); backdrop-filter: blur(16px);
+  background: rgba(3, 20, 30, 0.92); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
   border-top: 1px solid rgba(139, 130, 245, 0.15);
 }
 .mobile-cta__call, .mobile-cta__book {
@@ -551,7 +551,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 /* ═══════════════ МОДАЛКА ═══════════════ */
 .modal { position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center; padding: 20px; }
 .modal[hidden] { display: none; }
-.modal__backdrop { position: absolute; inset: 0; background: rgba(2, 14, 22, 0.75); backdrop-filter: blur(8px); animation: fadeIn 0.3s; }
+.modal__backdrop { position: absolute; inset: 0; background: rgba(2, 14, 22, 0.75); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); animation: fadeIn 0.3s; }
 @keyframes fadeIn { from { opacity: 0; } }
 .modal__card {
   position: relative; width: min(440px, 100%); padding: 36px 32px; border-radius: 26px;
@@ -573,7 +573,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__burger { display: flex; }
   .nav__links.is-open {
     display: flex; position: fixed; inset: 64px 0 auto 0; flex-direction: column;
-    background: rgba(3, 20, 30, 0.97); backdrop-filter: blur(20px);
+    background: rgba(3, 20, 30, 0.97); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
     padding: 24px clamp(16px, 5vw, 48px) 30px; gap: 4px;
     border-bottom: 1px solid var(--card-line);
     animation: fadeIn 0.25s;
@@ -674,7 +674,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .lang__menu {
   position: absolute; top: calc(100% + 10px); inset-inline-end: 0; min-width: 150px;
   padding: 8px; border-radius: 16px; display: none; flex-direction: column; gap: 2px;
-  background: rgba(3, 25, 38, 0.96); border: 1px solid var(--card-line); backdrop-filter: blur(16px);
+  background: rgba(3, 25, 38, 0.96); border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
 }
 .lang.is-open .lang__menu { display: flex; animation: fadeIn 0.2s; }
@@ -688,7 +688,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .news__feed { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
 .post {
   padding: 26px 28px; border-radius: var(--radius);
-  background: var(--card); border: 1px solid var(--card-line); backdrop-filter: blur(10px);
+  background: var(--card); border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   display: flex; flex-direction: column; gap: 12px;
   transition: border-color 0.3s, transform 0.3s;
 }
@@ -837,7 +837,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .footer__made { opacity: 0.7; }
 .footer__legal { max-width: 1120px; margin: 26px auto 0; padding-top: 22px; border-top: 1px solid var(--card-line); scroll-margin-top: 90px; }
 .footer__legal h4 { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--aqua-soft); margin-bottom: 14px; }
-.footer__legal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px 32px; }
+.footer__legal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 10px 32px; }
 .footer__legal p { font-size: 0.78rem; line-height: 1.6; color: var(--ink-dim); }
 .footer__legal b { color: var(--ink); font-weight: 700; }
 .footer__legal-note { margin-top: 14px; opacity: 0.9; }
@@ -904,7 +904,7 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 16px; border-radius: 999px; font-size: 0.85rem; font-weight: 700;
   background: rgba(3, 25, 38, 0.9); color: var(--aqua-soft);
-  border: 1px solid var(--card-line); backdrop-filter: blur(8px); transition: 0.22s;
+  border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: 0.22s;
 }
 .contacts__map-link:hover { background: rgba(3, 25, 38, 1); border-color: var(--aqua); }
 .contacts__map-link .icon { width: 15px; height: 15px; }
@@ -945,7 +945,7 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
   display: grid; grid-template-columns: auto 1fr; gap: clamp(20px, 4vw, 40px); align-items: center;
   padding: clamp(26px, 4vw, 44px); border-radius: 28px; margin-bottom: 34px;
   background: linear-gradient(140deg, rgba(66, 57, 184, 0.12), rgba(122, 108, 240, 0.06));
-  border: 1px solid var(--card-line); backdrop-filter: blur(12px);
+  border: 1px solid var(--card-line); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   animation: dpageIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 @keyframes dpageIn { from { opacity: 0; transform: translateY(30px); } }
@@ -1166,7 +1166,7 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 }
 .faq[open] summary::after { transform: translateY(-50%) rotate(45deg); }
 .faq p { padding: 0 22px 18px; color: var(--ink-dim); line-height: 1.65; }
-.svcpage__others { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.svcpage__others { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 12px; }
 .svc-mini {
   display: flex; align-items: center; gap: 12px;
   padding: 15px 18px; border-radius: 14px;
@@ -1445,4 +1445,87 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 @media (max-width: 520px) {
   .sterile__card { flex-direction: column; }
   .sterile__card img { width: 100%; }
+}
+
+/* ═══════════════ УЗКИЕ ЭКРАНЫ ═══════════════
+   Шапка не помещалась в 375 px: логотип со словами (206 px) плюс пять
+   круглых кнопок (243 px) давали 591 px, и страница ехала вбок.
+   Ниже 560 px оставляем сам знак — слова есть на первом экране и в подвале. */
+@media (max-width: 560px) {
+  .nav { gap: 8px; padding: 10px 12px; }
+  .nav__logo { min-width: 0; }
+  .nav__logo span { display: none; }
+  .nav__logo-img { height: 30px; }
+  .nav__actions { gap: 6px; }
+  .nav__actions > * { flex: none; }
+  /* 38 px — нижняя граница, на которую ещё уверенно попадает палец */
+  .theme-btn, .account-btn, .nav__burger { width: 38px; height: 38px; }
+  .lang__btn { width: 38px; min-width: 38px; height: 38px; padding: 0; }
+}
+/* Совсем маленькие телефоны (320 px): кнопки те же, теснее только зазоры */
+@media (max-width: 380px) {
+  .nav { padding: 10px 10px; gap: 6px; }
+  .nav__actions { gap: 4px; }
+  .nav__logo-img { height: 28px; }
+}
+
+/* Ничто не должно выходить за край: длинные слова и ссылки переносим,
+   а не растягиваем страницу вбок.
+   Именно clip, а не hidden: hidden делает страницу прокручиваемым
+   контейнером, и position: sticky перестаёт держать сцену скролла —
+   кадры уезжали вверх вместо того, чтобы стоять. Старые браузеры
+   свойства не знают и просто его пропустят: настоящие причины
+   переполнения всё равно убраны выше. */
+html, body { overflow-x: clip; max-width: 100%; }
+body { overflow-wrap: break-word; }
+/* Safari в альбомной ориентации самовольно раздувает шрифт */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+img, svg, video, canvas, iframe { max-width: 100%; }
+table { max-width: 100%; }
+
+/* Поля формы на iOS: шрифт меньше 16 px заставляет Safari зумить страницу
+   при фокусе, и вернуться назад пользователь уже не может. */
+@media (max-width: 860px) {
+  input, select, textarea { font-size: 16px; }
+}
+
+/* Пальцем по ссылке в подвале попасть сложнее, чем курсором: строка
+   высотой 20 px на телефоне почти не ловится. На сенсорных экранах
+   растим область нажатия до 40 px, внешне ничего не меняя. */
+@media (hover: none) and (pointer: coarse) {
+  .footer__col a,
+  .footer__legal a,
+  .contacts__list a,
+  .review__doc {
+    display: inline-flex; align-items: center; min-height: 40px;
+  }
+  .footer__col { gap: 2px; }
+  .contacts__list li { gap: 0; }
+  .nav__logo { padding: 4px 2px; }
+}
+
+/* На 320 px длинное слово в заголовке («Профессиональная») требовало
+   313 px и растягивало грид-колонку шире экрана — правый край карточки
+   уезжал за кадр. Колонке запрещаем расти сверх контейнера, заголовок
+   уменьшаем по ширине экрана, а перенос оставляем как страховку. */
+.dpage__hero { grid-template-columns: auto minmax(0, 1fr); }
+.dpage__info, .dpage__hero > * { min-width: 0; }
+.dpage__info h1 { font-size: clamp(1.05rem, 5.5vw, 2.3rem); }
+h1, h2, h3, .seq-title { overflow-wrap: break-word; }
+@media (max-width: 640px) {
+  .dpage__hero { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* «О клинике» и «Контакты» оставались в две колонки даже на телефоне —
+   в каждой оказывалось около 160 px. На узких экранах кладём в одну. */
+@media (max-width: 860px) {
+  .about__grid, .contacts__grid { grid-template-columns: 1fr; }
+}
+
+/* У кнопок white-space: nowrap, и длинная подпись («Мы ВКонтакте —
+   438 подписчиков») вылезала за край на узком экране. Ширину
+   ограничиваем, а на телефоне разрешаем перенос по словам. */
+.btn { max-width: 100%; }
+@media (max-width: 560px) {
+  .btn { white-space: normal; text-align: center; }
 }
