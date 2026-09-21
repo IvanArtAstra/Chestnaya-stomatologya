@@ -24,9 +24,10 @@ const I18N = {
   "hero.stat3":     { ru: "скрытых доплат", en: "hidden charges", ar: "رسوم خفية" },
 
   /* — девиз — */
-  "motto.w1":       { ru: "Честно.", en: "Honestly.", ar: "بصدق." },
-  "motto.w2":       { ru: "Профессионально.", en: "Professionally.", ar: "باحترافية." },
-  "motto.w3":       { ru: "С заботой о вас.", en: "With care for you.", ar: "برعاية لكم." },
+  /* Точки в девизе рисует CSS — кружки-разделители между словами */
+  "motto.w1":       { ru: "Честно", en: "Honestly", ar: "بصدق" },
+  "motto.w2":       { ru: "Профессионально", en: "Professionally", ar: "باحترافية" },
+  "motto.w3":       { ru: "С заботой о вас", en: "With care for you", ar: "برعاية لكم" },
 
   /* — секвенция «в наших руках» — */
   "ster.tag":       { ru: "Стерильность", en: "Sterility", ar: "التعقيم" },
@@ -43,6 +44,25 @@ const I18N = {
   "care.p5":        { ru: "Использованные уходят на дезинфекцию и в автоклав класса B.", en: "Used ones go to disinfection and then a class B autoclave.", ar: "المستعملة تذهب للتطهير ثم لجهاز تعقيم من الفئة B." },
   "care.h6":        { ru: "Крафт-пакет вскрываем при вас", en: "The sealed pouch is opened in front of you", ar: "يُفتح الكيس المُحكم أمامك" },
   "care.p6":        { ru: "На пакете индикатор стерильности и дата обработки.", en: "Each pouch carries a sterility indicator and a processing date.", ar: "يحمل كل كيس مؤشر تعقيم وتاريخ المعالجة." },
+  /* ── Как добраться ── */
+  "route.tag":      { ru: "Дорога", en: "Getting here", ar: "الوصول إلينا" },
+  "route.title":    { ru: "Как до нас добраться", en: "How to reach us", ar: "كيف تصل إلينا" },
+  "route.sub":      { ru: "Мы на первом этаже дома 68 по улице Танкистов — микрорайон Декабристов, Индустриальный район.", en: "We are on the ground floor of 68 Tankistov Street — Dekabristov neighbourhood, Industrialny district of Perm.", ar: "نحن في الطابق الأرضي من مبنى 68 بشارع تانكيستوف — حي ديكابريستوف في بيرم." },
+  "route.s1.h":     { ru: "Остановка «ул. Танкистов»", en: "Tankistov Street stop", ar: "موقف «شارع تانكيستوف»" },
+  "route.s1.p":     { ru: "Ближайшая остановка городского транспорта.", en: "The nearest city transport stop.", ar: "أقرب موقف للنقل العام." },
+  "route.s2.h":     { ru: "Вдоль улицы Танкистов до дома 68", en: "Along Tankistov Street to number 68", ar: "على امتداد شارع تانكيستوف حتى رقم 68" },
+  "route.s2.p":     { ru: "Жилой дом, вывеска «Честная стоматология».", en: "A residential building with our sign on it.", ar: "مبنى سكني عليه لافتة العيادة." },
+  "route.s3.h":     { ru: "Первый этаж, помещения 1–3", en: "Ground floor, units 1–3", ar: "الطابق الأرضي، الوحدات ١–٣" },
+  "route.s3.p":     { ru: "Отдельный вход, ступеней нет.", en: "Separate entrance, no steps.", ar: "مدخل منفصل بلا درجات." },
+  "route.car.h":    { ru: "На машине", en: "By car", ar: "بالسيارة" },
+  "route.car.p":    { ru: "Навигатор доведёт до дома 68 — маршрут построится от вашего места.", en: "Your navigator will take you to number 68 — the route starts from wherever you are.", ar: "سيأخذك الملاح إلى رقم 68 — يبدأ المسار من موقعك." },
+  "route.car.a":    { ru: "Маршрут на машине", en: "Driving directions", ar: "مسار القيادة" },
+  "route.bus.h":    { ru: "Городским транспортом", en: "By public transport", ar: "بالنقل العام" },
+  "route.bus.p":    { ru: "Выходить на остановке «ул. Танкистов». Карты подскажут ближайший рейс.", en: "Get off at the Tankistov Street stop. Maps will show the next departure.", ar: "انزل عند موقف شارع تانكيستوف. ستعرض الخرائط أقرب رحلة." },
+  "route.bus.a":    { ru: "Маршрут на транспорте", en: "Transit directions", ar: "مسار النقل العام" },
+  "route.walk.h":   { ru: "Пешком", en: "On foot", ar: "سيراً على الأقدام" },
+  "route.walk.p":   { ru: "Если вы рядом — покажем дорогу до подъезда шаг за шагом.", en: "If you are nearby, we will walk you to the door step by step.", ar: "إذا كنت قريباً، سنرشدك إلى الباب خطوة بخطوة." },
+  "route.walk.a":   { ru: "Открыть в 2ГИС", en: "Open in 2GIS", ar: "افتح في 2GIS" },
   "room.1":         { ru: "Стойка регистрации", en: "Reception", ar: "الاستقبال" },
   "room.2":         { ru: "Кабинет № 1", en: "Treatment room 1", ar: "غرفة العلاج ١" },
   "room.3":         { ru: "Кабинет № 2", en: "Treatment room 2", ar: "غرفة العلاج ٢" },
