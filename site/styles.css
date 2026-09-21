@@ -719,12 +719,9 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .icon--star { width: 16px; height: 16px; color: #ffd98a; }
 .svc-card__icon, .doc-card__photo .icon--xl { color: var(--aqua-soft); }
 .svc-card__icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 64px; height: 64px; border-radius: 18px;
-  background: linear-gradient(140deg, rgba(66, 57, 184, 0.14), rgba(122, 108, 240, 0.1));
-  border: 1px solid var(--card-line);
+  display: inline-flex; align-items: center; justify-content: flex-start;
 }
-.svc-card--accent .svc-card__icon { background: rgba(20, 18, 58, 0.15); border-color: rgba(20, 18, 58, 0.2); color: #ffffff; }
+.svc-card--accent .svc-card__icon { color: #ffffff; }
 .hero__stats .icon--star { margin-inline-start: 4px; }
 .review__stars { display: flex; gap: 4px; }
 
@@ -1165,7 +1162,7 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
     radial-gradient(35% 30% at 18% 75%, rgba(66, 57, 184, 0.12), transparent 70%);
 }
 :root[data-theme="light"] .bubble { border-color: rgba(66, 57, 184, 0.12); background: radial-gradient(circle at 32% 30%, rgba(255,255,255,0.9), rgba(66, 57, 184,0.06) 60%, transparent); }
-:root[data-theme="light"] .svc-card__icon { background: linear-gradient(140deg, rgba(66, 57, 184, 0.12), rgba(122, 108, 240, 0.08)); }
+
 :root[data-theme="light"] .booking-form input,
 :root[data-theme="light"] .booking-form select,
 :root[data-theme="light"] .modal__card input,
@@ -1753,4 +1750,92 @@ h1, h2, h3, .seq-title { overflow-wrap: break-word; }
 .route .contacts__map iframe { border-radius: inherit; }
 @media (max-width: 860px) {
   .route .contacts__map { aspect-ratio: 4 / 3.2; }
+}
+
+/* ═══════════════ О КЛИНИКЕ: цифры · зуб · текст ═══════════════ */
+.about__grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.05fr) minmax(0, 1.2fr); }
+
+/* ── Крупные цифры ── */
+.about__stats { list-style: none; display: flex; flex-direction: column; gap: clamp(26px, 3.6vw, 44px); }
+.stat { display: flex; flex-direction: column; gap: 6px; }
+.stat__num {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(2.3rem, 5vw, 3.4rem); line-height: 1; letter-spacing: -0.04em;
+  color: var(--aqua-soft);
+}
+.stat__suf {
+  font-family: var(--font-display); font-weight: 500; font-size: 1.1rem;
+  color: var(--aqua-soft); margin-inline-start: 6px; align-self: baseline;
+}
+.stat:has(.stat__suf) { flex-direction: row; flex-wrap: wrap; align-items: baseline; }
+.stat__cap { color: var(--ink-dim); font-size: 0.92rem; line-height: 1.45; flex-basis: 100%; }
+
+/* ── Фотография в силуэте зуба ──
+   clip-path режет картинку по контуру, а drop-shadow строится по альфе,
+   поэтому свечение повторяет тот же контур, а не прямоугольник. */
+.tooth-shot { position: relative; align-self: center; }
+.tooth-shot img {
+  display: block; width: 100%; height: auto;
+  clip-path: url(#toothClip);
+  filter:
+    drop-shadow(0 0 18px rgba(139, 130, 245, 0.75))
+    drop-shadow(0 0 46px rgba(139, 130, 245, 0.5))
+    drop-shadow(0 0 90px rgba(122, 108, 240, 0.32))
+    drop-shadow(0 20px 48px rgba(23, 18, 62, 0.42));
+  transition: transform 0.7s cubic-bezier(0.22, 0.7, 0.2, 1), filter 0.7s ease;
+}
+.tooth-shot:hover img {
+  transform: translateY(-6px) scale(1.015);
+  filter:
+    drop-shadow(0 0 32px rgba(139, 130, 245, 0.7))
+    drop-shadow(0 0 74px rgba(139, 130, 245, 0.38))
+    drop-shadow(0 24px 52px rgba(23, 18, 62, 0.45));
+}
+/* Старые браузеры без clip-path по ссылке на SVG покажут прямоугольник —
+   скругляем его, чтобы это не выглядело поломкой. */
+@supports not (clip-path: url(#toothClip)) {
+  .tooth-shot img { border-radius: 42% 42% 38% 38% / 46% 46% 54% 54%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tooth-shot img { transition: none; }
+  .tooth-shot:hover img { transform: none; }
+}
+@media (max-width: 1080px) {
+  .about__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+  .about__stats { flex-direction: row; flex-wrap: wrap; gap: 24px 34px; grid-column: 1 / -1; }
+  .stat { flex: 1 1 150px; }
+}
+@media (max-width: 860px) {
+  .about__grid { grid-template-columns: 1fr; }
+  .tooth-shot { max-width: 380px; margin: 0 auto; }
+}
+
+/* ═══════════════ УСЛУГИ: спокойные карточки, крупная иконка ═══════════════ */
+.svc-card { border-radius: 26px 26px 26px 8px; padding: 30px 28px 26px; }
+.svc-card h3 {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.12rem;
+  line-height: 1.25; letter-spacing: -0.022em; color: var(--ink);
+}
+/* Иконка без подложки: тонкий контур сам по себе, как на образце —
+   держатель только съедал место и делал рисунок мелким */
+.svc-card__icon { align-self: flex-start; margin-bottom: 8px; }
+.svc-card__icon .icon--xl { width: 50px; height: 50px; stroke-width: 1.4; }
+.svc-card:hover .svc-card__icon { transform: translateY(-2px) rotate(-4deg) scale(1.04); }
+/* Карточка-призыв к калькулятору: текст на индиго-градиенте должен быть
+   светлым — тёмный на нём почти не читался */
+.svc-card--accent p { color: rgba(255, 255, 255, 0.86); }
+.svc-card--accent h3 { color: #fff; }
+.svc-card--wide { grid-column: 1 / -1; }
+@media (min-width: 861px) {
+  /* Широкая карточка-призыв: иконка · заголовок · пояснение · кнопка
+     в одну строку. Заголовку даём фиксированную долю, иначе он
+     сжимался в два слова на строку, а пояснение расплывалось. */
+  .svc-card--wide {
+    flex-direction: row; align-items: center; gap: clamp(20px, 3vw, 36px);
+    padding: 28px clamp(28px, 3vw, 38px);
+  }
+  .svc-card--wide .svc-card__icon { flex: none; margin-bottom: 0; align-self: center; }
+  .svc-card--wide h3 { flex: 0 1 300px; font-size: 1.25rem; }
+  .svc-card--wide p { flex: 1 1 260px; margin: 0; }
+  .svc-card--wide .btn { flex: none; align-self: center; white-space: nowrap; }
 }

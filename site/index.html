@@ -80,16 +80,19 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260921i">
-<link rel="stylesheet" href="effects.css?v=20260921i">
-<link rel="stylesheet" href="cards-fx.css?v=20260921i">
-<link rel="stylesheet" href="polish.css?v=20260921i">
+<link rel="stylesheet" href="styles.css?v=20260921p">
+<link rel="stylesheet" href="effects.css?v=20260921p">
+<link rel="stylesheet" href="cards-fx.css?v=20260921p">
+<link rel="stylesheet" href="polish.css?v=20260921p">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
 
 <!-- ══════════ SVG-СПРАЙТ: фирменные иконки (штрих 1.8, скругления) ══════════ -->
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<!-- Не display:none: в спрайте лежит clipPath зуба, а ссылку на него
+     браузер не разрешает, если SVG не участвует в раскладке.
+     Нулевой размер прячет спрайт и оставляет clipPath рабочим. -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
   <defs>
     <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#4239b8"/><stop offset="1" stop-color="#7a6cf0"/>
@@ -226,6 +229,21 @@ try {
     <path d="M7.4 17.4v1.6M16.6 17.4v1.6"/>
     <circle cx="8.2" cy="14.4" r="1"/><circle cx="15.8" cy="14.4" r="1"/>
   </symbol>
+  <!-- Силуэт зуба: им обрезаем фотографию в блоке «О клинике».
+       Координаты в долях блока (0…1), поэтому форма тянется за размером. -->
+  <clipPath id="toothClip" clipPathUnits="objectBoundingBox">
+    <path d="M0.50 0.09
+             C0.42 0.02, 0.28 0.00, 0.17 0.06
+             C0.05 0.13, 0.02 0.30, 0.05 0.47
+             C0.08 0.64, 0.16 0.84, 0.24 0.95
+             C0.29 1.00, 0.38 0.99, 0.41 0.90
+             C0.44 0.80, 0.46 0.68, 0.50 0.62
+             C0.54 0.68, 0.56 0.80, 0.59 0.90
+             C0.62 0.99, 0.71 1.00, 0.76 0.95
+             C0.84 0.84, 0.92 0.64, 0.95 0.47
+             C0.98 0.30, 0.95 0.13, 0.83 0.06
+             C0.72 0.00, 0.58 0.02, 0.50 0.09 Z"/>
+  </clipPath>
   <!-- пешеход -->
   <symbol id="i-walk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="13.2" cy="4.4" r="1.9"/>
@@ -242,7 +260,7 @@ try {
     <span>Ч<em class="logo-e">е</em>стная <b>стоматология</b></span>
   </a>
   <nav class="nav__links" id="navLinks">
-    <a href="#care" data-i18n="nav.services">Услуги и цены</a>
+    <a href="#services" data-i18n="nav.services">Услуги и цены</a>
     <a href="#team" data-i18n="nav.team">Команда</a>
     <a href="#cases" data-i18n="nav.cases">До / после</a>
     <a href="#promo" data-i18n="nav.promo">Акции</a>
@@ -277,8 +295,8 @@ try {
     <canvas class="reveal-seq__canvas" id="seqCanvas" aria-hidden="true"></canvas>
     <!-- Запасной кадр — первый в секвенции, иначе без JS страница открывалась бы
          сразу рецепцией, минуя заставку -->
-    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260921i" width="1920" height="1080"
-         srcset="hero-seq/m/01.jpg?v=20260921i 1024w, hero-seq/01.jpg?v=20260921i 1920w"
+    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260921p" width="1920" height="1080"
+         srcset="hero-seq/m/01.jpg?v=20260921p 1024w, hero-seq/01.jpg?v=20260921p 1920w"
          sizes="100vw"
          alt="Руки бережно держат здоровый зуб — символ заботы клиники о здоровье пациента" loading="lazy">
     <div class="reveal-seq__steps">
@@ -337,7 +355,7 @@ try {
     <p class="hero__sub reveal" data-i18n="hero.sub">Лечение без скрытых услуг и навязанных процедур. Понятный план и честная стоимость — до начала лечения.</p>
     <div class="hero__cta reveal">
       <button class="btn btn--primary btn--lg" data-open-booking data-i18n="hero.book">Записаться на приём</button>
-      <a class="btn btn--ghost btn--lg" href="#care" data-i18n="hero.prices">Смотреть цены</a>
+      <a class="btn btn--ghost btn--lg" href="#services" data-i18n="hero.prices">Смотреть цены</a>
     </div>
     <ul class="hero__stats reveal">
       <li><b>5,0<svg class="icon icon--star" aria-hidden="true"><use href="#i-star"/></svg></b><span data-i18n="hero.stat1">рейтинг в 2ГИС</span></li>
@@ -347,6 +365,65 @@ try {
   </div>
 </section>
 
+
+<!-- ══════════ УСЛУГИ И ЦЕНЫ (реальный прайс) ══════════ -->
+<section class="section services" id="services">
+  <div class="section__head reveal">
+    <span class="section__tag" data-i18n="svc.tag">Услуги и цены</span>
+    <h2 data-i18n-html="svc.title">Честный прайс.<br>Цена «от» = цена «до»</h2>
+    <p><span data-i18n="svc.sub">Реальные цены клиники. Анестезия, материалы и работа врача уже включены.</span><a class="fn-ref" href="#footnotes" aria-label="Примечание 1"><sup>1</sup></a></p>
+  </div>
+  <div class="services__grid">
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-exam"/></svg></span>
+      <h3 data-i18n="svc.1.h">Приём и консультация</h3>
+      <p data-i18n="svc.1.p">Осмотр врача-стоматолога, фото состояния зубов, понятный план лечения.</p>
+      <div class="svc-card__price"><b data-price-id="exam">600 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Консультация"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="konsultatsiya.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-tooth"/></svg></span>
+      <h3 data-i18n="svc.2.h">Лечение кариеса</h3>
+      <p data-i18n="svc.2.p">Лечение кариеса и пульпита с фотопротоколом. Глубокий кариес — 4 500 ₽.</p>
+      <div class="svc-card__price"><b data-price-id="caries">4 000–4 500 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Лечение кариеса"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="lechenie-kariesa.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-shine"/></svg></span>
+      <h3 data-i18n="svc.3.h">Профессиональная гигиена</h3>
+      <p data-i18n="svc.3.p">Ультразвук + Air-Flow + реминерализующая терапия за один визит.</p>
+      <div class="svc-card__price"><b data-price-id="hygiene">4 900 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Профгигиена"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="profgigiena.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-restore"/></svg></span>
+      <h3 data-i18n="svc.4.h">Эстетическая реставрация</h3>
+      <p data-i18n="svc.4.p">Восстановление формы и цвета зубов. Красивая улыбка без коронок.</p>
+      <div class="svc-card__price"><span data-i18n="svc.from">от</span>&nbsp;<b data-price-id="restore">3 500 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Реставрация"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="restavratsiya.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-crown"/></svg></span>
+      <h3 data-i18n="svc.5.h">Протезирование</h3>
+      <p data-i18n="svc.5.p">Коронка цельнолитая «под ключ» — 10 440 ₽, съёмный протез (7+ зубов) — 26 025 ₽.</p>
+      <div class="svc-card__price"><span data-i18n="svc.from">от</span>&nbsp;<b data-price-id="prosthetics">10 440 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Протезирование"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="protezirovanie.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-extract"/></svg></span>
+      <h3 data-i18n="svc.6.h">Удаление зубов</h3>
+      <p data-i18n="svc.6.p">Бережное удаление, в том числе неотложная помощь для взрослых.</p>
+      <div class="svc-card__price"><span data-i18n="svc.from">от</span>&nbsp;<b data-price-id="extraction">2 500 ₽</b></div>
+      <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="Удаление зуба"><span data-i18n="svc.book">Записаться →</span></button><a class="svc-card__page" href="udalenie-zubov.html" data-i18n="svc.more">Подробнее</a></div>
+    </article>
+    <article class="svc-card svc-card--accent svc-card--wide reveal">
+      <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-calc"/></svg></span>
+      <h3 data-i18n="svc.calc.h">Не знаете, сколько будет стоить?</h3>
+      <p data-i18n="svc.calc.p">Ответьте на 4 вопроса — покажем ориентировочную смету за 30 секунд.</p>
+      <button class="btn btn--light" data-open-calc data-i18n="svc.calc.btn">Рассчитать стоимость</button>
+    </article>
+  </div>
+</section>
 
 <!-- ══════════ КАЛЬКУЛЯТОР ══════════ -->
 <section class="section calc" id="calc">
@@ -520,6 +597,33 @@ try {
 <!-- ══════════ О КЛИНИКЕ ══════════ -->
 <section class="section about" id="about">
   <div class="about__grid">
+    <!-- Цифры — только те, что можно проверить: карточка клиники в 2ГИС
+         и год начала работы из лицензии. -->
+    <ul class="about__stats reveal">
+      <li class="stat">
+        <b class="stat__num">5,0</b>
+        <span class="stat__cap" data-i18n="about.f1">рейтинг на 2ГИС</span>
+      </li>
+      <li class="stat">
+        <b class="stat__num" data-count="72">0</b>
+        <span class="stat__cap" data-i18n="about.f2">оценки пациентов</span>
+      </li>
+      <li class="stat">
+        <b class="stat__num" data-count="5">0</b><span class="stat__suf" data-i18n="about.f5.u">года</span>
+        <span class="stat__cap" data-i18n="about.f5">принимаем в Перми</span>
+      </li>
+    </ul>
+
+    <!-- Фотография в силуэте зуба: свечение повторяет контур, потому что
+         drop-shadow работает по альфе, а не по прямоугольнику. -->
+    <figure class="tooth-shot reveal">
+      <img src="patient-smile.jpg" width="1040" height="1102"
+           srcset="patient-smile-sm.jpg 520w, patient-smile.jpg 1040w"
+           sizes="(max-width: 860px) 80vw, 34vw"
+           alt="Пациентка в кресле «Честной стоматологии» рассматривает свою улыбку в зеркальце"
+           loading="lazy" decoding="async">
+    </figure>
+
     <div class="about__text reveal">
       <span class="section__tag" data-i18n="about.tag">О клинике</span>
       <h2 data-i18n="about.title">Почему «честная»?</h2>
@@ -531,12 +635,6 @@ try {
         <li data-i18n="about.l4">Неотложная помощь для взрослых</li>
       </ul>
       <button class="btn btn--primary" data-open-booking data-i18n="about.btn">Прийти на консультацию</button>
-    </div>
-    <div class="about__facts reveal">
-      <div class="fact"><b>5,0</b><span data-i18n="about.f1">рейтинг на 2ГИС</span></div>
-      <div class="fact"><b data-count="72">0</b><span data-i18n="about.f2">оценки пациентов</span></div>
-      <div class="fact"><b data-count="438">0</b><span data-i18n="about.f3">подписчиков ВКонтакте</span></div>
-      <div class="fact"><b data-count="2021">0</b><span data-i18n="about.f4">работаем с этого года</span></div>
     </div>
   </div>
 </section>
@@ -690,7 +788,7 @@ try {
     </div>
     <nav class="footer__col" aria-label="Навигация по сайту">
       <h4 data-i18n="foot.nav">Навигация</h4>
-      <a href="#care" data-i18n="nav.services">Услуги и цены</a>
+      <a href="#services" data-i18n="nav.services">Услуги и цены</a>
       <a href="#team" data-i18n="nav.team">Команда</a>
       <a href="#promo" data-i18n="nav.promo">Акции</a>
       <a href="#news" data-i18n="nav.news">Новости</a>
@@ -765,19 +863,19 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260921i"></script>
-<script src="db.js?v=20260921i"></script>
-<script src="auth.js?v=20260921i"></script>
-<script src="md.js?v=20260921i"></script>
-<script src="ux.js?v=20260921i"></script>
-<script src="app.js?v=20260921i"></script>
-<script src="water.js?v=20260921i" defer></script>
-<script src="effects.js?v=20260921i" defer></script>
-<script src="teeth-map.js?v=20260921i" defer></script>
-<script src="hero-seq.js?v=20260921i" defer></script>
-<script src="cards-fx.js?v=20260921i" defer></script>
-<script src="motion-fx.js?v=20260921i" defer></script>
-<script src="polish.js?v=20260921i" defer></script>
-<script src="a11y.js?v=20260921i"></script>
+<script src="i18n.js?v=20260921p"></script>
+<script src="db.js?v=20260921p"></script>
+<script src="auth.js?v=20260921p"></script>
+<script src="md.js?v=20260921p"></script>
+<script src="ux.js?v=20260921p"></script>
+<script src="app.js?v=20260921p"></script>
+<script src="water.js?v=20260921p" defer></script>
+<script src="effects.js?v=20260921p" defer></script>
+<script src="teeth-map.js?v=20260921p" defer></script>
+<script src="hero-seq.js?v=20260921p" defer></script>
+<script src="cards-fx.js?v=20260921p" defer></script>
+<script src="motion-fx.js?v=20260921p" defer></script>
+<script src="polish.js?v=20260921p" defer></script>
+<script src="a11y.js?v=20260921p"></script>
 </body>
 </html>
