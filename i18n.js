@@ -45,6 +45,8 @@ const I18N = {
   "care.h6":        { ru: "Крафт-пакет вскрываем при вас", en: "The sealed pouch is opened in front of you", ar: "يُفتح الكيس المُحكم أمامك" },
   "care.p6":        { ru: "На пакете индикатор стерильности и дата обработки.", en: "Each pouch carries a sterility indicator and a processing date.", ar: "يحمل كل كيس مؤشر تعقيم وتاريخ المعالجة." },
   /* ── Как добраться ── */
+  "about.f5":       { ru: "принимаем в Перми", en: "seeing patients in Perm", ar: "نستقبل المرضى في بيرم" },
+  "about.f5.u":     { ru: "года", en: "years", ar: "سنوات" },
   "route.tag":      { ru: "Дорога", en: "Getting here", ar: "الوصول إلينا" },
   "route.title":    { ru: "Как до нас добраться", en: "How to reach us", ar: "كيف تصل إلينا" },
   "route.sub":      { ru: "Мы на первом этаже дома 68 по улице Танкистов — микрорайон Декабристов, Индустриальный район.", en: "We are on the ground floor of 68 Tankistov Street — Dekabristov neighbourhood, Industrialny district of Perm.", ar: "نحن في الطابق الأرضي من مبنى 68 بشارع تانكيستوف — حي ديكابريستوف في بيرم." },
