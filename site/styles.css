@@ -161,13 +161,24 @@ h3 { font-size: 1.25rem; }
 /* Метка помещения — левый нижний угол кадра */
 .seq-room {
   position: absolute; z-index: 4; left: clamp(18px, 4vw, 54px); bottom: clamp(18px, 4vw, 46px);
-  margin: 0; padding: 10px 20px; border-radius: 999px;
-  font-family: var(--font-display); font-weight: 700; font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  margin: 0; padding: 11px 22px 11px 16px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font); font-weight: 700; font-size: clamp(0.78rem, 1.4vw, 0.94rem);
   letter-spacing: 0.02em; color: var(--ink);
-  background: rgba(255, 255, 255, 0.82); border: 1px solid var(--card-line);
-  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-  box-shadow: 0 10px 30px rgba(23, 18, 62, 0.14);
-  transition: opacity 0.45s ease;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.66));
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 14px 34px -10px rgba(23, 18, 62, 0.24);
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+/* Точка-маркер слева: та же фигура, что у разделителей девиза */
+.seq-room::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none;
+  background: linear-gradient(140deg, var(--seq-accent), var(--seq-accent-2));
+  box-shadow: 0 0 0 4px rgba(66, 57, 184, 0.12);
 }
 .seq-room[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .seq-room { transition: none; } }
@@ -181,43 +192,140 @@ h3 { font-size: 1.25rem; }
   pointer-events: none; padding: 0 24px;
 }
 .reveal-seq__step {
-  /* та же «стеклянная» плашка, что у карточек на ресепшене */
-  grid-area: 1 / 1; max-width: 620px; text-align: center;
-  padding: 20px clamp(22px, 3vw, 32px);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  -webkit-backdrop-filter: blur(16px) saturate(1.3);
-  backdrop-filter: blur(16px) saturate(1.3);
-  box-shadow: 0 18px 50px rgba(23, 18, 62, 0.18);
-  opacity: 0; transform: translateY(28px);
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Стекло собрано слоями: сам фон — мягкий градиент, сверху блик по
+     верхней кромке, снизу контактная тень и широкая объёмная.
+     Форма намеренно несимметричная: три угла крупные, левый нижний
+     почти прямой — плашка перестаёт читаться как обычный прямоугольник. */
+  grid-area: 1 / 1; position: relative; isolation: isolate;
+  max-width: 640px; text-align: center;
+  padding: clamp(24px, 3vw, 34px) clamp(24px, 3.4vw, 40px);
+  border-radius: 34px 34px 34px 10px;
+  background:
+    linear-gradient(152deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.62) 58%, rgba(244, 243, 255, 0.7));
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(26px) saturate(1.55);
+  backdrop-filter: blur(26px) saturate(1.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 2px 6px rgba(23, 18, 62, 0.05),
+    0 28px 64px -18px rgba(23, 18, 62, 0.28);
+  opacity: 0; transform: translateY(38px) scale(0.965);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 0.7, 0.2, 1),
+    transform 0.9s cubic-bezier(0.22, 0.7, 0.2, 1),
+    box-shadow 0.5s ease, border-color 0.5s ease;
 }
-.reveal-seq__step.is-active { opacity: 1; transform: translateY(0); }
+/* Плашки всегда лежат на белом стекле, а не на тёмном фоне страницы,
+   поэтому акцентные цвета здесь фиксированные, не из темы: в тёмной
+   теме --aqua — светлая сирень, на белом она почти не читается. */
+.reveal-seq__steps, .seq-room {
+  --seq-accent: #4239b8;
+  --seq-accent-2: #7a6cf0;
+}
+
+/* Блик: узкая дуга света по верхней кромке — то, чем стекло отличается
+   от просто полупрозрачного прямоугольника. */
+.reveal-seq__step::before {
+  content: ""; position: absolute; z-index: -1; inset: 0;
+  border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(120% 70% at 50% -12%, rgba(255, 255, 255, 0.85), transparent 62%),
+    radial-gradient(70% 60% at 108% 112%, rgba(139, 130, 245, 0.16), transparent 70%);
+}
+/* Мягкое свечение под плашкой — «аура», отделяющая её от кадра */
+.reveal-seq__step::after {
+  content: ""; position: absolute; z-index: -2; inset: 8% 6% -6%;
+  border-radius: inherit; pointer-events: none;
+  background: radial-gradient(60% 60% at 50% 60%, rgba(66, 57, 184, 0.26), transparent 72%);
+  filter: blur(26px);
+  opacity: 0; transition: opacity 0.9s ease;
+}
+.reveal-seq__step.is-active {
+  opacity: 1; transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.reveal-seq__step.is-active::after { opacity: 1; }
+/* На наведении стекло чуть подсветляется и приподнимается */
+.reveal-seq__step.is-active:hover {
+  transform: translateY(-5px) scale(1.012);
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.5),
+    0 2px 6px rgba(23, 18, 62, 0.05),
+    0 40px 80px -20px rgba(23, 18, 62, 0.34);
+}
+/* Тонкая линия-акцент у левого нижнего угла — держит несимметричную форму */
+.reveal-seq__step > :last-child { position: relative; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal-seq__step { transition: opacity 0.2s linear; transform: none; }
+  .reveal-seq__step.is-active:hover { transform: none; }
+}
 .reveal-seq__step h2 {
-  margin: 0 0 8px; color: var(--ink);
-  font-size: clamp(1.3rem, 2.8vw, 2rem); line-height: 1.22;
+  margin: 0 0 10px; color: var(--ink);
+  font-size: clamp(1.22rem, 2.6vw, 1.85rem); line-height: 1.2; letter-spacing: -0.022em;
+}
+.reveal-seq__step h2 + p {
+  margin: 0; color: var(--ink-dim);
+  font-size: clamp(0.92rem, 1.6vw, 1.04rem); line-height: 1.55;
 }
 /* ── Визитка клиники: выходит вторым планом, после чистого кадра ── */
-.reveal-seq__step--brand { max-width: 760px; padding: 26px clamp(24px, 4vw, 40px); }
+.reveal-seq__step--brand {
+  max-width: 780px; padding: clamp(30px, 4vw, 46px) clamp(28px, 4.4vw, 52px);
+  border-radius: 46px 46px 46px 12px;
+}
 /* без JS плашками никто не управляет — показываем визитку сразу */
 html:not(.js) .reveal-seq__step--brand { opacity: 1; transform: none; }
+/* Надстрочник — капсула: отдельная маленькая фигура над заголовком,
+   чтобы шапка плашки не была просто строкой текста. */
 .seq-eyebrow {
-  margin: 0 0 12px; color: var(--aqua-soft);
-  font-size: clamp(0.68rem, 1.2vw, 0.8rem); font-weight: 800;
-  letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.5;
+  display: inline-block; margin: 0 0 16px;
+  padding: 7px 16px; border-radius: 999px;
+  color: var(--seq-accent); background: rgba(66, 57, 184, 0.09);
+  border: 1px solid rgba(66, 57, 184, 0.16);
+  font-size: clamp(0.62rem, 1.1vw, 0.74rem); font-weight: 800;
+  letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.45;
 }
+/* Заголовок собран из двух шрифтов: плотный гротеск Unbounded держит
+   строку, а одно слово уходит в наклонную антикву Playfair — контраст
+   двух характеров вместо одного ровного набора. */
 .seq-title {
-  margin: 0 0 14px; color: var(--ink);
+  margin: 0 0 18px; color: var(--ink);
   font-family: "Unbounded", system-ui, sans-serif; font-weight: 700;
-  font-size: clamp(1.65rem, 4.2vw, 3.1rem); line-height: 1.08; letter-spacing: -0.01em;
+  font-size: clamp(1.6rem, 4.2vw, 3.05rem); line-height: 1.06; letter-spacing: -0.025em;
 }
 .seq-title span { display: block; }
-.seq-title em { color: var(--aqua); font-style: normal; }
+.seq-title em {
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic; font-weight: 600;
+  font-size: 1.12em; letter-spacing: -0.005em;
+  background: linear-gradient(100deg, var(--seq-accent), var(--seq-accent-2));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+  padding-inline-end: 0.06em;   /* курсив иначе обрезается по правому краю */
+}
+/* В арабской версии курсивной антиквы нет — возвращаем Cairo и цвет */
+[dir="rtl"] .seq-title em {
+  font-family: "Cairo", var(--font-display); font-style: normal; font-size: 1em;
+  background: none; color: var(--seq-accent); -webkit-text-fill-color: var(--seq-accent);
+}
+/* Если Playfair не загрузился, градиентный текст не должен пропасть */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .seq-title em { color: var(--seq-accent); -webkit-text-fill-color: var(--seq-accent); }
+}
+/* Девиз — три отдельных слова, между ними точки-разделители:
+   строка читается как ритм, а не как одно предложение. */
 .seq-motto {
-  margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center;
-  color: var(--aqua-soft); font-weight: 700;
-  font-size: clamp(0.9rem, 1.7vw, 1.08rem);
+  margin: 0; display: flex; flex-wrap: wrap; gap: 6px 10px; justify-content: center;
+  align-items: center;
+  color: var(--ink-dim); font-weight: 600;
+  font-size: clamp(0.86rem, 1.6vw, 1.02rem); letter-spacing: 0.01em;
+}
+.seq-motto span { display: inline-flex; align-items: center; gap: 10px; }
+.seq-motto span + span::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--seq-accent); opacity: 0.6; flex: none;
 }
 /* ── Предложения на ресепшене: свайп справа налево по прогрессу ── */
 .reveal-seq__offers {
@@ -249,10 +357,7 @@ html:not(.js) .reveal-seq__step--brand { opacity: 1; transform: none; }
 .seq-offer p { margin: 0 0 10px; color: var(--ink-dim); font-size: 0.86rem; line-height: 1.5; }
 .seq-offer__till { font-size: 0.72rem; color: var(--ink-dim); opacity: 0.85; }
 
-.reveal-seq__step p {
-  margin: 0; color: var(--ink-dim);
-  font-size: clamp(0.95rem, 1.7vw, 1.08rem); line-height: 1.55;
-}
+
 
 /* ═══════════════ СЕКЦИИ ═══════════════ */
 .section { padding: clamp(70px, 10vw, 130px) clamp(16px, 5vw, 64px); position: relative; }
@@ -1528,4 +1633,124 @@ h1, h2, h3, .seq-title { overflow-wrap: break-word; }
 .btn { max-width: 100%; }
 @media (max-width: 560px) {
   .btn { white-space: normal; text-align: center; }
+}
+
+/* ═══════════════ КАК ДОБРАТЬСЯ ═══════════════
+   Сами маршрут не рисуем: карточки отдают точку Яндекс.Картам и 2ГИС,
+   а те строят путь от того места, где человек стоит прямо сейчас. */
+.route { max-width: 1120px; margin: clamp(46px, 6vw, 76px) auto 0; }
+.route__head { text-align: center; max-width: 620px; margin: 0 auto clamp(28px, 4vw, 42px); }
+.route__head h3 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.35rem, 2.6vw, 1.95rem); letter-spacing: -0.025em;
+  margin: 14px 0 10px; color: var(--ink);
+}
+.route__head p { color: var(--ink-dim); line-height: 1.6; font-size: 0.95rem; }
+
+/* ── Схема: три шага, соединённые линией ── */
+.route__steps {
+  list-style: none; display: grid; gap: 14px;
+  grid-template-columns: repeat(3, minmax(min(240px, 100%), 1fr));
+  margin-bottom: clamp(20px, 3vw, 30px); counter-reset: none;
+}
+.route__step {
+  position: relative; padding: 22px 22px 22px 68px;
+  border-radius: 24px 24px 24px 8px;
+  background: var(--card); border: 1px solid var(--card-line);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  transition: transform 0.4s cubic-bezier(0.22, 0.7, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.route__step:hover {
+  transform: translateY(-4px); border-color: rgba(139, 130, 245, 0.45);
+  box-shadow: 0 22px 50px -22px rgba(0, 0, 0, 0.55);
+}
+.route__step b { display: block; color: var(--ink); font-size: 0.98rem; line-height: 1.35; margin-bottom: 5px; }
+.route__step span:not(.route__step-num) { color: var(--ink-dim); font-size: 0.85rem; line-height: 1.5; }
+/* Номер шага — круг с градиентом, тот же язык фигур, что у плашек скролла */
+.route__step-num {
+  position: absolute; top: 20px; inset-inline-start: 20px;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
+  color: #fff; background: linear-gradient(140deg, var(--aqua), var(--cyan));
+  box-shadow: 0 0 0 5px rgba(66, 57, 184, 0.14);
+}
+.route__step-num .icon { width: 18px; height: 18px; color: #fff; }
+/* Соединительная линия между шагами — только там, где шаги стоят в ряд */
+@media (min-width: 861px) {
+  .route__step + .route__step::before {
+    content: ""; position: absolute; top: 37px; inset-inline-start: -14px; width: 14px; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(139, 130, 245, 0.5));
+  }
+}
+.route__step--final .route__step-num { background: linear-gradient(140deg, var(--cyan), var(--aqua)); }
+
+/* ── Три способа добраться ── */
+.route__grid {
+  display: grid; gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+}
+.route__card {
+  position: relative; overflow: hidden;
+  padding: 26px 24px; border-radius: 26px 26px 26px 8px;
+  background: var(--card); border: 1px solid var(--card-line);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  display: flex; flex-direction: column; gap: 10px;
+  transition: transform 0.45s cubic-bezier(0.22, 0.7, 0.2, 1), border-color 0.45s ease, box-shadow 0.45s ease;
+}
+/* Мягкое пятно в углу — оживает при наведении */
+.route__card::after {
+  content: ""; position: absolute; inset-inline-end: -40px; top: -40px;
+  width: 150px; height: 150px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(139, 130, 245, 0.28), transparent 70%);
+  opacity: 0; transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.22, 0.7, 0.2, 1);
+  transform: scale(0.8);
+}
+.route__card:hover {
+  transform: translateY(-6px); border-color: rgba(139, 130, 245, 0.5);
+  box-shadow: 0 28px 60px -24px rgba(0, 0, 0, 0.6);
+}
+.route__card:hover::after { opacity: 1; transform: scale(1); }
+.route__icon {
+  width: 46px; height: 46px; border-radius: 16px 16px 16px 5px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(139, 130, 245, 0.14); border: 1px solid var(--card-line);
+  transition: transform 0.45s cubic-bezier(0.22, 0.7, 0.2, 1), background 0.45s ease;
+}
+.route__card:hover .route__icon { transform: rotate(-6deg) scale(1.06); background: rgba(139, 130, 245, 0.22); }
+.route__icon .icon { width: 23px; height: 23px; color: var(--aqua-soft); }
+.route__card h4 {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.02rem;
+  letter-spacing: -0.02em; color: var(--ink);
+}
+.route__card p { color: var(--ink-dim); font-size: 0.87rem; line-height: 1.55; flex: 1; }
+.route__link {
+  display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+  padding: 10px 18px; border-radius: 999px; margin-top: 4px;
+  font-size: 0.85rem; font-weight: 700; color: var(--ink);
+  border: 1.5px solid var(--card-line); background: rgba(255, 255, 255, 0.04);
+  transition: border-color 0.3s ease, color 0.3s ease, gap 0.3s ease, background 0.3s ease;
+}
+.route__link:hover { border-color: var(--aqua); color: var(--aqua-soft); gap: 12px; background: rgba(139, 130, 245, 0.1); }
+.route__link .icon { width: 15px; height: 15px; }
+
+@media (max-width: 860px) {
+  .route__steps { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route__step, .route__card, .route__icon, .route__card::after { transition: none; }
+  .route__step:hover, .route__card:hover { transform: none; }
+  .route__card:hover .route__icon { transform: none; }
+}
+
+/* Карта переехала из колонки контактов в блок «Как добраться» —
+   там она во всю ширину и на ней видно улицу, а не один дом. */
+.route .contacts__map {
+  aspect-ratio: 16 / 6.2; margin-bottom: 18px;
+  border-style: solid; border-color: var(--card-line);
+  border-radius: 30px 30px 30px 10px;
+}
+.route .contacts__map iframe { border-radius: inherit; }
+@media (max-width: 860px) {
+  .route .contacts__map { aspect-ratio: 4 / 3.2; }
 }
