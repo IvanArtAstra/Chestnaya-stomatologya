@@ -1839,3 +1839,45 @@ h1, h2, h3, .seq-title { overflow-wrap: break-word; }
   .svc-card--wide p { flex: 1 1 260px; margin: 0; }
   .svc-card--wide .btn { flex: none; align-self: center; white-space: nowrap; }
 }
+
+/* ═══════════════ ФОТОПОЛОСА РАЗДЕЛА ═══════════════
+   Широкий кадр с подписью поверх: знакомит с разделом до того,
+   как человек начнёт читать карточки. */
+.band {
+  position: relative; overflow: hidden; margin: 0 auto clamp(22px, 3vw, 34px);
+  max-width: 1180px; border-radius: 30px 30px 30px 10px;
+  border: 1px solid var(--card-line); isolation: isolate;
+}
+.band img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  /* 16:8 вместо 16:7 — при более узкой полосе подпись наезжала на лица */
+  aspect-ratio: 16 / 8; object-position: 50% 40%;
+  transition: transform 1.1s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.band--tall img { aspect-ratio: 16 / 7; }
+.band:hover img { transform: scale(1.035); }
+/* Затемнение снизу, чтобы подпись читалась на любом кадре */
+.band::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(12, 9, 42, 0.82) 0%, rgba(12, 9, 42, 0.42) 26%, transparent 58%);
+}
+.band__cap {
+  position: absolute; z-index: 2; inset-inline-start: clamp(20px, 3vw, 38px);
+  inset-block-end: clamp(18px, 2.6vw, 30px); inset-inline-end: clamp(20px, 3vw, 38px);
+  display: flex; flex-direction: column; gap: 6px; color: #fff;
+}
+.band__cap b {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.02rem, 2.1vw, 1.5rem); line-height: 1.22; letter-spacing: -0.022em;
+}
+.band__cap span {
+  color: rgba(255, 255, 255, 0.82); font-size: clamp(0.84rem, 1.4vw, 0.98rem);
+  line-height: 1.5; max-width: 56ch;
+}
+@media (max-width: 640px) {
+  .band img, .band--tall img { aspect-ratio: 4 / 3; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .band img { transition: none; }
+  .band:hover img { transform: none; }
+}

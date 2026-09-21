@@ -47,6 +47,16 @@ const I18N = {
   /* ── Как добраться ── */
   "about.f5":       { ru: "принимаем в Перми", en: "seeing patients in Perm", ar: "نستقبل المرضى في بيرم" },
   "about.f5.u":     { ru: "года", en: "years", ar: "سنوات" },
+  /* ── Фотополосы разделов ── */
+  "band.priem.h":   { ru: "Осмотр — с объяснением каждого шага", en: "An examination with every step explained", ar: "فحص مع شرح كل خطوة" },
+  "band.priem.p":   { ru: "Врач показывает, что видит, и называет цену до начала лечения.", en: "The dentist shows what he sees and names the price before any treatment begins.", ar: "يُظهر الطبيب ما يراه ويحدد السعر قبل بدء العلاج." },
+  "band.plan.h":    { ru: "Смету фиксируем в договоре", en: "The estimate is fixed in the contract", ar: "تُثبَّت التكلفة في العقد" },
+  "band.plan.p":    { ru: "Цена не вырастет в кресле: план и стоимость обсуждаем до начала работы.", en: "The price will not grow in the chair — plan and cost are agreed beforehand.", ar: "لن يرتفع السعر على الكرسي: نتفق على الخطة والتكلفة مسبقاً." },
+  "band.gig.h":     { ru: "Ультразвук, Air-Flow и полировка", en: "Ultrasound, Air-Flow and polishing", ar: "موجات فوق صوتية وAir-Flow وتلميع" },
+  "band.gig.p":     { ru: "Снимаем налёт и камень за один визит, в защитных очках и под контролем зеркала.", en: "Plaque and calculus removed in a single visit, with protective goggles on.", ar: "نزيل البلاك والجير في زيارة واحدة، مع نظارات واقية." },
+  "calc.tag":       { ru: "Смета", en: "Estimate", ar: "التقدير" },
+  "calc.title":     { ru: "Сколько будет стоить лечение", en: "What your treatment will cost", ar: "كم سيكلف العلاج" },
+  "calc.sub":       { ru: "Отметьте зубы, которые беспокоят, — покажем ориентировочную сумму по нашему прайсу.", en: "Mark the teeth that bother you and we will show an approximate total from our price list.", ar: "حدّد الأسنان التي تزعجك وسنعرض مبلغاً تقريبياً وفق قائمة أسعارنا." },
   "route.tag":      { ru: "Дорога", en: "Getting here", ar: "الوصول إلينا" },
   "route.title":    { ru: "Как до нас добраться", en: "How to reach us", ar: "كيف تصل إلينا" },
   "route.sub":      { ru: "Мы на первом этаже дома 68 по улице Танкистов — микрорайон Декабристов, Индустриальный район.", en: "We are on the ground floor of 68 Tankistov Street — Dekabristov neighbourhood, Industrialny district of Perm.", ar: "نحن في الطابق الأرضي من مبنى 68 بشارع تانكيستوف — حي ديكابريستوف في بيرم." },
