@@ -45,8 +45,14 @@
         dots[k].classList.toggle("is-on", k === cur);
         dots[k].setAttribute("aria-selected", String(k === cur));
       }
-      prev.disabled = cur === 0;
-      next.disabled = cur === slides.length - 1;
+      edges();
+    }
+    /* в ряду видно несколько фото — «дальше» гаснет, когда лента
+       докручена до конца, а не на последнем слайде */
+    function edges() {
+      var max = track.scrollWidth - track.clientWidth;
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= max - 2;
     }
 
     var prev = document.getElementById("tourPrev");
@@ -62,9 +68,9 @@
     var raf = 0;
     track.addEventListener("scroll", function () {
       if (raf) return;
-      raf = requestAnimationFrame(function () { raf = 0; sync(); });
+      raf = requestAnimationFrame(function () { raf = 0; sync(); edges(); });
     }, { passive: true });
-    window.addEventListener("resize", sync);
+    window.addEventListener("resize", function () { sync(); edges(); });
 
     cur = -1; sync();
   } catch (e) { /* без скрипта лента всё равно листается пальцем */ }

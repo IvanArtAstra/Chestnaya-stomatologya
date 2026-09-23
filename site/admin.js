@@ -93,6 +93,7 @@
     prices:   { title: "Цены на сайте", sub: "Изменения публикуются на сайте мгновенно" },
     doctors:  { title: "Врачи", sub: "Добавление и удаление врачей сразу обновляет бегущую ленту на сайте" },
     blog:     { title: "Блог и новости", sub: "Каждый врач ведёт свою колонку — посты появляются в ленте на сайте" },
+    services: { title: "Услуги", sub: "Раздел «Услуги и цены» на главной: заголовок, фото, карточки и цены" },
     promos:   { title: "Акции", sub: "Раздел «Честные скидки» на главной: карточки, сроки, цены и фото" },
     banners:  { title: "Баннеры", sub: "Боковые рекламные блоки на широких экранах" },
     accounts: { title: "Аккаунты", sub: "Доступы сотрудников: администратор — всё, врач — своя страница и блог" }
@@ -101,6 +102,8 @@
     tab.addEventListener("click", () => {
       $$(".adm__tab").forEach((t) => t.classList.toggle("is-active", t === tab));
       $$(".adm__panel").forEach((p) => p.classList.toggle("is-active", p.id === "panel-" + tab.dataset.tab));
+      /* на телефоне меню — лента: выбранный пункт подтягиваем в видимую часть */
+      tab.scrollIntoView({ block: "nearest", inline: "nearest" });
       const meta = PAGE_META[tab.dataset.tab];
       if (meta) { $("#pageTitle").textContent = meta.title; $("#pageSub").textContent = meta.sub; }
     })
@@ -113,6 +116,8 @@
     $("#navPostCount").textContent = db.news.length;
     const dc = $("#navDocCount");
     if (dc) dc.textContent = db.doctors.length;
+    const sc = $("#navSvcCount");
+    if (sc && db.services) sc.textContent = db.services.items.filter((x) => x.on !== false).length;
     const pc = $("#navPromoCount");
     if (pc && db.promos) pc.textContent = db.promos.items.filter((p) => ChestomDB.promoActive(p)).length;
     const ac = $("#navAccCount");
@@ -259,6 +264,236 @@
       renderAccounts();
       updateStats();
       flash("#doctorsSaved");
+    });
+  }
+
+  /* ── услуги: редактор раздела «Услуги и цены» ──
+     Устроен как редактор акций: текст забираем из формы перед любой
+     перестройкой, фото сохраняем сразу. Цена карточки пишется в общий
+     прайс prices[priceKey]. Если текст поменяли, снимаем ссылку на
+     словарь переводов (i18n): иначе английская и арабская версии
+     показывали бы старый перевод. */
+  const SVC_ICONS = [
+    ["i-exam", "Осмотр"], ["i-tooth", "Зуб"], ["i-shine", "Гигиена"], ["i-restore", "Реставрация"],
+    ["i-crown", "Протезирование"], ["i-extract", "Удаление"], ["i-calc", "Калькулятор"],
+    ["i-promo-crown", "Коронка"], ["i-promo-percent", "Скидка %"], ["", "Без иконки"]
+  ];
+  const SVC_PAGES = ["konsultatsiya.html", "lechenie-kariesa.html", "profgigiena.html", "restavratsiya.html", "protezirovanie.html", "udalenie-zubov.html"];
+  const servicesForm = $("#servicesForm");
+  const svcPrice = (it) => (it.priceKey && db.prices[it.priceKey]) || it.price || "";
+  const trField = (o, lng, f) => esc((o[lng] && o[lng][f]) || "");
+  const renderSvcEditor = () => {
+    if (!servicesForm) return;
+    const sv = db.services;
+    const h = sv.head;
+    $$("[data-sh]", servicesForm).forEach((el) => {
+      const k = el.dataset.sh;
+      el.value = k.includes(".") ? ((h[k.split(".")[0]] || {})[k.split(".")[1]] || "") : (h[k] || "");
+    });
+    const b = sv.band;
+    $("#svcBandEditor").innerHTML = `
+      <div class="adm-doc__head"><b>Большое фото раздела</b></div>
+      <div class="adm-doc__photo">
+        <span class="adm-img__pic adm-svc__band">${b.image ? `<img src="${esc(b.image)}" alt="">` : `<span>нет фото</span>`}</span>
+        <div class="adm-doc__photo-ctl">
+          <span class="adm-post__meta">Широкий кадр над карточками. Обрежем до 2:1 и уменьшим до 1600×800.</span>
+          <div class="adm-doc__photo-btns">
+            <label class="btn btn--ghost btn--sm adm-doc__upload">${b.image ? "Заменить фото" : "Загрузить фото"}
+              <input type="file" accept="image/jpeg,image/png,image/webp" data-svc-band-img hidden>
+            </label>
+            ${b.image ? `<button type="button" class="btn btn--ghost btn--sm adm-doc__nophoto" data-svc-band-del>Удалить фото</button>` : ""}
+          </div>
+        </div>
+      </div>
+      <label class="adm-promo__check"><input type="checkbox" data-sb="on" ${b.on ? "checked" : ""}> Показывать фото на сайте</label>
+      <label>Описание фото для незрячих (alt)<input data-sb="alt" value="${esc(b.alt || "")}"></label>
+      <label>Подпись — заголовок<input data-sb="title" value="${esc(b.title || "")}"></label>
+      <label>Подпись — текст<input data-sb="text" value="${esc(b.text || "")}"></label>
+      <details class="adm-promo__tr">
+        <summary>Переводы подписи (необязательно)</summary>
+        <div class="adm-promo__tr-grid">
+          <label>Заголовок · EN<input data-sb="en.title" value="${trField(b, "en", "title")}"></label>
+          <label>Текст · EN<input data-sb="en.text" value="${trField(b, "en", "text")}"></label>
+          <label>Заголовок · AR<input data-sb="ar.title" dir="rtl" value="${trField(b, "ar", "title")}"></label>
+          <label>Текст · AR<input data-sb="ar.text" dir="rtl" value="${trField(b, "ar", "text")}"></label>
+        </div>
+      </details>`;
+    const items = sv.items;
+    $("#svcList").innerHTML = items.length ? items.map((it, i) => `
+      <fieldset class="adm-doc adm-promo adm-svc" data-svc="${esc(it.id)}">
+        <div class="adm-doc__head">
+          <span class="adm-promo__num">${i + 1}</span>
+          <span class="adm-promo__st adm-promo__st--${it.on !== false ? "on" : "off"}">${it.on !== false ? "На сайте" : "Скрыта"}</span>
+          <span class="adm-promo__move">
+            <button type="button" class="adm-post__del" data-svc-move="-1" title="Выше" aria-label="Переместить выше" ${i === 0 ? "disabled" : ""}>↑</button>
+            <button type="button" class="adm-post__del" data-svc-move="1" title="Ниже" aria-label="Переместить ниже" ${i === items.length - 1 ? "disabled" : ""}>↓</button>
+          </span>
+          <button type="button" class="adm-post__del adm-doc__del" data-svc-del title="Удалить услугу" aria-label="Удалить услугу"><svg class="icon"><use href="#i-trash"/></svg></button>
+        </div>
+        <label class="adm-promo__check"><input type="checkbox" data-sf="on" ${it.on !== false ? "checked" : ""}> Показывать на сайте</label>
+        <label>Иконка<select data-sf="icon">${SVC_ICONS.map(([v, l]) => `<option value="${v}" ${v === (it.icon || "") ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+        <label>Название<input data-sf="title" value="${esc(it.title || "")}" required></label>
+        <label>Цена<input data-sf="price" value="${esc(svcPrice(it))}" placeholder="3 500 ₽ или 4 000–4 500 ₽"></label>
+        <label>Описание<textarea data-sf="text" rows="2">${esc(it.text || "")}</textarea></label>
+        <label class="adm-promo__check"><input type="checkbox" data-sf="from" ${it.from ? "checked" : ""}> Писать «от» перед ценой</label>
+        <label>Подпись в форме записи<input data-sf="service" value="${esc(it.service || "")}" placeholder="Как услуга подписана в заявке"></label>
+        <label>Страница «Подробнее»<input data-sf="page" list="svcPages" value="${esc(it.page || "")}" placeholder="пусто — без кнопки"></label>
+        <div class="adm-doc__photo">
+          <span class="adm-img__pic">${it.poster ? `<img src="${esc(it.poster)}" alt="">` : `<span>нет картинки</span>`}</span>
+          <div class="adm-doc__photo-ctl">
+            <b>Картинка процедуры</b>
+            <span class="adm-post__meta">Обложка ролика в карусели «плей». Обрежем до 16:9, 960×540.</span>
+            <div class="adm-doc__photo-btns">
+              <label class="btn btn--ghost btn--sm adm-doc__upload">${it.poster ? "Заменить" : "Загрузить"}
+                <input type="file" accept="image/jpeg,image/png,image/webp" data-svc-img hidden>
+              </label>
+              ${it.poster ? `<button type="button" class="btn btn--ghost btn--sm adm-doc__nophoto" data-svc-img-del>Удалить</button>` : ""}
+            </div>
+          </div>
+        </div>
+        <label>Ролик (путь к mp4)<input data-sf="video" value="${esc(it.video || "")}" placeholder="svc/anim/название.mp4 — пусто: без кнопки «плей»"></label>
+        <details class="adm-promo__tr"${(it.en && (it.en.title || it.en.text)) || (it.ar && (it.ar.title || it.ar.text)) ? " open" : ""}>
+          <summary>Переводы (необязательно)</summary>
+          <div class="adm-promo__tr-grid">
+            <label>Название · EN<input data-sf="en.title" value="${trField(it, "en", "title")}"></label>
+            <label>Описание · EN<input data-sf="en.text" value="${trField(it, "en", "text")}"></label>
+            <label>Название · AR<input data-sf="ar.title" dir="rtl" value="${trField(it, "ar", "title")}"></label>
+            <label>Описание · AR<input data-sf="ar.text" dir="rtl" value="${trField(it, "ar", "text")}"></label>
+          </div>
+          <span class="adm-post__meta">${it.i18n ? "Пока текст не меняли, переводы берутся из словаря сайта." : "Без перевода в этих версиях показывается русский текст."}</span>
+        </details>
+      </fieldset>`).join("") : `<p class="adm-post__meta">Услуг пока нет.</p>`;
+    updateStats();
+  };
+  /* поля вида "en.title" → obj.en.title; пустой перевод убираем */
+  const setField = (obj, key, val) => {
+    if (key.includes(".")) {
+      const [lng, f] = key.split(".");
+      obj[lng] = obj[lng] || {};
+      obj[lng][f] = val;
+      if (!Object.values(obj[lng]).some(Boolean)) delete obj[lng];
+    } else obj[key] = val;
+  };
+  const syncServices = () => {
+    const sv = db.services;
+    const h = sv.head, before = [h.tag, h.title, h.sub].join("|");
+    $$("[data-sh]", servicesForm).forEach((el) => setField(h, el.dataset.sh, el.value.replace(/\r/g, "").trim()));
+    if ([h.tag, h.title, h.sub].join("|") !== before) h.i18n = false;
+    const b = sv.band, bBefore = b.title + "|" + b.text;
+    $$("[data-sb]", servicesForm).forEach((el) => setField(b, el.dataset.sb, el.type === "checkbox" ? el.checked : el.value.trim()));
+    if (b.title + "|" + b.text !== bBefore) b.i18n = null;
+    $$(".adm-svc", servicesForm).forEach((fs) => {
+      const it = sv.items.find((x) => x.id === fs.dataset.svc);
+      if (!it) return;
+      const tBefore = it.title + "|" + it.text;
+      $$("[data-sf]", fs).forEach((el) => {
+        const k = el.dataset.sf;
+        const val = el.type === "checkbox" ? el.checked : el.value.trim();
+        if (k === "price") {
+          if (!it.priceKey) it.priceKey = "svc_" + it.id;
+          db.prices[it.priceKey] = val;
+        } else setField(it, k, val);
+      });
+      if (it.title + "|" + it.text !== tBefore) it.i18n = null;
+    });
+  };
+  if (servicesForm) {
+    servicesForm.insertAdjacentHTML("beforeend", `<datalist id="svcPages">${SVC_PAGES.map((p) => `<option value="${p}">`).join("")}</datalist>`);
+    renderSvcEditor();
+    servicesForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      syncServices();
+      if (db.services.items.some((x) => !x.title)) { alert("У каждой услуги должно быть название."); return; }
+      ChestomDB.save(db);
+      renderSvcEditor();
+      fillPrices();
+      flash("#servicesSaved");
+    });
+    $("#svcAdd").addEventListener("click", () => {
+      syncServices();
+      const id = "s" + Date.now().toString(36);
+      db.services.items.push({ id, on: true, icon: "i-tooth", priceKey: "svc_" + id, from: true, title: "Новая услуга", text: "", service: "", page: "", video: "", poster: "" });
+      db.prices["svc_" + id] = "";
+      ChestomDB.save(db);
+      renderSvcEditor();
+      const fs = $(`.adm-svc[data-svc="${id}"]`);
+      if (fs) { fs.scrollIntoView({ behavior: "smooth", block: "center" }); $('[data-sf="title"]', fs).select(); }
+    });
+    $("#svcList").addEventListener("click", (e) => {
+      const fs = e.target.closest(".adm-svc");
+      if (!fs) return;
+      const items = db.services.items;
+      const idx = items.findIndex((x) => x.id === fs.dataset.svc);
+      if (idx < 0) return;
+      const mv = e.target.closest("[data-svc-move]");
+      if (mv) {
+        syncServices();
+        const to = idx + +mv.dataset.svcMove;
+        if (to < 0 || to >= items.length) return;
+        [items[idx], items[to]] = [items[to], items[idx]];
+        ChestomDB.save(db); renderSvcEditor();
+        return;
+      }
+      if (e.target.closest("[data-svc-del]")) {
+        if (!confirm(`Удалить услугу «${items[idx].title}» с главной?\nСтраница услуги и цена в прайсе останутся.`)) return;
+        syncServices();
+        items.splice(idx, 1);
+        ChestomDB.save(db); renderSvcEditor();
+        return;
+      }
+      if (e.target.closest("[data-svc-img-del]")) {
+        if (!confirm("Удалить картинку процедуры?")) return;
+        syncServices();
+        const prev = items[idx].poster;
+        items[idx].poster = "";
+        if (saveOrRollback(() => { items[idx].poster = prev; })) renderSvcEditor();
+      }
+    });
+    servicesForm.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-svc-band-del]")) return;
+      if (!confirm("Удалить большое фото раздела? На сайте полоса с фото пропадёт.")) return;
+      syncServices();
+      const b = db.services.band, prev = [b.image, b.imageSm];
+      b.image = ""; b.imageSm = "";
+      if (saveOrRollback(() => { [b.image, b.imageSm] = prev; })) renderSvcEditor();
+    });
+    servicesForm.addEventListener("change", async (e) => {
+      const bandInp = e.target.closest("[data-svc-band-img]");
+      const cardInp = e.target.closest("[data-svc-img]");
+      const inp = bandInp || cardInp;
+      if (!inp || !inp.files || !inp.files[0]) return;
+      const file = inp.files[0];
+      const fs = inp.closest(".adm-svc");
+      inp.value = "";
+      const bad = imageError(file);
+      if (bad) { alert(bad); return; }
+      let data;
+      try {
+        data = bandInp
+          ? await imageToJpeg(file, { w: 1600, h: 800, biasY: 0.4, quality: 0.82 })
+          : await imageToJpeg(file, { w: 960, h: 540, quality: 0.82 });
+      } catch (err) { alert("Не получилось прочитать это изображение. Попробуйте другой файл."); return; }
+      syncServices();
+      if (bandInp) {
+        const b = db.services.band, prev = [b.image, b.imageSm, b.on];
+        b.image = data; b.imageSm = ""; b.on = true;
+        if (saveOrRollback(() => { [b.image, b.imageSm, b.on] = prev; })) renderSvcEditor();
+      } else {
+        const it = db.services.items.find((x) => x.id === fs.dataset.svc);
+        if (!it) return;
+        const prev = it.poster;
+        it.poster = data;
+        if (saveOrRollback(() => { it.poster = prev; })) renderSvcEditor();
+      }
+    });
+    /* статус меняется сразу, пока правят галочку */
+    $("#svcList").addEventListener("input", (e) => {
+      const fs = e.target.closest(".adm-svc");
+      if (!fs) return;
+      const on = $('[data-sf="on"]', fs).checked;
+      const st = $(".adm-promo__st", fs);
+      st.className = `adm-promo__st adm-promo__st--${on ? "on" : "off"}`;
+      st.textContent = on ? "На сайте" : "Скрыта";
     });
   }
 
@@ -598,6 +833,7 @@
         if (el.name && el.value.trim()) db.prices[el.name] = el.value.trim();
       });
       ChestomDB.save(db);
+      renderSvcEditor();                 /* цены в карточках услуг — те же */
       flash("#pricesSaved");
     });
 

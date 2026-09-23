@@ -7,9 +7,12 @@
     linear-gradient(180deg, var(--deep-0) 0%, var(--deep-1) 40%, var(--deep-2) 100%);
 }
 
+/* minmax(0, 1fr), а не 1fr: иначе колонка растягивается под самый
+   широкий элемент внутри (на телефоне — строку меню) и всё содержимое
+   уезжает за правый край экрана */
 .adm-shell {
-  display: grid; grid-template-columns: 280px 1fr;
-  min-height: 100vh; max-width: 1440px; margin: 0 auto;
+  display: grid; grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh; min-height: 100dvh; max-width: 1440px; margin: 0 auto;
 }
 
 /* ═══ САЙДБАР ═══ */
@@ -18,7 +21,8 @@
   padding: 26px 20px;
   border-right: 1px solid var(--card-line);
   background: rgba(2, 18, 28, 0.5); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
-  position: sticky; top: 0; height: 100vh;
+  position: sticky; top: 0; height: 100vh; height: 100dvh;
+  min-width: 0; overflow-y: auto; overscroll-behavior: contain;
 }
 .adm-side__logo { display: flex; align-items: center; gap: 12px; padding: 4px 6px; }
 .adm-side__logo-ico {
@@ -27,7 +31,9 @@
   background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.2), rgba(var(--acc-rgb), 0.15));
   border: 1px solid var(--card-line); color: var(--aqua-soft);
 }
-.adm-side__logo-text { display: flex; flex-direction: column; line-height: 1.25; font-size: 0.98rem; color: var(--ink); font-weight: 600; }
+.adm-side__logo { min-width: 0; }
+.adm-side__logo-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; font-size: 0.98rem; color: var(--ink); font-weight: 600; }
+.adm-side__logo-name { white-space: nowrap; }
 .adm-side__logo-text b { color: var(--ink); }
 .adm-side__logo-text small { color: var(--ink-dim); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 3px; }
 
@@ -85,7 +91,7 @@
 .adm-head__who small { color: var(--ink-dim); font-size: 0.75rem; }
 
 /* ═══ СТАТ-КАРТОЧКИ ═══ */
-.adm-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 26px; }
+.adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 14px; margin-bottom: 26px; }
 .adm-stat {
   display: flex; flex-direction: column; gap: 4px; position: relative;
   padding: 20px 22px; border-radius: 18px;
@@ -133,8 +139,8 @@
 .adm__saved { color: var(--aqua-soft); font-weight: 700; font-size: 0.9rem; animation: popIn 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.2); }
 
 /* блог */
-.adm__blog { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; align-items: start; }
-.adm__post-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.adm__blog { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.adm__post-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .adm__post-form textarea { resize: vertical; min-height: 120px; }
 
 .adm__hint { color: var(--ink-dim); font-size: 0.8rem; line-height: 1.7; }
@@ -167,29 +173,55 @@
 
 /* ═══ АДАПТИВ ═══ */
 @media (max-width: 1080px) {
-  .adm__blog { grid-template-columns: 1fr; }
+  .adm__blog { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 860px) {
-  .adm-shell { grid-template-columns: 1fr; }
+  .adm-shell { grid-template-columns: minmax(0, 1fr); }
+  /* сайдбар становится шапкой: логотип сверху, под ним меню-лента,
+     которая листается пальцем внутри себя */
   .adm-side {
-    position: static; height: auto; flex-direction: row; align-items: center;
-    gap: 12px; padding: 14px 16px; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 30; height: auto; overflow: visible;
+    flex-direction: column; align-items: stretch;
+    gap: 10px; padding: 12px 14px 10px;
     border-right: 0; border-bottom: 1px solid var(--card-line);
   }
+  .adm-side__logo-ico { width: 38px; height: 38px; border-radius: 12px; }
   .adm-side__logo-text small { display: none; }
-  .adm-side__nav { flex-direction: row; flex: 1; min-width: 0; overflow-x: auto; }
-  .adm-side__item { padding: 10px 14px; white-space: nowrap; }
+  .adm-side__nav {
+    flex-direction: row; flex: none; min-width: 0; gap: 6px;
+    overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    margin: 0 -14px; padding: 2px 14px 4px; scroll-padding-inline: 14px;
+  }
+  .adm-side__nav::-webkit-scrollbar { display: none; }
+  .adm-side__item { flex: none; padding: 9px 14px; white-space: nowrap; font-size: 0.9rem; }
   .adm-side__foot { display: none; }
-  .adm-stats { grid-template-columns: 1fr; }
-  .adm__post-row { grid-template-columns: 1fr; }
-  .adm-main { padding: 22px 16px 50px; }
+  .adm__post-row { grid-template-columns: minmax(0, 1fr); }
+  .adm-main { padding: 20px 14px 50px; }
+  .adm-head { gap: 12px; margin-bottom: 18px; }
+  .adm-head__right { width: 100%; justify-content: space-between; }
+  /* 16 px — меньше iPhone приближает страницу при нажатии на поле */
+  .adm-card input, .adm-card select, .adm-card textarea { font-size: 16px; }
+  .adm-card { padding: 18px 16px; border-radius: 18px; }
+  .adm__actions .btn { flex: 1 1 auto; }
+}
+@media (max-width: 480px) {
+  /* статистика — компактной строкой из трёх, без значков */
+  .adm-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 18px; }
+  .adm-stat { padding: 12px 12px 14px; border-radius: 14px; }
+  .adm-stat__ico { display: none; }
+  .adm-stat b { font-size: 1.3rem; }
+  .adm-stat span { font-size: 0.72rem; line-height: 1.3; }
+  .adm-doc { padding: 14px; }
+  .adm-doc__head { flex-wrap: wrap; row-gap: 8px; }
+  .adm-doc__photo { flex-direction: column; align-items: flex-start; }
+  .adm-img__pic, .adm-svc__band { width: 100%; max-width: 320px; }
 }
 
 /* редактор врачей */
 .adm-doc {
   border: 1px solid var(--card-line); border-radius: 16px;
   padding: 18px; margin-bottom: 14px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
   background: rgba(2, 18, 28, 0.35);
 }
 .adm-doc__head { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; }
@@ -223,7 +255,7 @@
 @media (max-width: 480px) { .adm-doc__photo { align-items: flex-start; } .adm-doc__pic { width: 76px; } }
 .adm-doc label:has(textarea) { grid-column: 1 / -1; }
 .adm-doc textarea { resize: vertical; }
-@media (max-width: 720px) { .adm-doc { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .adm-doc { grid-template-columns: minmax(0, 1fr); } }
 
 /* шапка: правый блок с темой */
 .adm-head__right { display: flex; align-items: center; gap: 12px; }
@@ -263,8 +295,8 @@
 .adm-head__logout .icon { width: 16px; height: 16px; }
 
 /* баннеры */
-.adm-banners { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 860px) { .adm-banners { grid-template-columns: 1fr; } }
+.adm-banners { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 1200px) { .adm-banners { grid-template-columns: minmax(0, 1fr); } }
 .adm-banner__toggle { flex-direction: row !important; align-items: center; gap: 10px !important; cursor: pointer; }
 .adm-banner__toggle input { width: 20px; height: 20px; accent-color: var(--aqua); padding: 0 !important; }
 .adm-banner__toggle span { font-size: 0.95rem; color: var(--ink); }
@@ -304,6 +336,21 @@
 .adm-promo label:has(textarea) { grid-column: 1 / -1; }
 .adm-promo__tr { grid-column: 1 / -1; border: 1px dashed var(--card-line); border-radius: 12px; padding: 10px 14px; }
 .adm-promo__tr summary { cursor: pointer; font-weight: 700; font-size: 0.88rem; }
-.adm-promo__tr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 6px; }
-@media (max-width: 720px) { .adm-promo__tr-grid { grid-template-columns: 1fr; } }
+.adm-promo__tr-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0 6px; }
+@media (max-width: 720px) { .adm-promo__tr-grid { grid-template-columns: minmax(0, 1fr); } }
 .adm-promo__note { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 10px; }
+
+/* редактор услуг */
+.adm-svc-head label:has(textarea) { grid-column: 1 / -1; }
+.adm-svc__h { font-size: 1.02rem; margin: 18px 0 10px; }
+.adm-svc__band { width: 220px; aspect-ratio: 2 / 1; }
+.adm-svc-band .adm-doc__head b, .adm-svc-head .adm-doc__head b { font-size: 0.95rem; }
+
+/* ничто внутри карточек не распирает страницу: длинные слова, пути
+   и кусочки кода переносятся, поля и картинки не шире карточки */
+.adm-card, .adm-card > *, .adm-doc > * { min-width: 0; }
+.adm-card input, .adm-card select, .adm-card textarea { max-width: 100%; min-width: 0; }
+.adm-card select { width: 100%; text-overflow: ellipsis; }
+.adm-card img { max-width: 100%; }
+.adm-post__top b, .adm-post__text, .adm-card__head p { overflow-wrap: anywhere; }
+@media (max-width: 860px) { .adm__hint code { white-space: normal; overflow-wrap: anywhere; } }

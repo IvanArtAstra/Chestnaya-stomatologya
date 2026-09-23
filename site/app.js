@@ -35,6 +35,7 @@
       if (t && t[code] != null) el.setAttribute("aria-label", t[code]);
     });
     renderNews();
+    renderServices();
     renderPromos();
     renderDoctors();
     renderReviews();
@@ -93,6 +94,66 @@
         <div class="post__body">${MD.toHtml(n.text)}</div>
       </article>`;
     }).join("");
+  }
+
+  /* ══════════ Услуги и цены (вкладка «Услуги» в админке) ══════════
+     Перевод: пока текст не правили в админке — из словаря сайта (ключ
+     i18n), после правки — из en/ar карточки, иначе русский текст.
+     После сборки сообщаем карусели роликов, что карточки новые. */
+  const svcTr = (obj, field, dictKey) => {
+    if (lang === "ru") return obj[field] || "";
+    if (obj[lang] && obj[lang][field]) return obj[lang][field];
+    if (dictKey && I18N[dictKey] && I18N[dictKey][lang]) return I18N[dictKey][lang];
+    return obj[field] || "";
+  };
+  function renderServices() {
+    const sv = db.services;
+    const grid = $("#svcGrid");
+    if (!sv || !grid) return;
+    const t = (k) => (I18N[k] || {})[lang] || (I18N[k] || {}).ru || "";
+    const h = sv.head || {};
+    const tag = $("#svcTag"), title = $("#svcTitle"), sub = $("#svcSub");
+    if (tag) tag.textContent = svcTr(h, "tag", h.i18n ? "svc.tag" : "");
+    if (title) {
+      const raw = lang !== "ru" && !(h[lang] && h[lang].title) && h.i18n
+        ? (I18N["svc.title"] || {})[lang] || ""        /* в словаре уже есть <br> */
+        : esc(svcTr(h, "title", "")).replace(/\n/g, "<br>");
+      title.innerHTML = raw;
+    }
+    if (sub) sub.textContent = svcTr(h, "sub", h.i18n ? "svc.sub" : "");
+
+    const band = $("#svcBand"), b = sv.band || {};
+    if (band) {
+      band.hidden = !(b.on && b.image);
+      if (!band.hidden) {
+        const img = $("img", band);
+        img.src = b.image;
+        if (b.imageSm) img.srcset = `${b.imageSm} 450w, ${b.image} 900w`; else img.removeAttribute("srcset");
+        img.alt = b.alt || "";
+        $(".band__cap b", band).textContent = svcTr(b, "title", b.i18n ? b.i18n + ".h" : "");
+        $(".band__cap span", band).textContent = svcTr(b, "text", b.i18n ? b.i18n + ".p" : "");
+      }
+    }
+
+    $$(".svc-card:not(.svc-card--accent)", grid).forEach((c) => c.remove());
+    const accent = $(".svc-card--accent", grid);
+    const html = sv.items.filter((it) => it.on !== false).map((it) => {
+      const price = (it.priceKey && db.prices[it.priceKey]) || it.price || "";
+      const attrs = [
+        it.video ? `data-video="${esc(it.video)}"` : "",
+        it.poster ? `data-poster="${esc(it.poster)}"` : "",
+        it.vtt ? `data-vtt="${esc(it.vtt)}"` : ""
+      ].join(" ");
+      return `<article class="svc-card reveal is-in" ${attrs}>
+        ${it.icon ? `<span class="svc-card__icon"><svg class="icon icon--xl"><use href="#${esc(it.icon)}"/></svg></span>` : ""}
+        <h3>${esc(svcTr(it, "title", it.i18n ? it.i18n + ".h" : ""))}</h3>
+        <p>${esc(svcTr(it, "text", it.i18n ? it.i18n + ".p" : ""))}</p>
+        ${price ? `<div class="svc-card__price">${it.from ? `<span>${esc(t("svc.from"))}</span>&nbsp;` : ""}<b>${esc(price)}</b></div>` : ""}
+        <div class="svc-card__links"><button class="svc-card__cta" data-open-booking data-service="${esc(it.service || it.title)}"><span>${esc(t("svc.book"))}</span></button>${it.page ? `<a class="svc-card__page" href="${esc(it.page)}">${esc(t("svc.more"))}</a>` : ""}</div>
+      </article>`;
+    }).join("");
+    if (accent) accent.insertAdjacentHTML("beforebegin", html); else grid.insertAdjacentHTML("beforeend", html);
+    document.dispatchEvent(new CustomEvent("chestom:services"));
   }
 
   /* ══════════ Акции (вкладка «Акции» в админке) ══════════
@@ -408,6 +469,7 @@
           if (v) el.textContent = v;
         });
         renderNews();
+        renderServices();
         renderPromos();
         renderDoctors();
         renderReviews();

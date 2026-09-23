@@ -17,9 +17,9 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923y">
-<link rel="stylesheet" href="admin.css?v=20260923y">
-<link rel="stylesheet" href="glass.css?v=20260923zb">
+<link rel="stylesheet" href="styles.css?v=20260923ze">
+<link rel="stylesheet" href="admin.css?v=20260923zj">
+<link rel="stylesheet" href="glass.css?v=20260923zd">
 </head>
 <body class="adm-body">
 
@@ -101,7 +101,7 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
   <aside class="adm-side">
     <a class="adm-side__logo" href="index.html">
       <span class="adm-side__logo-ico"><img class="nav__logo-img" src="logo.png" alt="Честная стоматология"></span>
-      <span class="adm-side__logo-text">Ч<em class="logo-e">е</em>стная <b>стоматология</b><small>админ-панель</small></span>
+      <span class="adm-side__logo-text"><span class="adm-side__logo-name">Ч<em class="logo-e">е</em>стная <b>стоматология</b></span><small>админ-панель</small></span>
     </a>
 
     <nav class="adm-side__nav">
@@ -115,6 +115,10 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
       <button class="adm-side__item adm__tab" data-tab="blog">
         <svg class="icon"><use href="#i-pen"/></svg><span>Блог и новости</span>
         <em class="adm-side__badge" id="navPostCount"></em>
+      </button>
+      <button class="adm-side__item adm__tab" data-tab="services" data-admin-only>
+        <svg class="icon"><use href="#i-tooth"/></svg><span>Услуги</span>
+        <em class="adm-side__badge" id="navSvcCount"></em>
       </button>
       <button class="adm-side__item adm__tab" data-tab="promos" data-admin-only>
         <svg class="icon"><use href="#i-promo-percent"/></svg><span>Акции</span>
@@ -222,6 +226,46 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
     </section>
 
     <!-- ═══ БАННЕРЫ ═══ -->
+    <!-- ═══ УСЛУГИ И ЦЕНЫ ═══ -->
+    <section class="adm__panel" id="panel-services" data-admin-only>
+      <form class="adm-card" id="servicesForm">
+        <div class="adm-card__head">
+          <h2>Раздел «Услуги и цены»</h2>
+          <p>Заголовок, большое фото раздела и карточки услуг на главной. Цены здесь и на вкладке «Цены» — одни и те же: поменяете в одном месте, обновятся калькулятор и страницы услуг.</p>
+        </div>
+
+        <fieldset class="adm-doc adm-svc-head">
+          <div class="adm-doc__head"><b>Заголовок раздела</b></div>
+          <label>Метка над заголовком<input data-sh="tag" placeholder="Услуги и цены"></label>
+          <label>Подзаголовок<input data-sh="sub" placeholder="Реальные цены клиники…"></label>
+          <label>Заголовок — перенос строки клавишей Enter<textarea data-sh="title" rows="2"></textarea></label>
+          <details class="adm-promo__tr">
+            <summary>Переводы заголовка (необязательно)</summary>
+            <div class="adm-promo__tr-grid">
+              <label>Заголовок · EN<input data-sh="en.title"></label>
+              <label>Подзаголовок · EN<input data-sh="en.sub"></label>
+              <label>Заголовок · AR<input data-sh="ar.title" dir="rtl"></label>
+              <label>Подзаголовок · AR<input data-sh="ar.sub" dir="rtl"></label>
+            </div>
+            <span class="adm-post__meta">Пока заголовок не меняли, переводы берутся из словаря сайта.</span>
+          </details>
+        </fieldset>
+
+        <fieldset class="adm-doc adm-svc-band" id="svcBandEditor"><!-- рендерится из admin.js --></fieldset>
+
+        <h3 class="adm-svc__h">Карточки услуг</h3>
+        <div id="svcList"><!-- рендерится из admin.js --></div>
+        <div class="adm__actions">
+          <button type="submit" class="btn btn--primary">Сохранить раздел</button>
+          <button type="button" class="btn btn--ghost" id="svcAdd">+ Добавить услугу</button>
+          <span class="adm__saved" id="servicesSaved" hidden>✓ Сохранено — обновите вкладку с сайтом</span>
+        </div>
+        <p class="adm__hint">Фото сохраняются сразу после загрузки, текст — кнопкой «Сохранить раздел».
+          Ролики процедур (mp4) слишком тяжёлые для хранилища браузера — их кладут файлом в папку <code>site/svc/anim/</code>, а здесь указывают путь.
+          Для всех посетителей правки публикует «⬇ Скачать db.json» на вкладке «Цены».</p>
+      </form>
+    </section>
+
     <!-- ═══ АКЦИИ ═══ -->
     <section class="adm__panel" id="panel-promos" data-admin-only>
       <form class="adm-card" id="promosForm">
@@ -357,9 +401,9 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
   </div>
 </div>
 
-<script src="db.js?v=20260923y"></script>
+<script src="db.js?v=20260923zf"></script>
 <script src="auth.js?v=20260923k"></script>
 <script src="md.js?v=20260923k"></script>
-<script src="admin.js?v=20260923y"></script>
+<script src="admin.js?v=20260923zj"></script>
 </body>
 </html>

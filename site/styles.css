@@ -1836,18 +1836,25 @@ h1, h2, h3, .seq-title { overflow-wrap: break-word; }
 
 /* ═══════════════ ПРОГУЛКА ПО КЛИНИКЕ ═══════════════ */
 .tour__box { position: relative; max-width: 1120px; margin: 0 auto; }
+/* Фото вертикальные (3:4): на компьютере три в ряд, на планшете два,
+   на телефоне одно с краем следующего — видно, что лента листается. */
 .tour__track {
-  display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+  --tour-gap: 18px; --tour-per: 3;
+  display: flex; gap: var(--tour-gap); overflow-x: auto; scroll-snap-type: x mandatory;
   scrollbar-width: none; -ms-overflow-style: none; outline: none;
-  border-radius: 30px 30px 30px 10px;
+  padding: 6px 2px 14px;
 }
+@media (max-width: 1000px) { .tour__track { --tour-per: 2; } }
 .tour__track::-webkit-scrollbar { display: none; }
 .tour__track:focus-visible { outline: 2px solid var(--aqua); outline-offset: 4px; }
 .tour__slide {
-  position: relative; flex: 0 0 100%; scroll-snap-align: start;
-  margin: 0; border-radius: inherit; overflow: hidden; isolation: isolate;
+  position: relative; scroll-snap-align: start;
+  flex: 0 0 calc((100% - var(--tour-gap) * (var(--tour-per) - 1)) / var(--tour-per));
+  margin: 0; border-radius: 24px; overflow: hidden; isolation: isolate;
+  box-shadow: 0 18px 40px -22px rgba(var(--shade-rgb), 0.45);
 }
-.tour__slide img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; display: block; }
+@media (max-width: 620px) { .tour__slide { flex-basis: 84%; } }
+.tour__slide img { width: 100%; height: auto; object-fit: cover; aspect-ratio: 3 / 4; display: block; }
 .tour__slide figcaption {
   position: absolute; z-index: 2; inset-inline-start: clamp(18px, 3vw, 32px);
   inset-block-end: clamp(16px, 2.6vw, 26px);
