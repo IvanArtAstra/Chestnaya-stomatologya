@@ -7,6 +7,51 @@
 
   let db = ChestomDB.load();
 
+  /* ── картинки: файл → сжатый JPEG (data-URL) ──
+     Всё хранится в localStorage (около 5 МБ на сайт), поэтому режем
+     и ужимаем прямо в браузере.
+     fit: "cover" — ровно w×h с обрезкой (biasY: 0 — верх, 0.5 — центр),
+          "max"   — вписать в w×h, пропорции сохранить. */
+  const imageError = (file) => {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return "Нужна картинка в формате JPG, PNG или WebP.";
+    if (file.size > 15 * 1024 * 1024) return "Файл больше 15 МБ — выберите изображение поменьше.";
+    return "";
+  };
+  const imageToJpeg = (file, { w, h, fit = "cover", biasY = 0.5, quality = 0.84 }) => new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      let sw = img.naturalWidth, sh = img.naturalHeight, sx = 0, sy = 0, cw = w, ch = h;
+      if (fit === "cover") {
+        const k = w / h;
+        if (sw / sh > k) { const nw = sh * k; sx = (sw - nw) / 2; sw = nw; }
+        else { const nh = sw / k; sy = Math.max(0, (sh - nh) * biasY); sh = nh; }
+      } else {
+        const s = Math.min(1, w / sw, h / sh);
+        cw = Math.round(sw * s); ch = Math.round(sh * s);
+      }
+      const c = document.createElement("canvas");
+      c.width = cw; c.height = ch;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, cw, ch); /* прозрачный PNG — на белом */
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL("image/jpeg", quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+    img.src = url;
+  });
+  /* сохранить базу; если не влезло — откатить изменение и сказать об этом */
+  const saveOrRollback = (rollback) => {
+    try { ChestomDB.save(db); return true; }
+    catch (err) {
+      rollback();
+      alert("Не хватило места в хранилище браузера. Попробуйте изображение поменьше или удалите старые картинки в постах.");
+      return false;
+    }
+  };
+
   /* ── сессия и роли ── */
   const session = ChestomAuth.require();
   if (!session) return; /* редирект уже произошёл */
@@ -48,6 +93,7 @@
     prices:   { title: "Цены на сайте", sub: "Изменения публикуются на сайте мгновенно" },
     doctors:  { title: "Врачи", sub: "Добавление и удаление врачей сразу обновляет бегущую ленту на сайте" },
     blog:     { title: "Блог и новости", sub: "Каждый врач ведёт свою колонку — посты появляются в ленте на сайте" },
+    promos:   { title: "Акции", sub: "Раздел «Честные скидки» на главной: карточки, сроки, цены и фото" },
     banners:  { title: "Баннеры", sub: "Боковые рекламные блоки на широких экранах" },
     accounts: { title: "Аккаунты", sub: "Доступы сотрудников: администратор — всё, врач — своя страница и блог" }
   };
@@ -67,6 +113,8 @@
     $("#navPostCount").textContent = db.news.length;
     const dc = $("#navDocCount");
     if (dc) dc.textContent = db.doctors.length;
+    const pc = $("#navPromoCount");
+    if (pc && db.promos) pc.textContent = db.promos.items.filter((p) => ChestomDB.promoActive(p)).length;
     const ac = $("#navAccCount");
     if (ac) ac.textContent = db.accounts.length;
   };
@@ -151,28 +199,7 @@
     /* ── фото врача: загрузка, замена, удаление ──
        Сразу сохраняем в базу — как и удаление врача. Перерисовываем только
        блок фото этой карточки, чтобы не потерять несохранённый текст. */
-    const PHOTO_W = 600, PHOTO_H = 800;
-    const toPortrait = (file) => new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        /* центр-кроп под 3:4 с небольшим сдвигом вверх — лицо обычно выше центра */
-        const k = PHOTO_W / PHOTO_H;
-        let sw = img.naturalWidth, sh = img.naturalHeight, sx = 0, sy = 0;
-        if (sw / sh > k) { const w = sh * k; sx = (sw - w) / 2; sw = w; }
-        else { const h = sw / k; sy = Math.max(0, (sh - h) * 0.3); sh = h; }
-        const c = document.createElement("canvas");
-        c.width = PHOTO_W; c.height = PHOTO_H;
-        const ctx = c.getContext("2d");
-        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, PHOTO_W, PHOTO_H); /* прозрачный PNG — на белом */
-        ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, PHOTO_W, PHOTO_H);
-        URL.revokeObjectURL(url);
-        resolve(c.toDataURL("image/jpeg", 0.84));
-      };
-      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
-      img.src = url;
-    });
+    const toPortrait = (file) => imageToJpeg(file, { w: 600, h: 800, biasY: 0.3 }); /* лицо обычно выше центра */
     const refreshPhoto = (doc) => {
       const fs = $(`.adm-doc[data-doc="${doc.id}"]`);
       if (!fs) return;
@@ -190,12 +217,7 @@
     const savePhoto = (doc, value) => {
       const prev = doc.photo;
       if (value) doc.photo = value; else delete doc.photo;
-      try { ChestomDB.save(db); }
-      catch (err) {
-        if (prev) doc.photo = prev; else delete doc.photo;
-        alert("Не хватило места в хранилище браузера для этого фото. Попробуйте фото меньшего размера или удалите старые посты с картинками.");
-        return false;
-      }
+      if (!saveOrRollback(() => { if (prev) doc.photo = prev; else delete doc.photo; })) return false;
       refreshPhoto(doc);
       return true;
     };
@@ -206,8 +228,8 @@
       const file = inp.files[0];
       inp.value = "";                       /* чтобы то же фото можно было выбрать снова */
       if (!doc) return;
-      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { alert("Нужна картинка в формате JPG, PNG или WebP."); return; }
-      if (file.size > 15 * 1024 * 1024) { alert("Файл больше 15 МБ — выберите фото поменьше."); return; }
+      const bad = imageError(file);
+      if (bad) { alert(bad); return; }
       try { savePhoto(doc, await toPortrait(file)); }
       catch (err) { alert("Не получилось прочитать это изображение. Попробуйте другой файл."); }
     });
@@ -237,6 +259,178 @@
       renderAccounts();
       updateStats();
       flash("#doctorsSaved");
+    });
+  }
+
+  /* ── акции: редактор раздела «Честные скидки» ──
+     Текст правится в форме и сохраняется кнопкой; перед любой
+     перестройкой списка (добавить, удалить, переставить) сначала
+     забираем введённое из формы, чтобы ничего не потерялось. */
+  const PROMO_ICONS = [
+    ["i-promo-hygiene", "Гигиена"], ["i-promo-percent", "Скидка %"], ["i-promo-crown", "Коронка"],
+    ["i-tooth", "Зуб"], ["i-shine", "Чистка"], ["i-restore", "Реставрация"],
+    ["i-exam", "Осмотр"], ["i-extract", "Удаление"], ["", "Без иконки"]
+  ];
+  const promosForm = $("#promosForm");
+  const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+  const ruDate = (iso) => (iso || "").split("-").reverse().join(".");
+  const promoStatus = (p) => {
+    if (!p.on) return ["off", "Скрыта"];
+    if (p.till && p.till < todayIso()) return ["old", `Истекла ${ruDate(p.till)} — на сайте не видна`];
+    return ["on", p.till ? `На сайте до ${ruDate(p.till)}` : "На сайте, без срока"];
+  };
+  const renderPromoEditor = () => {
+    if (!promosForm) return;
+    const items = db.promos.items;
+    $("#promoNote").value = db.promos.note || "";
+    $("#promoList").innerHTML = items.length ? items.map((p, i) => {
+      const [st, stText] = promoStatus(p);
+      return `
+      <fieldset class="adm-doc adm-promo${p.accent ? " is-accent" : ""}" data-promo="${esc(p.id)}">
+        <div class="adm-doc__head">
+          <span class="adm-promo__num">${i + 1}</span>
+          <span class="adm-promo__st adm-promo__st--${st}">${esc(stText)}</span>
+          <span class="adm-promo__move">
+            <button type="button" class="adm-post__del" data-promo-move="-1" title="Выше" aria-label="Переместить выше" ${i === 0 ? "disabled" : ""}>↑</button>
+            <button type="button" class="adm-post__del" data-promo-move="1" title="Ниже" aria-label="Переместить ниже" ${i === items.length - 1 ? "disabled" : ""}>↓</button>
+          </span>
+          <button type="button" class="adm-post__del adm-doc__del" data-promo-del title="Удалить акцию" aria-label="Удалить акцию"><svg class="icon"><use href="#i-trash"/></svg></button>
+        </div>
+        <div class="adm-doc__photo">
+          <span class="adm-img__pic adm-promo__pic">${p.image ? `<img src="${esc(p.image)}" alt="">` : `<span>нет фото</span>`}</span>
+          <div class="adm-doc__photo-ctl">
+            <b>Фото акции</b>
+            <span class="adm-post__meta">Горизонтальное фото — обрежем до 16:10 и уменьшим до 800×500. Можно без фото.</span>
+            <div class="adm-doc__photo-btns">
+              <label class="btn btn--ghost btn--sm adm-doc__upload">${p.image ? "Заменить фото" : "Загрузить фото"}
+                <input type="file" accept="image/jpeg,image/png,image/webp" data-promo-img hidden>
+              </label>
+              ${p.image ? `<button type="button" class="btn btn--ghost btn--sm adm-doc__nophoto" data-promo-img-del>Удалить фото</button>` : ""}
+            </div>
+          </div>
+        </div>
+        <label class="adm-promo__check"><input type="checkbox" data-pf="on" ${p.on ? "checked" : ""}> Показывать на сайте</label>
+        <label>Действует до (включительно)<input type="date" data-pf="till" value="${esc(p.till || "")}"></label>
+        <label>Заголовок<input data-pf="title" value="${esc(p.title || "")}" placeholder="Профгигиена 1+1" required></label>
+        <label>Иконка<select data-pf="icon">${PROMO_ICONS.map(([v, l]) => `<option value="${v}" ${v === (p.icon || "") ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+        <label>Описание<textarea data-pf="text" rows="2" placeholder="Коротко: что входит и для кого">${esc(p.text || "")}</textarea></label>
+        <label>Старая цена (зачёркнутая)<input data-pf="oldPrice" value="${esc(p.oldPrice || "")}" placeholder="9 800 ₽ — можно пусто"></label>
+        <label>Цена или скидка<input data-pf="price" value="${esc(p.price || "")}" placeholder="6 990 ₽ или −15%"></label>
+        <label class="adm-promo__check"><input type="checkbox" data-pf="accent" ${p.accent ? "checked" : ""}> Выделить — сиреневая стеклянная карточка</label>
+        <details class="adm-promo__tr"${(p.en && (p.en.title || p.en.text)) || (p.ar && (p.ar.title || p.ar.text)) ? " open" : ""}>
+          <summary>Переводы для английской и арабской версии (необязательно)</summary>
+          <div class="adm-promo__tr-grid">
+            <label>Заголовок · EN<input data-pf="en.title" value="${esc((p.en && p.en.title) || "")}"></label>
+            <label>Описание · EN<input data-pf="en.text" value="${esc((p.en && p.en.text) || "")}"></label>
+            <label>Заголовок · AR<input data-pf="ar.title" dir="rtl" value="${esc((p.ar && p.ar.title) || "")}"></label>
+            <label>Описание · AR<input data-pf="ar.text" dir="rtl" value="${esc((p.ar && p.ar.text) || "")}"></label>
+          </div>
+          <span class="adm-post__meta">Без перевода в этих версиях показывается русский текст.</span>
+        </details>
+      </fieldset>`;
+    }).join("") : `<p class="adm-post__meta">Акций пока нет — на сайте вместо них будет приглашение следить за группой ВКонтакте.</p>`;
+    updateStats();
+  };
+  /* забрать введённое из формы в db (без сохранения) */
+  const syncPromos = () => {
+    db.promos.note = $("#promoNote").value.trim();
+    $$(".adm-promo", promosForm).forEach((fs) => {
+      const p = db.promos.items.find((x) => x.id === fs.dataset.promo);
+      if (!p) return;
+      $$("[data-pf]", fs).forEach((el) => {
+        const key = el.dataset.pf;
+        const val = el.type === "checkbox" ? el.checked : el.value.trim();
+        if (key.includes(".")) {
+          const [lng, f] = key.split(".");
+          p[lng] = p[lng] || {};
+          p[lng][f] = val;
+          if (!p[lng].title && !p[lng].text) delete p[lng];
+        } else p[key] = val;
+      });
+    });
+  };
+  if (promosForm) {
+    renderPromoEditor();
+    promosForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      syncPromos();
+      const empty = db.promos.items.find((p) => !p.title);
+      if (empty) { alert("У каждой акции должен быть заголовок."); return; }
+      ChestomDB.save(db);
+      renderPromoEditor();
+      flash("#promosSaved");
+    });
+    $("#promoAdd").addEventListener("click", () => {
+      syncPromos();
+      const d = new Date(); d.setDate(d.getDate() + 30);
+      const till = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      const id = "p" + Date.now().toString(36);
+      db.promos.items.push({ id, on: true, till, accent: false, icon: "i-promo-percent", image: "", title: "Новая акция", text: "", oldPrice: "", price: "" });
+      ChestomDB.save(db);
+      renderPromoEditor();
+      const fs = $(`.adm-promo[data-promo="${id}"]`);
+      if (fs) { fs.scrollIntoView({ behavior: "smooth", block: "center" }); $('[data-pf="title"]', fs).select(); }
+    });
+    $("#promoList").addEventListener("click", (e) => {
+      const fs = e.target.closest(".adm-promo");
+      if (!fs) return;
+      const items = db.promos.items;
+      const idx = items.findIndex((x) => x.id === fs.dataset.promo);
+      if (idx < 0) return;
+      const mv = e.target.closest("[data-promo-move]");
+      if (mv) {
+        syncPromos();
+        const to = idx + +mv.dataset.promoMove;
+        if (to < 0 || to >= items.length) return;
+        [items[idx], items[to]] = [items[to], items[idx]];
+        ChestomDB.save(db);
+        renderPromoEditor();
+        return;
+      }
+      if (e.target.closest("[data-promo-del]")) {
+        if (!confirm(`Удалить акцию «${items[idx].title}»?`)) return;
+        syncPromos();
+        items.splice(idx, 1);
+        ChestomDB.save(db);
+        renderPromoEditor();
+        return;
+      }
+      if (e.target.closest("[data-promo-img-del]")) {
+        if (!confirm("Удалить фото акции?")) return;
+        syncPromos();
+        const prev = items[idx].image;
+        items[idx].image = "";
+        if (saveOrRollback(() => { items[idx].image = prev; })) renderPromoEditor();
+      }
+    });
+    $("#promoList").addEventListener("change", async (e) => {
+      const inp = e.target.closest("[data-promo-img]");
+      if (!inp || !inp.files || !inp.files[0]) return;
+      const fs = inp.closest(".adm-promo");
+      const file = inp.files[0];
+      inp.value = "";
+      const bad = imageError(file);
+      if (bad) { alert(bad); return; }
+      let data;
+      try { data = await imageToJpeg(file, { w: 800, h: 500, quality: 0.82 }); }
+      catch (err) { alert("Не получилось прочитать это изображение. Попробуйте другой файл."); return; }
+      syncPromos();
+      const p = db.promos.items.find((x) => x.id === fs.dataset.promo);
+      if (!p) return;
+      const prev = p.image;
+      p.image = data;
+      if (saveOrRollback(() => { p.image = prev; })) renderPromoEditor();
+    });
+    /* статус и подсветка меняются сразу, пока человек правит поля */
+    $("#promoList").addEventListener("input", (e) => {
+      const fs = e.target.closest(".adm-promo");
+      if (!fs) return;
+      const on = $('[data-pf="on"]', fs).checked, till = $('[data-pf="till"]', fs).value;
+      const [st, txt] = promoStatus({ on, till });
+      const badge = $(".adm-promo__st", fs);
+      badge.className = `adm-promo__st adm-promo__st--${st}`;
+      badge.textContent = txt;
+      fs.classList.toggle("is-accent", $('[data-pf="accent"]', fs).checked);
     });
   }
 
@@ -444,12 +638,37 @@
             </button>
           </div>
           <span class="adm-post__meta">${esc(n.author)} · ${esc(n.role)} · ${esc(n.tag)} · ${n.date}</span>
+          ${n.image ? `<div class="adm-post__img"><img src="${esc(n.image)}" alt=""><button type="button" class="btn btn--ghost btn--sm adm-doc__nophoto" data-del-img="${esc(n.id)}">Убрать изображение</button></div>` : ""}
           <p class="adm-post__text">${esc((s => s.length > 160 ? s.slice(0, 160) + "…" : s)(n.text.replace(/[*`#]|\[([^\]]+)\]\([^)]*\)/g, "$1").replace(/\n+/g, " ")))}</p>
         </div>`).join("")
       : `<p class="adm-post__meta">Постов пока нет.</p>`;
     updateStats();
   };
   renderPosts();
+
+  /* ── изображение к новому посту ── */
+  let postImage = "";
+  const setPostImage = (val) => {
+    postImage = val || "";
+    const pic = $("#postImgPic");
+    pic.hidden = !postImage;
+    pic.innerHTML = postImage ? `<img src="${postImage}" alt="">` : "";
+    $("#postImgDel").hidden = !postImage;
+    $("#postImgLabel").textContent = postImage ? "Заменить изображение" : "Добавить изображение";
+    const pv = $("#pvImg");
+    if (pv) { pv.hidden = !postImage; if (postImage) pv.src = postImage; else pv.removeAttribute("src"); }
+    updatePreview();
+  };
+  $("#postImgInput").addEventListener("change", async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    const bad = imageError(file);
+    if (bad) { alert(bad); return; }
+    try { setPostImage(await imageToJpeg(file, { w: 1200, h: 1200, fit: "max", quality: 0.82 })); }
+    catch (err) { alert("Не получилось прочитать это изображение. Попробуйте другой файл."); }
+  });
+  $("#postImgDel").addEventListener("click", () => setPostImage(""));
 
   postForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -465,9 +684,11 @@
       role: f.get("role"),
       tag: f.get("tag").trim(),
       title: f.get("title").trim(),
-      text: f.get("text").trim()
+      text: f.get("text").trim(),
+      ...(postImage ? { image: postImage } : {})
     });
-    ChestomDB.save(db);
+    if (!saveOrRollback(() => db.news.pop())) return;
+    setPostImage("");
     postForm.reset();
     renderPosts();
     flash("#postSaved");
@@ -494,6 +715,15 @@
   postForm.addEventListener("reset", () => setTimeout(updatePreview, 0));
 
   $("#postList").addEventListener("click", (e) => {
+    const imgBtn = e.target.closest("[data-del-img]");
+    if (imgBtn) {
+      const post = db.news.find((n) => n.id === imgBtn.dataset.delImg);
+      if (!post || !confirm("Убрать изображение из поста? Текст останется.")) return;
+      delete post.image;
+      ChestomDB.save(db);
+      renderPosts();
+      return;
+    }
     const btn = e.target.closest("[data-del]");
     if (!btn) return;
     if (!confirm("Удалить пост?")) return;

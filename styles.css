@@ -1909,3 +1909,10 @@ h1, h2, h3, .seq-title { overflow-wrap: break-word; }
 @media (prefers-reduced-motion: reduce) {
   .promo-card__pic, .promo-card:hover .promo-card__pic { transition: none; transform: none; }
 }
+
+/* картинка в посте ленты и на странице врача */
+.post__img {
+  display: block; width: 100%; height: auto; max-width: none;
+  aspect-ratio: 16 / 10; object-fit: cover;
+  border-radius: 16px; margin: 4px 0 6px;
+}

@@ -158,6 +158,9 @@ const I18N = {
   "promo.2.p":      { ru: "При прохождении профессиональной гигиены.", en: "When you complete professional hygiene.", ar: "عند إتمام التنظيف الاحترافي." },
   "promo.3.h":      { ru: "Циркониевая коронка «под ключ»", en: "Zirconia crown, all-inclusive", ar: "تاج زركونيا شامل" },
   "promo.3.p":      { ru: "Полная стоимость с работой и материалами.", en: "Full price with work and materials included.", ar: "السعر الكامل شامل العمل والمواد." },
+  "promo.till.p":   { ru: "до", en: "until", ar: "حتى" },
+  "promo.empty":    { ru: "Сейчас новых акций нет. Следите за обновлениями в нашей группе ВКонтакте — или просто запишитесь на консультацию.", en: "There are no new offers right now. Follow our VK group for updates — or simply book a consultation.", ar: "لا توجد عروض جديدة حالياً. تابعوا مجموعتنا على فكونتاكتي — أو احجزوا استشارة." },
+  "promo.vk":       { ru: "Акции во ВКонтакте", en: "Offers on VK", ar: "العروض على فكونتاكتي" },
   "promo.book":     { ru: "Успеть записаться", en: "Book before it ends", ar: "احجز قبل انتهاء العرض" },
 
   /* — новости/блог — */
@@ -272,7 +275,7 @@ const I18N = {
 
   "fn.title":       { ru: "Примечания", en: "Notes", ar: "ملاحظات" },
   "fn.prices":      { ru: "Информация о ценах носит справочный характер и не является публичной офертой. Точная стоимость определяется после осмотра и фиксируется в договоре.", en: "Price information is for reference only and does not constitute a public offer. The exact cost is determined after examination and fixed in the contract.", ar: "معلومات الأسعار للاسترشاد فقط وليست عرضاً ملزماً. تُحدد التكلفة الدقيقة بعد الفحص وتُثبت في العقد." },
-  "fn.promo":       { ru: "Акции действуют до 31.08.2026 и не суммируются с другими скидками. Подробности — по телефону +7 999 115-24-19.", en: "Offers are valid until 31.08.2026 and cannot be combined with other discounts. Details by phone +7 999 115-24-19.", ar: "العروض سارية حتى ٣١/٠٨/٢٠٢٦ ولا تُجمع مع خصومات أخرى. التفاصيل عبر الهاتف." },
+  "fn.promo":       { ru: "Акции не суммируются с другими скидками. Подробности — по телефону +7 999 115-24-19.", en: "Offers cannot be combined with other discounts. Details by phone +7 999 115-24-19.", ar: "لا تُجمع العروض مع خصومات أخرى. التفاصيل عبر الهاتف +7 999 115-24-19." },
   "fn.med":         { ru: "Имеются противопоказания. Необходима консультация специалиста.", en: "Contraindications exist. Specialist consultation is required.", ar: "توجد موانع استعمال. استشارة الأخصائي مطلوبة." },
 
   /* — футер — */
@@ -294,7 +297,6 @@ const I18N = {
   "ch.news.p":      { ru: "Блог врачей клиники", en: "Our doctors' blog", ar: "مدونة أطبائنا" },
   "ch.contacts.h":  { ru: "Контакты и запись", en: "Contacts & booking", ar: "التواصل والحجز" },
   "ch.contacts.p":  { ru: "Адрес · как добраться · запись", en: "Address · directions · booking", ar: "العنوان · الطريق · الحجز" },
-  "ch.all":         { ru: "Все разделы", en: "All sections", ar: "كل الأقسام" },
 
   /* — единицы — */
   "u.rub":          { ru: "₽", en: "₽", ar: "₽" }

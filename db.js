@@ -119,6 +119,43 @@ const ChestomDB = (() => {
       right: { on: true, badge: "Неотложка", title: "Острая боль?", text: "Неотложная помощь взрослым — примем сегодня",  url: "tel:+79991152419", cta: "Позвонить" }
     },
 
+    /* ── АКЦИИ (раздел «Честные скидки», управляется из админки) ──
+       till — последний день акции (ГГГГ-ММ-ДД): после него акция сама
+       пропадает с сайта. en/ar — необязательные переводы; без них
+       в английской и арабской версии показывается русский текст. */
+    promos: {
+      note: "Акции не суммируются с другими скидками. Подробности — по телефону +7 999 115-24-19.",
+      items: [
+        {
+          id: "p1", on: true, till: "2026-08-31", accent: false, icon: "i-promo-hygiene",
+          image: "svc/profgigiena-xs.jpg",
+          title: "Профгигиена 1+1",
+          text: "Профессиональная гигиена для двоих — приходите вместе.",
+          oldPrice: "9 800 ₽", price: "6 990 ₽",
+          en: { title: "Hygiene 1+1", text: "Professional hygiene for two — come together." },
+          ar: { title: "تنظيف ١+١", text: "تنظيف احترافي لشخصين — تعالوا معاً." }
+        },
+        {
+          id: "p2", on: true, till: "2026-08-31", accent: true, icon: "i-promo-percent",
+          image: "svc/karies-xs.jpg",
+          title: "−15% на лечение кариеса",
+          text: "При прохождении профессиональной гигиены.",
+          oldPrice: "", price: "−15%",
+          en: { title: "−15% on caries treatment", text: "When you complete professional hygiene." },
+          ar: { title: "−١٥٪ على علاج التسوس", text: "عند إتمام التنظيف الاحترافي." }
+        },
+        {
+          id: "p3", on: true, till: "2026-08-31", accent: false, icon: "i-promo-crown",
+          image: "svc/protezirovanie-xs.jpg",
+          title: "Циркониевая коронка «под ключ»",
+          text: "Полная стоимость с работой и материалами.",
+          oldPrice: "", price: "24 500 ₽",
+          en: { title: "Zirconia crown, all-inclusive", text: "Full price with work and materials included." },
+          ar: { title: "تاج زركونيا شامل", text: "السعر الكامل شامل العمل والمواد." }
+        }
+      ]
+    },
+
     /* ── НОВОСТИ / БЛОГ ── */
     news: [
       {
@@ -154,6 +191,18 @@ const ChestomDB = (() => {
     ]
   };
 
+  /* Акции: если в базе их ещё нет — берём встроенные, подставив цены,
+     которые раньше правились на вкладке «Цены» (promoHygiene/promoCrown). */
+  const normPromos = (p, prices) => {
+    if (p && Array.isArray(p.items)) return { note: p.note != null ? p.note : SEED.promos.note, items: p.items };
+    const out = deepCopy(SEED.promos);
+    if (prices) {
+      if (prices.promoHygiene) out.items[0].price = prices.promoHygiene;
+      if (prices.promoCrown) out.items[2].price = prices.promoCrown;
+    }
+    return out;
+  };
+
   const load = () => {
     try {
       const raw = localStorage.getItem(KEY);
@@ -165,6 +214,7 @@ const ChestomDB = (() => {
         reviews: Array.isArray(db.reviews) && db.reviews.length ? db.reviews : deepCopy(SEED.reviews),
         news:    Array.isArray(db.news) ? db.news : deepCopy(SEED.news),
         accounts: Array.isArray(db.accounts) && db.accounts.length ? db.accounts : deepCopy(SEED.accounts),
+        promos:  normPromos(db.promos, db.prices),
         banners: {
           left:  { ...SEED.banners.left,  ...(db.banners && db.banners.left) },
           right: { ...SEED.banners.right, ...(db.banners && db.banners.right) }
@@ -185,16 +235,26 @@ const ChestomDB = (() => {
     reviews: Array.isArray(remote.reviews) && remote.reviews.length ? remote.reviews : db.reviews,
     news:    Array.isArray(remote.news) && remote.news.length ? remote.news : db.news,
     accounts: db.accounts, /* аккаунты никогда не публикуются в db.json */
+    promos:  remote.promos && Array.isArray(remote.promos.items) ? normPromos(remote.promos) : db.promos,
     banners: {
       left:  { ...db.banners.left,  ...(remote.banners && remote.banners.left) },
       right: { ...db.banners.right, ...(remote.banners && remote.banners.right) }
     }
   });
 
+  /* акция видна на сайте: включена и срок не вышел (включительно) */
+  const promoActive = (p, today) => {
+    if (!p || !p.on) return false;
+    if (!p.till) return true;
+    const d = today || new Date();
+    const iso = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    return p.till >= iso;
+  };
+
   const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   const doctorById = (db, id) => db.doctors.find((d) => d.id === id) || null;
   const reviewsFor = (db, id) => db.reviews.filter((r) => r.doctorId === id);
   const postsFor = (db, id) => db.news.filter((n) => n.authorId === id);
 
-  return { load, save, reset, hasLocal, mergeRemote, deepCopy, initials, doctorById, reviewsFor, postsFor, SEED };
+  return { load, save, reset, hasLocal, mergeRemote, deepCopy, initials, doctorById, reviewsFor, postsFor, promoActive, SEED };
 })();

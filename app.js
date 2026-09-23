@@ -35,6 +35,7 @@
       if (t && t[code] != null) el.setAttribute("aria-label", t[code]);
     });
     renderNews();
+    renderPromos();
     renderDoctors();
     renderReviews();
     /* строки, которые собираются в других модулях (счётчик и смета в карте
@@ -87,10 +88,50 @@
           <span class="post__meta"><b>${esc(n.author)}</b><span>${esc(n.role)} · ${newsDateFmt(n.date)}</span></span>
           <span class="post__tag">${esc(n.tag)}</span>
         </header>
+        ${n.image ? `<img class="post__img" src="${esc(n.image)}" alt="" loading="lazy" decoding="async">` : ""}
         <h3>${MD.inlineHtml(n.title)}</h3>
         <div class="post__body">${MD.toHtml(n.text)}</div>
       </article>`;
     }).join("");
+  }
+
+  /* ══════════ Акции (вкладка «Акции» в админке) ══════════
+     Показываем включённые акции, у которых не вышел срок; истёкшие
+     пропадают сами. Разметка та же, что была в HTML, — стеклянные
+     стили раздела работают без изменений. */
+  const promoDate = (iso) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+    return m ? `${m[3]}.${m[2]}.${m[1]}` : "";
+  };
+  function renderPromos() {
+    const row = $("#promoRow");
+    if (!row || !db.promos) return;
+    const t = (k) => (I18N[k] || {})[lang] || (I18N[k] || {}).ru || "";
+    const items = db.promos.items.filter((p) => ChestomDB.promoActive(p));
+    if (!items.length) {
+      row.innerHTML = `<div class="promo__empty">
+        <p>${esc(t("promo.empty"))}</p>
+        <a class="btn btn--light btn--sm" href="https://vk.ru/chestom" target="_blank" rel="noopener">${esc(t("promo.vk"))}</a>
+      </div>`;
+    } else {
+      row.innerHTML = items.map((p) => {
+        const tr = (lang !== "ru" && p[lang]) || {};
+        const title = tr.title || p.title || "";
+        const text = tr.text || p.text || "";
+        return `<article class="promo-card${p.accent ? " promo-card--alt" : ""} reveal is-in">
+          ${p.till ? `<span class="promo-card__badge">${esc(t("promo.till.p"))} ${promoDate(p.till)}</span>` : ""}
+          ${p.image ? `<img class="promo-card__pic" src="${esc(p.image)}" width="560" height="420" alt="" loading="lazy" decoding="async">` : ""}
+          ${p.icon ? `<span class="promo-card__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#${esc(p.icon)}"/></svg></span>` : ""}
+          <h3>${esc(title)}</h3>
+          ${text ? `<p>${esc(text)}</p>` : ""}
+          ${p.price || p.oldPrice ? `<div class="promo-card__price">${p.oldPrice ? `<s>${esc(p.oldPrice)}</s>` : ""}${p.price ? `<b>${esc(p.price)}</b>` : ""}</div>` : ""}
+          <button class="btn btn--light btn--sm" data-open-booking data-service="${esc("Акция: " + p.title)}">${esc(t("promo.book"))}</button>
+        </article>`;
+      }).join("");
+    }
+    /* сноска с условиями: русский текст — из админки, переводы — из словаря */
+    const fn = $("#fnPromo");
+    if (fn && lang === "ru" && db.promos.note) fn.textContent = db.promos.note;
   }
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -367,6 +408,7 @@
           if (v) el.textContent = v;
         });
         renderNews();
+        renderPromos();
         renderDoctors();
         renderReviews();
         renderBanners();
