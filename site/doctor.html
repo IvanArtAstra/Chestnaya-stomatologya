@@ -8,9 +8,6 @@ try {
   document.documentElement.dataset.theme =
     localStorage.getItem("chestom_theme") ||
     "light";
-  var _a=null; try{_a=JSON.parse(localStorage.getItem("chestom_a11y"));}catch(_){}
-  if(!_a && localStorage.getItem("chestom_bvi")==="1") _a={on:true};
-  if(_a && _a.on){var _r=document.documentElement; _r.classList.add("bvi");_r.setAttribute("data-a11y-font",_a.font||1);_r.setAttribute("data-a11y-scheme",_a.scheme||"wb");_r.setAttribute("data-a11y-spacing",_a.spacing||1);_r.setAttribute("data-a11y-images",_a.images||"on");}
 } catch (e) { document.documentElement.dataset.theme = "light"; }
 </script>
 <title>Сотрудник — Честная стоматология, Пермь</title>
@@ -27,7 +24,7 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923k">
+<link rel="stylesheet" href="styles.css?v=20260923t">
 <link rel="stylesheet" href="glass.css?v=20260923k">
 </head>
 <body>
@@ -162,6 +159,5 @@ try {
 <script src="md.js?v=20260923k"></script>
 <script src="ux.js?v=20260923k"></script>
 <script src="doctor.js?v=20260923k"></script>
-<script src="a11y.js?v=20260923k"></script>
 </body>
 </html>
