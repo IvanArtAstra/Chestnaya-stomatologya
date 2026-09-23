@@ -38,7 +38,7 @@
     var BASE = "hero-seq/" + (narrow ? "m/" : "");
     /* Кадры менялись, а имена файлов оставались прежними — браузер отдавал
        старые картинки из кэша. Версия в запросе это снимает. */
-    var VER = "?v=20260923b";
+    var VER = "?v=20260923e";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var roomEl = document.getElementById("seqRoom");
 

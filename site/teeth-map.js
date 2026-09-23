@@ -68,7 +68,7 @@
 }
 .tm-intro__pic {
   flex: none; width: clamp(190px, 30vw, 300px); height: auto; border-radius: 20px;
-  background: #ececee; box-shadow: 0 14px 40px rgba(23, 18, 62, 0.16);
+  background: #ececee; box-shadow: 0 14px 40px rgba(var(--shade-rgb), 0.16);
   transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.35s;
 }
 .tm-intro__text { display: flex; flex-direction: column; gap: 10px; min-width: 240px; flex: 1; align-items: flex-start; }
@@ -81,10 +81,10 @@
   margin-top: 6px; padding: 14px 28px; border-radius: 999px; border: none; cursor: pointer;
   font-family: inherit; font-weight: 700; font-size: 0.96rem; color: #fff;
   background: linear-gradient(120deg, var(--aqua), var(--cyan));
-  box-shadow: 0 8px 24px rgba(66, 57, 184, 0.32);
+  box-shadow: 0 8px 24px rgba(var(--acc-rgb), 0.32);
   transition: transform 0.2s, box-shadow 0.2s;
 }
-.tm-intro__btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(66, 57, 184, 0.4); }
+.tm-intro__btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(var(--acc-rgb), 0.4); }
 .tm-intro__btn:focus-visible { outline: 2px solid var(--aqua); outline-offset: 3px; }
 
 /* раскрытие: сомкнутые челюсти расходятся и уступают место схеме */
@@ -132,7 +132,7 @@
   cursor: pointer; transition: 0.2s;
 }
 .tm-row:hover { border-color: var(--aqua); color: var(--ink); }
-.tm-row[aria-pressed="true"] { border-color: var(--aqua); background: rgba(66, 57, 184, 0.1); color: var(--aqua); }
+.tm-row[aria-pressed="true"] { border-color: var(--aqua); background: rgba(var(--acc-rgb), 0.1); color: var(--aqua); }
 
 /* Зона выбора поверх зуба на снимке: прозрачная, подсвечивается по наведению
    и заливается фирменным цветом, когда зуб отмечен. */
@@ -143,7 +143,7 @@
 }
 .tm-tooth:hover .tm-pick,
 .tm-tooth:focus-visible .tm-pick {
-  fill: rgba(66, 57, 184, 0.22); stroke: var(--aqua);
+  fill: rgba(var(--acc-rgb), 0.22); stroke: var(--aqua);
 }
 .tm-tooth:focus-visible .tm-pick { stroke-width: 3; }
 .tm-tooth[aria-pressed="true"] .tm-pick {
@@ -173,7 +173,7 @@
 .tm-chips input:focus-visible + span { outline: 2px solid var(--aqua); outline-offset: 2px; }
 
 .tm-summary {
-  border-radius: 18px; padding: 24px; background: rgba(2, 18, 28, 0.4);
+  border-radius: 18px; padding: 24px; background: rgba(var(--shade-rgb), 0.4);
   border: 1px solid var(--card-line); display: flex; flex-direction: column;
   gap: 12px; align-items: flex-start; position: sticky; top: 90px;
 }
@@ -204,8 +204,8 @@
 .tm-lead__legal { color: var(--ink-dim); font-size: 0.74rem; line-height: 1.5; }
 .tm-lead__ok {
   padding: 12px 16px; border-radius: 14px; font-weight: 700; font-size: 0.9rem;
-  color: var(--aqua); background: rgba(66, 57, 184, 0.12);
-  border: 1px solid rgba(66, 57, 184, 0.24);
+  color: var(--aqua); background: rgba(var(--acc-rgb), 0.12);
+  border: 1px solid rgba(var(--acc-rgb), 0.24);
 }
 .tm-lead__ok[hidden] { display: none; }
 /* iOS зумит страницу, если шрифт поля меньше 16 px */
