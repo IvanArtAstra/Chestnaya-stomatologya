@@ -330,7 +330,12 @@
     }
     if (e.target.closest("[data-close-modal]")) closeModal();
     if (e.target.closest("[data-open-calc]")) {
-      $("#calc").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+      /* Ведём не к закрытой заставке, а к уже раскрытой челюсти:
+         человек нажал «рассчитать» — значит выбирать зубы он готов. */
+      const fold = document.querySelector(".tm-fold");
+      if (fold && !fold.classList.contains("is-open")) $("#tmOpen")?.click();
+      const target = $("#teethMap") || $("#calc");
+      setTimeout(() => target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }), fold ? 360 : 0);
     }
   });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
