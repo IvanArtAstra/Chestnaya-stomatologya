@@ -32,8 +32,8 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923e">
-<link rel="stylesheet" href="glass.css?v=20260923e">
+<link rel="stylesheet" href="styles.css?v=20260923h">
+<link rel="stylesheet" href="glass.css?v=20260923h">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Лечение кариеса", "serviceType": "Лечение кариеса", "provider": {"@type": "Dentist", "name": "Честная стоматология", "address": {"@type": "PostalAddress", "streetAddress": "ул. Танкистов, 68", "addressLocality": "Пермь", "postalCode": "614095", "addressCountry": "RU"}, "telephone": "+79991152419"}, "areaServed": "Пермь", "offers": {"@type": "Offer", "price": "4000", "priceCurrency": "RUB"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Больно ли лечить кариес?", "acceptedAnswer": {"@type": "Answer", "text": "Нет, используем современную анестезию — пациенты не чувствуют даже укол."}}, {"@type": "Question", "name": "Действует ли скидка?", "acceptedAnswer": {"@type": "Answer", "text": "Да, до 31.08.2026 — скидка 15% на лечение кариеса при прохождении профгигиены."}}, {"@type": "Question", "name": "Что будет, если кариес не лечить?", "acceptedAnswer": {"@type": "Answer", "text": "Кариес перейдёт в пульпит — лечение будет дольше и дороже."}}]}</script>
 </head>
@@ -43,9 +43,10 @@ try {
      браузер не разрешает, если SVG не участвует в раскладке.
      Нулевой размер прячет спрайт и оставляет clipPath рабочим. -->
 <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
-  <symbol id="i-tooth" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 3C8 3 5.5 5.6 5.5 8.8c0 2.6 1.3 3.9 1.9 6.5.5 2 .9 5.7 2.2 5.7 1.5 0 1-4.4 2.4-4.4s.9 4.4 2.4 4.4c1.3 0 1.7-3.7 2.2-5.7.6-2.6 1.9-3.9 1.9-6.5C18.5 5.6 16 3 12 3z"/>
-    <path d="M8.5 9.5h2l1-1.7 1.4 3 1-1.3h1.6"/>
+  <!-- зуб, одной линией -->
+  <symbol id="i-tooth" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M38.0 24.0 C41.0 22.0 44.0 24.0 44.0 27.0 C44.0 30.0 41.0 32.0 38.0 30.0 C36.0 28.0 36.0 26.0 38.0 24.0"/>
   </symbol>
   <symbol id="i-logo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
     <path d="M32 6.5 L37 13.5 L32 20.5 L27 13.5 Z"/>
@@ -60,25 +61,30 @@ try {
     <path d="M32 23.5c-5.2 0-8.6 3-8.6 6.8 0 2.8 1.7 4.3 2.5 6.9 .7 2.2 1 5.6 2.6 5.6 1.7 0 1.4-4 3-4h1c1.6 0 1.3 4 3 4 1.6 0 1.9-3.4 2.6-5.6 .8-2.6 2.5-4.1 2.5-6.9 0-3.8-3.4-6.8-8.6-6.8z"/>
   </symbol>
 
-  <symbol id="i-exam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="10.5" cy="10.5" r="6.5"/><path d="M20.5 20.5 15.2 15.2"/>
-    <path d="M8 10c0-1.6 1.1-2.7 2.5-2.7S13 8.4 13 10c0 1.3-.7 1.9-1 3.2-.2.8-.4 1.3-.9 1.3s-.5-.7-.6-1.3c-.3-1.3-1.5-1.9-1.5-3.2z" stroke-width="1.4"/>
+  <!-- осмотр, одной линией -->
+  <symbol id="i-exam" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M41.0 30.0 C47.0 28.0 53.0 32.0 53.0 38.0 C53.0 44.0 48.0 48.0 42.0 46.0 C38.0 44.0 36.0 39.0 39.0 35.0 M50.0 44.0 C53.0 47.0 55.0 49.0 58.0 52.0"/>
   </symbol>
-  <symbol id="i-shine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 3.5c2.5 3.6 6 6.7 6 10.3a6 6 0 0 1-12 0c0-3.6 3.5-6.7 6-10.3z"/>
-    <path d="M9.5 13.5a2.6 2.6 0 0 0 2.5 2.7"/>
-    <path d="M17.5 4.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" stroke-width="1.4"/>
+  <!-- гигиена, одной линией -->
+  <symbol id="i-shine" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M60.0 58.0 C57.0 52.0 54.0 46.0 52.0 42.0 C51.0 39.0 52.0 37.0 55.0 36.0 C58.0 35.0 60.0 36.0 61.0 39.0 M52.0 38.0 C50.0 36.0 49.0 34.0 47.0 32.0 M56.0 36.0 C55.0 33.0 54.0 31.0 53.0 28.0 M60.0 37.0 C60.0 34.0 60.0 31.0 60.0 28.0"/>
   </symbol>
-  <symbol id="i-restore" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M9.5 4.2C6.6 4.6 4.8 6.8 4.8 9.4c0 2.3 1.1 3.4 1.7 5.7.4 1.8.8 5 1.9 5 1.3 0 .9-3.9 2.1-3.9s.8 3.9 2.1 3.9c1.1 0 1.5-3.2 1.9-5 .2-.9.5-1.7.9-2.4"/>
-    <path d="M18.2 3.2l.9 2.2 2.2.9-2.2.9-.9 2.2-.9-2.2-2.2-.9 2.2-.9z"/>
+  <!-- реставрация, одной линией -->
+  <symbol id="i-restore" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M51.0 12.0 C52.0 16.0 54.0 18.0 58.0 19.0 C54.0 20.0 52.0 22.0 51.0 26.0 C50.0 22.0 48.0 20.0 44.0 19.0 C48.0 18.0 50.0 16.0 51.0 12.0 M53.0 34.0 C54.0 36.0 55.0 37.0 57.0 38.0 C55.0 39.0 54.0 40.0 53.0 42.0 C52.0 40.0 51.0 39.0 49.0 38.0 C51.0 37.0 52.0 36.0 53.0 34.0"/>
   </symbol>
-  <symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4.5 9.5 7 15.5h10l2.5-6-4 2.2L12 6.8l-3.5 4.9z"/><path d="M7.5 18.5h9"/>
+  <!-- имплант, одной линией -->
+  <symbol id="i-crown" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 24.0 C10.0 24.0 13.0 22.0 15.0 19.0 C16.0 13.0 22.0 9.0 31.0 9.0 C40.0 9.0 47.0 12.0 48.0 17.0 C49.0 22.0 49.0 27.0 47.0 30.0 C45.0 33.0 38.0 34.0 31.0 34.0 C23.0 34.0 16.0 33.0 15.0 29.0 C14.0 24.0 17.0 20.0 23.0 18.0 C31.0 16.0 41.0 17.0 46.0 21.0 M48.0 24.0 C53.0 24.0 56.0 23.0 59.0 22.0 M26.0 34.0 C24.0 37.0 38.0 37.0 37.0 40.0 C36.0 43.0 25.0 42.0 27.0 45.0 C29.0 48.0 36.0 47.0 35.0 50.0 C34.0 53.0 30.0 53.0 31.0 56.0"/>
   </symbol>
-  <symbol id="i-extract" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 13.5c-2.6 0-4.2 1.7-4.2 3.7 0 1.7.9 3.3 1.9 3.3.9 0 .8-1.8 2.3-1.8s1.4 1.8 2.3 1.8c1 0 1.9-1.6 1.9-3.3 0-2-1.6-3.7-4.2-3.7z"/>
-    <path d="M12 10.5V3.5M9 6l3-2.9L15 6"/>
+  <!-- удаление, одной линией -->
+  <symbol id="i-extract" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M54.0 26.0 C54.0 34.0 54.0 42.0 54.0 52.0 M48.0 45.0 C50.0 48.0 52.0 50.0 54.0 53.0 C56.0 50.0 58.0 48.0 60.0 45.0"/>
   </symbol>
   <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <path d="M7.5 4.5c.8 0 1.7 1.4 2.1 2.6.3 1-.2 1.6-.9 2.2-.4.4-.4 1 0 1.6 1 1.6 2.3 2.9 4 3.9.6.4 1.2.4 1.6 0 .6-.7 1.2-1.2 2.2-.9 1.2.4 2.6 1.3 2.6 2.1 0 1.7-2 3.2-3.7 3.2C10 19.2 4.8 14 4.8 8.7c0-1.7 1-4.2 2.7-4.2z"/>
@@ -98,6 +104,21 @@ try {
   <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="4.2"/>
     <path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/>
+  </symbol>
+  <!-- акция · щётка, одной линией -->
+  <symbol id="i-promo-hygiene" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.0 55.0 C16.0 46.0 23.0 35.0 29.0 26.0 C31.0 23.0 33.0 22.0 36.0 24.0 C40.0 27.0 42.0 30.0 41.0 33.0 C39.0 37.0 35.0 39.0 31.0 37.0 C27.0 35.0 25.0 31.0 27.0 28.0 M36.0 22.0 C37.0 19.0 38.0 16.0 39.0 13.0 M41.0 24.0 C43.0 21.0 45.0 19.0 47.0 16.0 M44.0 29.0 C47.0 27.0 50.0 26.0 53.0 25.0"/>
+  </symbol>
+  <!-- акция · скидка, одной линией -->
+  <symbol id="i-promo-percent" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13.0 50.0 C24.0 37.0 37.0 24.0 50.0 12.0 M20.0 13.0 C25.0 13.0 29.0 17.0 29.0 21.0 C29.0 26.0 25.0 29.0 20.0 29.0 C15.0 29.0 12.0 26.0 12.0 21.0 C12.0 17.0 15.0 13.0 20.0 13.0 M44.0 33.0 C49.0 33.0 52.0 37.0 52.0 41.0 C52.0 46.0 49.0 49.0 44.0 49.0 C39.0 49.0 36.0 46.0 36.0 41.0 C36.0 37.0 39.0 33.0 44.0 33.0"/>
+  </symbol>
+  <!-- акция · коронка, одной линией -->
+  <symbol id="i-promo-crown" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.0 48.0 C10.0 48.0 13.0 46.0 14.0 42.0 C15.0 33.0 16.0 24.0 19.0 20.0 C21.0 17.0 24.0 19.0 27.0 21.0 C30.0 23.0 34.0 23.0 37.0 20.0 C40.0 17.0 43.0 16.0 45.0 20.0 C48.0 25.0 49.0 34.0 50.0 42.0 C51.0 46.0 54.0 48.0 58.0 47.0 M14.0 42.0 C23.0 47.0 41.0 47.0 50.0 42.0"/>
   </symbol>
 </svg>
 
@@ -133,16 +154,11 @@ try {
     </div>
   </section>
 
-  <!-- Кадр услуги: фотореалистичная сцена в нашем кабинете -->
   <figure class="band">
-    <img src="scenes/priem.jpg" width="1600" height="900"
-         srcset="scenes/priem-sm.jpg 800w, scenes/priem.jpg 1600w"
+    <img src="svc/karies.jpg" width="900" height="1200"
+         srcset="svc/karies-sm.jpg 450w, svc/karies.jpg 900w"
          sizes="(max-width: 860px) 100vw, 900px"
-         alt="Мохамад Рамдун осматривает пациентку в защитных очках в кабинете клиники" loading="lazy" decoding="async">
-    <figcaption class="band__cap">
-      <b data-i18n="band.priem.h">Осмотр — с объяснением каждого шага</b>
-      <span data-i18n="band.priem.p">Врач показывает, что видит, и называет цену до начала лечения.</span>
-    </figcaption>
+         alt="Наконечник бормашины с бором на светлом фоне" loading="lazy" decoding="async">
   </figure>
 
   <h2><svg class="icon"><use href="#i-shield"/></svg>Что входит в стоимость</h2>
@@ -188,11 +204,11 @@ try {
 </div>
 
 <script>window.SERVICE_ID = "lechenie-kariesa";</script>
-<script src="db.js?v=20260923e"></script>
-<script src="md.js?v=20260923e"></script>
-<script src="services-data.js?v=20260923e"></script>
-<script src="ux.js?v=20260923e"></script>
-<script src="service.js?v=20260923e"></script>
-<script src="a11y.js?v=20260923e"></script>
+<script src="db.js?v=20260923h"></script>
+<script src="md.js?v=20260923h"></script>
+<script src="services-data.js?v=20260923h"></script>
+<script src="ux.js?v=20260923h"></script>
+<script src="service.js?v=20260923h"></script>
+<script src="a11y.js?v=20260923h"></script>
 </body>
 </html>

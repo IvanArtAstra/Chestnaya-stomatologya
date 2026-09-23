@@ -1907,3 +1907,18 @@ h1, h2, h3, .seq-title { overflow-wrap: break-word; }
 :root[data-theme="light"] .hero__inner .seq-eyebrow {
   color: var(--aqua); background: rgba(var(--acc-rgb), 0.08); border-color: rgba(var(--acc-rgb), 0.16);
 }
+
+/* Иконка акции — тот же лаконичный контур, что у услуг */
+.promo-card__icon {
+  display: inline-flex; align-self: flex-start; margin-bottom: 6px;
+  color: var(--aqua-soft);
+  transition: transform 0.45s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.promo-card__icon .icon--xl { width: 50px; height: 50px; }
+.promo-card:hover .promo-card__icon { transform: translateY(-2px) rotate(-4deg) scale(1.04); }
+.promo-card--alt .promo-card__icon { color: rgba(255, 255, 255, 0.92); }
+
+/* Предметные кадры вертикальные — в полосе показываем их широкой
+   срединной частью, иначе полоса вытянулась бы на два экрана. */
+.band img[src^="svc/"] { aspect-ratio: 16 / 8; object-position: 50% 42%; }
+@media (max-width: 640px) { .band img[src^="svc/"] { aspect-ratio: 4 / 3; } }
