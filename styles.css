@@ -143,7 +143,7 @@ h3 { font-size: 1.25rem; }
 .hero__stats b { display: block; font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 800; color: var(--aqua-soft); }
 .hero__stats span { font-size: 0.85rem; color: var(--ink-dim); }
 /* ═══════════════ СЕКВЕНЦИЯ «в наших руках» (sticky-скролл) ═══════════════ */
-.reveal-seq { height: 980vh; position: relative; }
+.reveal-seq { height: 560vh; position: relative; }
 .reveal-seq__sticky {
   position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -157,6 +157,13 @@ h3 { font-size: 1.25rem; }
 .reveal-seq__canvas { z-index: 1; opacity: 0; transition: opacity 0.5s ease; }
 .reveal-seq.is-ready .reveal-seq__canvas { opacity: 1; }
 .reveal-seq.is-ready .reveal-seq__fallback { visibility: hidden; }
+/* заставка с вращающимся зубом — поверх холста, тает при прокрутке */
+.reveal-seq__intro {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 1; pointer-events: none;
+  opacity: 0; transition: opacity 0.6s ease;
+}
+.reveal-seq__intro.is-on { opacity: var(--intro, 1); transition: none; }
 /* мягкое затемнение снизу — под подписи */
 .reveal-seq__sticky::after {
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
@@ -699,7 +706,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__burger { display: flex; }
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
-  .reveal-seq { height: 830vh; }
+  .reveal-seq { height: 470vh; }
   .seq-offer { padding: 16px 18px; }
   .seq-offer h3 { font-size: 1rem; }
   .reveal-seq__steps { padding: 0 16px; }

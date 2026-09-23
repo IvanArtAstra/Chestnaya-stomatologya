@@ -1,0 +1,311 @@
+/* ═══════════════ УСЛУГИ: НЕОМОРФНЫЕ ПЛАШКИ ═══════════════
+   Плашка «вылеплена» из фона: тот же цвет, что и подложка, рельеф
+   даёт пара теней — светлая сверху-слева, тёмная снизу-справа.
+   Все углы одинаковые. Три плашки в ряд.
+   Подключается последним, после glass.css: перекрывает стекло
+   только внутри .services__grid--neu. */
+
+:root {
+  /* графит */
+  --neu-bg: #1c1e24;
+  --neu-hi: rgba(255, 255, 255, 0.045);
+  --neu-lo: rgba(0, 0, 0, 0.55);
+  --neu-radius: 28px;
+}
+:root[data-theme="light"] {
+  --neu-bg: #f1f2f5;
+  --neu-hi: rgba(255, 255, 255, 0.95);
+  --neu-lo: rgba(155, 162, 182, 0.42);
+}
+
+.services__grid--neu {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(22px, 2.6vw, 34px);
+  padding: 10px;                     /* место под тени у краёв сетки */
+}
+/* три в ряд — пока плашке хватает ширины на заголовок без переноса слов */
+@media (max-width: 1079px) {
+  .services__grid--neu { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .services__grid--neu { grid-template-columns: 1fr; gap: 22px; }
+}
+
+/* ── Плашка ── */
+.services__grid--neu > .svc-card {
+  border-radius: var(--neu-radius);
+  background: var(--neu-bg);
+  border: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    -9px -9px 22px var(--neu-hi),
+    10px 10px 26px var(--neu-lo);
+  transition: box-shadow 0.45s ease, transform 0.45s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.services__grid--neu > .svc-card:hover {
+  background: var(--neu-bg);
+  border: 0;
+  transform: translateY(-3px);
+  box-shadow:
+    -12px -12px 28px var(--neu-hi),
+    14px 14px 34px var(--neu-lo);
+}
+.services__grid--neu > .svc-card::after,
+.services__grid--neu .spot { content: none; display: none; }
+.services__grid--neu .svc-card__cta { white-space: nowrap; }
+
+/* ── Иконка: утопленная лунка с теми же углами, что у плашки ── */
+.services__grid--neu .svc-card__icon {
+  width: 76px; height: 76px; margin-bottom: 10px;
+  justify-content: center;
+  border-radius: calc(var(--neu-radius) * 0.72);
+  background: var(--neu-bg);
+  box-shadow:
+    inset 5px 5px 12px var(--neu-lo),
+    inset -5px -5px 12px var(--neu-hi);
+}
+.services__grid--neu .svc-card__icon .icon--xl { width: 48px; height: 48px; overflow: visible; }
+.services__grid--neu > .svc-card:hover .svc-card__icon { transform: none; }
+/* общий эффект «рисующейся иконки» заменён своей анимацией ниже */
+.services__grid--neu > .svc-card:hover .svc-card__icon svg { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+
+/* ── Мини-анимация: по контуру бежит световой штрих ──
+   Второй <use> (.svc-trace) вставляет svc-play.js. Контуры иконок
+   размечены pathLength="100", поэтому длина штриха одинакова
+   у всех иконок, какой бы длинной ни была линия. */
+.svc-trace {
+  stroke: var(--aqua);
+  stroke-width: 2.6;
+  stroke-dasharray: 22 78;
+  stroke-dashoffset: 100;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+:root[data-theme="light"] .svc-trace { stroke: #6a5cf0; }
+.svc-card--accent .svc-trace { stroke: #fff; }
+.svc-card.is-playing .svc-trace {
+  opacity: 1;
+  animation: svcTrace 2.6s linear infinite;
+}
+.svc-card.is-playing .svc-card__icon > svg {
+  animation: svcFloat 2.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(var(--acc-rgb), 0.55));
+}
+/* пока играет — контур приглушён, чтобы штрих света читался */
+.svc-card.is-playing .svc-card__icon > svg > use:first-child { opacity: 0.3; transition: opacity 0.4s ease; }
+@keyframes svcTrace { to { stroke-dashoffset: 0; } }
+@keyframes svcFloat {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50%      { transform: translateY(-3px) rotate(-3deg); }
+}
+/* при появлении на экране иконка один раз прорисовывается */
+.svc-card.is-drawn .svc-card__icon > svg > use:first-child {
+  stroke-dasharray: 100;
+  animation: svcDraw 1.4s cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+@keyframes svcDraw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+
+/* ── Кнопка «плей»: выпуклый круг, при нажатии — вдавлен ── */
+.svc-play {
+  position: absolute; top: 24px; right: 24px; z-index: 3;
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--aqua-soft);
+  background: var(--neu-bg);
+  border: 0; cursor: pointer;
+  box-shadow:
+    -4px -4px 10px var(--neu-hi),
+    5px 5px 12px var(--neu-lo);
+  transition: box-shadow 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+[dir="rtl"] .svc-play { right: auto; left: 24px; }
+.svc-play .icon { width: 22px; height: 22px; }
+.svc-play:hover { color: var(--aqua); }
+.svc-play:active { transform: scale(0.96); }
+.svc-card.is-playing .svc-play {
+  color: var(--aqua);
+  box-shadow:
+    inset 4px 4px 9px var(--neu-lo),
+    inset -4px -4px 9px var(--neu-hi);
+}
+.svc-play:focus-visible { outline: 2px solid var(--aqua); outline-offset: 4px; }
+
+/* ── «Подробнее»: маленькая выпуклая таблетка вместо стекла ── */
+.services__grid--neu .svc-card__page {
+  border: 0; border-radius: 999px; padding: 8px 16px;
+  background: var(--neu-bg);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  box-shadow:
+    -3px -3px 8px var(--neu-hi),
+    4px 4px 10px var(--neu-lo);
+  transition: box-shadow 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+.services__grid--neu .svc-card__page:hover {
+  box-shadow:
+    inset 3px 3px 7px var(--neu-lo),
+    inset -3px -3px 7px var(--neu-hi);
+}
+
+/* ── Карточка-призыв к калькулятору: индиго, но тот же рельеф и углы ── */
+.services__grid--neu > .svc-card--accent,
+.services__grid--neu > .svc-card--accent:hover {
+  background: linear-gradient(135deg, #4a3fcf, #7a6cf0);
+}
+.services__grid--neu > .svc-card--accent .svc-card__icon {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 4px 4px 10px rgba(20, 10, 80, 0.35),
+    inset -4px -4px 10px rgba(255, 255, 255, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svc-card.is-playing .svc-trace { animation: none; stroke-dasharray: none; opacity: 0.6; }
+  .svc-card.is-playing .svc-card__icon > svg,
+  .svc-card.is-drawn .svc-card__icon > svg > use:first-child { animation: none; }
+  .svc-reel, .svc-reel__panel { transition: none !important; }
+}
+
+/* версия для слабовидящих: без рельефа и анимаций */
+:root.bvi .services__grid--neu > .svc-card { box-shadow: none; border: 2px solid currentColor; }
+:root.bvi .svc-play { display: none; }
+
+/* ═══════════════ КАРУСЕЛЬ ПРОЦЕДУР ═══════════════
+   Открывается по «плей». Слайды листаются на scroll-snap:
+   палец, стрелки, точки, клавиши ← →. */
+html.svc-reel-open { overflow: hidden; }
+.svc-reel {
+  position: fixed; inset: 0; z-index: 400;
+  display: grid; place-items: center;
+  padding: clamp(12px, 3vw, 40px);
+  background: rgba(20, 22, 30, 0.42);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity 0.28s ease;
+}
+.svc-reel[hidden] { display: none; }
+.svc-reel.is-open { opacity: 1; }
+.svc-reel__panel {
+  position: relative; width: min(980px, 100%);
+  max-height: calc(100dvh - 24px); overflow: auto;
+  padding: clamp(14px, 2vw, 22px);
+  border-radius: var(--neu-radius);
+  background: var(--neu-bg);
+  box-shadow:
+    -10px -10px 26px var(--neu-hi),
+    14px 14px 40px rgba(0, 0, 0, 0.28);
+  transform: translateY(14px) scale(0.98);
+  transition: transform 0.35s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.svc-reel.is-open .svc-reel__panel { transform: none; }
+
+.svc-reel__track {
+  display: flex; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  border-radius: calc(var(--neu-radius) * 0.72);
+}
+.svc-reel__track::-webkit-scrollbar { display: none; }
+.svc-reel__slide {
+  flex: 0 0 100%; margin: 0; scroll-snap-align: center; scroll-snap-stop: always;
+}
+.svc-reel__slide video {
+  display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+  border-radius: calc(var(--neu-radius) * 0.72);
+  background: var(--neu-bg);
+  box-shadow:
+    inset 5px 5px 12px var(--neu-lo),
+    inset -5px -5px 12px var(--neu-hi);
+}
+/* подпись: номер · название · пояснение */
+.svc-reel__slide figcaption {
+  display: grid; grid-template-columns: auto 1fr; column-gap: 18px; row-gap: 4px;
+  align-items: baseline;
+  padding: 18px 6px 4px;
+}
+.svc-reel__num {
+  grid-row: span 2; align-self: start;
+  font-family: var(--font-display); font-weight: 500; font-size: 0.78rem;
+  letter-spacing: 0.08em; color: var(--aqua);
+  padding: 8px 12px; border-radius: 999px; white-space: nowrap;
+  box-shadow:
+    inset 3px 3px 7px var(--neu-lo),
+    inset -3px -3px 7px var(--neu-hi);
+}
+.svc-reel__num i { font-style: normal; opacity: 0.45; }
+.svc-reel__title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.05rem, 2vw, 1.3rem); letter-spacing: -0.02em; color: var(--ink);
+}
+.svc-reel__text { color: var(--ink-dim); font-size: 0.95rem; line-height: 1.5; }
+/* текущий этап процедуры — меняется в такт ролику */
+.svc-reel__step {
+  grid-column: 2; justify-self: start; margin-top: 8px;
+  padding: 7px 14px 7px 12px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: 700; font-size: 0.9rem; color: var(--aqua);
+  background: var(--neu-bg);
+  box-shadow: -3px -3px 8px var(--neu-hi), 4px 4px 10px var(--neu-lo);
+}
+.svc-reel__step:empty { display: none; }
+.svc-reel__step::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: var(--aqua);
+}
+.svc-reel__step.is-in { animation: svcStepIn 0.35s ease both; }
+@keyframes svcStepIn { from { opacity: 0; transform: translateY(4px); } }
+@media (max-width: 620px) { .svc-reel__step { grid-column: 1; } }
+@media (prefers-reduced-motion: reduce) { .svc-reel__step.is-in { animation: none; } }
+.svc-reel__slide:not(.is-active) figcaption { opacity: 0; }
+.svc-reel__slide figcaption { transition: opacity 0.35s ease; }
+
+/* низ: стрелки и точки */
+.svc-reel__bar {
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  padding-top: 14px;
+}
+.svc-reel__dots { display: flex; gap: 10px; }
+.svc-reel__dot {
+  width: 10px; height: 10px; padding: 0; border: 0; border-radius: 50%;
+  background: var(--neu-bg); cursor: pointer;
+  box-shadow:
+    inset 2px 2px 4px var(--neu-lo),
+    inset -2px -2px 4px var(--neu-hi);
+  transition: background 0.3s ease, width 0.3s ease, border-radius 0.3s ease;
+}
+.svc-reel__dot[aria-selected="true"] { width: 26px; border-radius: 999px; background: var(--aqua); box-shadow: none; }
+
+.svc-reel__nav,
+.svc-reel__close {
+  width: 46px; height: 46px; border-radius: 50%; border: 0;
+  display: grid; place-items: center; cursor: pointer;
+  color: var(--aqua); background: var(--neu-bg);
+  box-shadow:
+    -4px -4px 10px var(--neu-hi),
+    5px 5px 12px var(--neu-lo);
+  transition: box-shadow 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
+}
+.svc-reel__nav .icon, .svc-reel__close .icon { width: 22px; height: 22px; }
+.svc-reel__nav--prev .icon { transform: rotate(180deg); }
+[dir="rtl"] .svc-reel__nav--prev .icon { transform: none; }
+[dir="rtl"] .svc-reel__nav--next .icon { transform: rotate(180deg); }
+.svc-reel__nav:active, .svc-reel__close:active {
+  box-shadow:
+    inset 4px 4px 9px var(--neu-lo),
+    inset -4px -4px 9px var(--neu-hi);
+}
+.svc-reel__nav:disabled { opacity: 0.35; cursor: default; box-shadow: none; }
+.svc-reel__nav:focus-visible, .svc-reel__close:focus-visible, .svc-reel__dot:focus-visible {
+  outline: 2px solid var(--aqua); outline-offset: 3px;
+}
+/* крестик — поверх ролика в углу */
+.svc-reel__close {
+  position: absolute; top: clamp(24px, 3vw, 34px); right: clamp(24px, 3vw, 34px); z-index: 2;
+}
+[dir="rtl"] .svc-reel__close { right: auto; left: clamp(24px, 3vw, 34px); }
+
+@media (max-width: 620px) {
+  .svc-reel { padding: 0; align-items: end; }
+  .svc-reel__panel { border-radius: var(--neu-radius) var(--neu-radius) 0 0; }
+  .svc-reel__slide figcaption { grid-template-columns: 1fr; }
+  .svc-reel__num { grid-row: auto; justify-self: start; }
+  .svc-reel__close { width: 40px; height: 40px; }
+}

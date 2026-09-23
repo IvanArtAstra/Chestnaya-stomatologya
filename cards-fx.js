@@ -24,7 +24,8 @@
   /* ---------- 1. Spotlight-сетка ---------- */
   try {
     if (!reduceMotion && finePointer && canHover) {
-      var grids = document.querySelectorAll(".services__grid, .promo__row");
+      /* у неоморфной сетки услуг своя подсветка — рельеф, а не свечение */
+      var grids = document.querySelectorAll(".services__grid:not(.services__grid--neu), .promo__row");
 
       Array.prototype.forEach.call(grids, function (grid) {
         var cards = Array.prototype.slice.call(

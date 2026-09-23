@@ -11,10 +11,11 @@
     var canvas = document.getElementById("seqCanvas");
     if (!section || !canvas) return;
 
-    var COUNT = 16;                 /* 1–8 зуб в ладонях, 9 переход,
-                                       10–14 ныряем в стеклянный зуб,
-                                       15–16 уход в свет. Дальше человек
-                                       попадает в «Прогуляйтесь по клинике». */
+    var COUNT = 7;                  /* 1–5 ныряем в стеклянный зуб,
+                                       6–7 уход в свет. Зуб в ладонях сняли —
+                                       скролл начинается сразу со стекла.
+                                       Дальше человек попадает
+                                       в «Прогуляйтесь по клинике». */
     var ROOM_MIX = 0.42;            /* доля отрезка комнаты, отданная под смену */
     /* Подпись показываем только на самих помещениях, не на проходах и не на
        зубе: ключ — индекс кадра (0-based) */
@@ -35,7 +36,7 @@
     var BASE = "hero-seq/" + (narrow ? "m/" : "");
     /* Кадры менялись, а имена файлов оставались прежними — браузер отдавал
        старые картинки из кэша. Версия в запросе это снимает. */
-    var VER = "?v=20260923j";
+    var VER = "?v=20260923m";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var roomEl = document.getElementById("seqRoom");
 
@@ -128,6 +129,34 @@
       }
       updateSteps(f);
       updateRoom(f);
+      updateIntro(p);
+    }
+
+    /* ── Заставка: вращающийся стеклянный зуб ──
+       Играет, пока человек стоит в начале секции; с первых процентов
+       прокрутки растворяется, и дальше работает покадровое погружение.
+       Ушла — ставим на паузу, чтобы не грузить процессор впустую. */
+    var intro = document.getElementById("seqIntro");
+    var INTRO_FADE = 0.035;           /* доля прокрутки, за которую заставка тает */
+    if (intro && !reduce) {
+      intro.src = "hero-seq/" + (narrow ? "intro-m.mp4" : "intro.mp4") + VER;
+      intro.preload = "auto";
+    } else { intro = null; }
+    function updateIntro(p) {
+      if (!intro) return;
+      var k = 1 - Math.min(p / INTRO_FADE, 1);
+      intro.style.setProperty("--intro", k.toFixed(3));
+      if (k > 0) {
+        if (intro.readyState >= 2) intro.classList.add("is-on");
+        if (intro.paused) { var pr = intro.play(); if (pr && pr.catch) pr.catch(function () {}); }
+      } else if (!intro.paused) { intro.pause(); }
+    }
+    if (intro) {
+      intro.addEventListener("loadeddata", function () { lastP = -1; schedule(); });
+      /* вернулись на вкладку — браузер мог приостановить ролик, будим */
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) { lastP = -1; schedule(); }
+      });
     }
 
     /* подпись помещения: показываем, начиная с первого кадра помещения */
