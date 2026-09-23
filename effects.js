@@ -151,13 +151,14 @@
       };
       var hideOverlay = function () {
         overlay.classList.add("is-done");
-        window.setTimeout(removeOverlay, 450);
+        window.setTimeout(removeOverlay, 950);
       };
 
-      // сборка ≈ 0.82s (ладони 0.55s + зуб с задержкой 0.32s) → пауза → уход
-      window.setTimeout(hideOverlay, 1250);
-      // страховка: в любом случае убрать через 2.5s
-      window.setTimeout(removeOverlay, 2500);
+      // сборка ≈ 1.55s (ладони 1.15s, зуб с задержкой 0.55s) → короткая
+      // пауза, чтобы знак успел «вздохнуть» → плавный уход за 0.9s
+      window.setTimeout(hideOverlay, 2000);
+      // страховка: в любом случае убрать через 3.6s
+      window.setTimeout(removeOverlay, 3600);
     }
   } catch (e) { /* noop */ }
 

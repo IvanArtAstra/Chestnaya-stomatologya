@@ -857,6 +857,13 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 [dir="rtl"] .about__list li::before { left: auto; right: 0; }
 [dir="rtl"] .ba__tag--before { left: auto; right: 14px; }
 [dir="rtl"] .ba__tag--after { right: auto; left: 14px; }
+/* Шапка при арабском не зеркалится: логотип слева, кнопки и бургер
+   справа — иначе при смене языка меню перепрыгивало на другую сторону.
+   Сам текст пунктов и выпадающих списков остаётся справа налево. */
+[dir="rtl"] .nav { direction: ltr; }
+[dir="rtl"] .nav__links,
+[dir="rtl"] .lang__menu { direction: rtl; }
+[dir="rtl"] .lang__menu { inset-inline: auto; left: auto; right: 0; }
 @media (max-width: 640px) {
   [dir="rtl"] .fab { left: 14px; bottom: 84px; }
 }
@@ -1428,109 +1435,6 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 /* Шторку «до/после» ведёт app.js: --pos пишется инлайном.
    Свойство объявлено один раз выше (@property --pos, inherits: true) —
    второе объявление с inherits:false ломало наследование в потомках. */
-
-/* ═══════════════ ВЕРСИЯ ДЛЯ СЛАБОВИДЯЩИХ (ГОСТ Р 52872-2019) ═══════════════ */
-/* Цветовые схемы */
-:root.bvi                             { --a-bg:#ffffff; --a-fg:#000000; --a-acc:#00159f; }  /* чёрным по белому */
-:root.bvi[data-a11y-scheme="bw"]      { --a-bg:#000000; --a-fg:#ffffff; --a-acc:#ffdf1a; }  /* белым по чёрному */
-:root.bvi[data-a11y-scheme="beige"]   { --a-bg:#f4ecd6; --a-fg:#31250f; --a-acc:#0b3d91; }  /* тёмным по бежевому */
-:root.bvi[data-a11y-scheme="blue"]    { --a-bg:#9dccff; --a-fg:#06304f; --a-acc:#06304f; }  /* синим по голубому */
-
-:root.bvi {
-  --ink: var(--a-fg); --ink-dim: var(--a-fg); --gold: var(--a-fg);
-  --deep-0: var(--a-bg); --deep-1: var(--a-bg); --deep-2: var(--a-bg); --deep-3: var(--a-bg);
-  --card: var(--a-bg); --card-line: var(--a-fg);
-  --glass-bg: var(--a-bg); --glass-line: var(--a-fg); --glass-hi: transparent;
-  --aqua: var(--a-acc); --aqua-soft: var(--a-acc); --cyan: var(--a-acc);
-}
-:root.bvi body { background: var(--a-bg); color: var(--a-fg); }
-
-/* Размер шрифта (ступени) */
-:root.bvi { font-size: 18px; }
-:root.bvi[data-a11y-font="2"] { font-size: 22px; }
-:root.bvi[data-a11y-font="3"] { font-size: 26px; }
-
-/* Интервалы (межбуквенный / межстрочный) */
-:root.bvi[data-a11y-spacing="2"] p, :root.bvi[data-a11y-spacing="2"] li,
-:root.bvi[data-a11y-spacing="2"] a, :root.bvi[data-a11y-spacing="2"] span,
-:root.bvi[data-a11y-spacing="2"] h1, :root.bvi[data-a11y-spacing="2"] h2,
-:root.bvi[data-a11y-spacing="2"] h3 { letter-spacing: .06em; word-spacing: .14em; line-height: 1.8; }
-:root.bvi[data-a11y-spacing="3"] p, :root.bvi[data-a11y-spacing="3"] li,
-:root.bvi[data-a11y-spacing="3"] a, :root.bvi[data-a11y-spacing="3"] span,
-:root.bvi[data-a11y-spacing="3"] h1, :root.bvi[data-a11y-spacing="3"] h2,
-:root.bvi[data-a11y-spacing="3"] h3 { letter-spacing: .12em; word-spacing: .26em; line-height: 2.1; }
-
-/* Отключение изображений */
-:root.bvi[data-a11y-images="off"] img,
-:root.bvi[data-a11y-images="off"] iframe,
-:root.bvi[data-a11y-images="off"] .ba,
-:root.bvi[data-a11y-images="off"] .doc-card__photo,
-:root.bvi[data-a11y-images="off"] .reveal-seq__fallback { display: none !important; }
-/* Секвенция: без sticky-«погружения» — обычный короткий блок с подписями */
-:root.bvi .reveal-seq { height: auto !important; }
-:root.bvi .reveal-seq__sticky { position: static !important; height: auto !important; padding: 40px 24px; }
-:root.bvi .reveal-seq__sticky::after, :root.bvi .reveal-seq__fallback,
-/* карточки-предложения — дубль раздела «Акции», в упрощённой версии не нужны */
-:root.bvi .reveal-seq__offers { display: none !important; }
-:root.bvi .reveal-seq__steps { position: static; display: block; }
-:root.bvi .reveal-seq__step {
-  position: static; max-width: none; opacity: 1 !important; transform: none !important;
-  margin: 0 0 22px; text-align: left; padding: 0;
-  background: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
-}
-:root.bvi .reveal-seq__step h2, :root.bvi .reveal-seq__step p,
-:root.bvi .seq-title, :root.bvi .seq-title em,
-:root.bvi .seq-eyebrow, :root.bvi .seq-motto { color: var(--a-fg) !important; text-shadow: none !important; }
-:root.bvi .seq-motto { justify-content: flex-start; }
-
-/* Убираем декоративные слои */
-:root.bvi .hero__glow, :root.bvi canvas,
-:root.bvi .nav.is-scrolled::after { display: none !important; }
-:root.bvi .nav, :root.bvi .nav.is-scrolled, :root.bvi .footer,
-:root.bvi .mobile-cta, :root.bvi .fab__menu, :root.bvi .modal__card { background: var(--a-bg) !important; }
-
-/* Ссылки и кнопки — высокий контраст */
-:root.bvi a { text-decoration: underline; }
-:root.bvi .nav__links a, :root.bvi .btn, :root.bvi a.nav__logo, :root.bvi .nav__logo { text-decoration: none; }
-:root.bvi .btn--primary, :root.bvi .btn--light, :root.bvi .mobile-cta__book {
-  background: var(--a-acc) !important; color: var(--a-bg) !important; border: 2px solid var(--a-acc); box-shadow: none !important;
-}
-:root.bvi .btn--ghost { border: 2px solid var(--a-acc); color: var(--a-fg); background: transparent; }
-:root.bvi *:focus-visible { outline: 3px solid var(--a-acc) !important; outline-offset: 2px !important; }
-
-/* Кнопка-глаз в шапке */
-.a11y-btn[aria-pressed="true"] { background: var(--aqua); color: #fff; }
-:root.bvi .a11y-btn { background: var(--a-acc); color: var(--a-bg); border-color: var(--a-acc); }
-
-/* Панель настроек доступности */
-.a11y-panel { display: none; }
-.a11y-panel.is-open {
-  display: block; position: fixed; z-index: 200;
-  top: 74px; right: clamp(8px, 2vw, 24px);
-  width: min(360px, 94vw); max-height: 78vh; overflow-y: auto;
-  padding: 18px 18px 20px; border-radius: 16px;
-  background: var(--a-bg, #fff); color: var(--a-fg, #111);
-  border: 2px solid var(--a-fg, #111);
-  box-shadow: 0 20px 60px rgba(0,0,0,.4);
-  font-size: 16px; font-family: var(--font);
-}
-.a11y-panel h2 { font-size: 1.08rem; font-family: var(--font); margin-bottom: 4px; }
-.a11y-panel__hint { font-size: .82rem; opacity: .85; margin-bottom: 14px; line-height: 1.4; }
-.a11y-group { margin-bottom: 14px; }
-.a11y-group > b { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
-.a11y-opts { display: flex; flex-wrap: wrap; gap: 8px; }
-.a11y-opt {
-  padding: 9px 14px; border-radius: 10px; border: 2px solid var(--a-fg, #111);
-  background: transparent; color: var(--a-fg, #111); font: inherit; font-weight: 700; cursor: pointer; line-height: 1.1;
-  display: inline-flex; align-items: center; gap: 7px;
-}
-.a11y-opt[aria-pressed="true"] { background: var(--a-fg, #111); color: var(--a-bg, #fff); }
-.a11y-opt .sw { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--a-fg, #111); flex: none; }
-.a11y-reset {
-  display: block; width: 100%; margin-top: 6px; padding: 13px; border-radius: 11px; border: 0;
-  background: var(--a-acc, #00159f); color: var(--a-bg, #fff); font: inherit; font-weight: 800; cursor: pointer;
-}
-@media (prefers-reduced-motion: reduce) { :root.bvi * { animation-duration: .001ms !important; } }
 
 /* ═══════════ Стерилизация ═══════════ */
 .sterile__grid {

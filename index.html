@@ -9,9 +9,6 @@ try {
   document.documentElement.dataset.theme =
     localStorage.getItem("chestom_theme") ||
     "light";
-  var _a=null; try{_a=JSON.parse(localStorage.getItem("chestom_a11y"));}catch(_){}
-  if(!_a && localStorage.getItem("chestom_bvi")==="1") _a={on:true};
-  if(_a && _a.on){var _r=document.documentElement; _r.classList.add("bvi");_r.setAttribute("data-a11y-font",_a.font||1);_r.setAttribute("data-a11y-scheme",_a.scheme||"wb");_r.setAttribute("data-a11y-spacing",_a.spacing||1);_r.setAttribute("data-a11y-images",_a.images||"on");}
 } catch (e) { document.documentElement.dataset.theme = "light"; }
 </script>
 <title>Честная стоматология — клиника в Перми | Честные цены, онлайн-запись</title>
@@ -80,12 +77,12 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923m">
-<link rel="stylesheet" href="effects.css?v=20260923m">
+<link rel="stylesheet" href="styles.css?v=20260923t">
+<link rel="stylesheet" href="effects.css?v=20260923t">
 <link rel="stylesheet" href="cards-fx.css?v=20260923m">
 <link rel="stylesheet" href="polish.css?v=20260923m">
 <link rel="stylesheet" href="glass.css?v=20260923m">
-<link rel="stylesheet" href="neu.css?v=20260923r">
+<link rel="stylesheet" href="neu.css?v=20260923w">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -371,8 +368,8 @@ try {
   <div class="tour__box reveal">
     <div class="tour__track" id="tourTrack" tabindex="0" aria-label="Фотографии помещений клиники">
       <figure class="tour__slide">
-        <img src="tour/reception.jpg" width="1920" height="1080"
-             srcset="tour/reception-sm.jpg 1024w, tour/reception.jpg 1920w" sizes="(max-width: 860px) 100vw, 1120px"
+        <img src="tour/reception.jpg?v=2" width="1920" height="1080"
+             srcset="tour/reception-sm.jpg?v=2 1024w, tour/reception.jpg?v=2 1920w" sizes="(max-width: 860px) 100vw, 1120px"
              alt="Стойка регистрации «Честной стоматологии»" loading="lazy" decoding="async">
         <figcaption><b data-i18n="tour.s1">Стойка регистрации</b></figcaption>
       </figure>
@@ -620,7 +617,7 @@ try {
     <span class="section__tag" data-i18n="promo.tag">Акции</span>
     <h2><span data-i18n="promo.title">Честные скидки — без звёздочек</span><a class="fn-ref" href="#footnotes" aria-label="Примечание 2"><sup>2</sup></a></h2>
   </div>
-  <div class="promo__row">
+  <div class="promo__row promo__row--glass">
     <article class="promo-card reveal">
       <span class="promo-card__badge" data-i18n="promo.till">до 31.08.2026</span>
       <img class="promo-card__pic" src="svc/profgigiena-xs.jpg" width="560" height="420"
@@ -969,14 +966,13 @@ try {
 <script src="ux.js?v=20260923m"></script>
 <script src="app.js?v=20260923m"></script>
 <script src="water.js?v=20260923m" defer></script>
-<script src="effects.js?v=20260923m" defer></script>
+<script src="effects.js?v=20260923t" defer></script>
 <script src="teeth-map.js?v=20260923m" defer></script>
 <script src="hero-seq.js?v=20260923o" defer></script>
 <script src="tour.js?v=20260923m" defer></script>
-<script src="cards-fx.js?v=20260923m" defer></script>
+<script src="cards-fx.js?v=20260923u" defer></script>
 <script src="motion-fx.js?v=20260923m" defer></script>
 <script src="polish.js?v=20260923m" defer></script>
 <script src="svc-play.js?v=20260923r" defer></script>
-<script src="a11y.js?v=20260923m"></script>
 </body>
 </html>

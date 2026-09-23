@@ -8,9 +8,6 @@ try {
   document.documentElement.dataset.theme =
     localStorage.getItem("chestom_theme") ||
     "light";
-  var _a=null; try{_a=JSON.parse(localStorage.getItem("chestom_a11y"));}catch(_){}
-  if(!_a && localStorage.getItem("chestom_bvi")==="1") _a={on:true};
-  if(_a && _a.on){var _r=document.documentElement; _r.classList.add("bvi");_r.setAttribute("data-a11y-font",_a.font||1);_r.setAttribute("data-a11y-scheme",_a.scheme||"wb");_r.setAttribute("data-a11y-spacing",_a.spacing||1);_r.setAttribute("data-a11y-images",_a.images||"on");}
 } catch (e) { document.documentElement.dataset.theme = "light"; }
 </script>
 <title>Эстетическая реставрация зубов в Перми — от 3 500 ₽ | Честная стоматология</title>
@@ -32,7 +29,7 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923k">
+<link rel="stylesheet" href="styles.css?v=20260923t">
 <link rel="stylesheet" href="glass.css?v=20260923k">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Эстетическая реставрация зубов", "serviceType": "Эстетическая реставрация зубов", "provider": {"@type": "Dentist", "name": "Честная стоматология", "address": {"@type": "PostalAddress", "streetAddress": "ул. Танкистов, 68", "addressLocality": "Пермь", "postalCode": "614095", "addressCountry": "RU"}, "telephone": "+79991152419"}, "areaServed": "Пермь", "offers": {"@type": "Offer", "price": "3500", "priceCurrency": "RUB"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Чем реставрация отличается от коронки?", "acceptedAnswer": {"@type": "Answer", "text": "Реставрация делается композитом за один визит и не требует обточки зуба."}}, {"@type": "Question", "name": "Сколько держится реставрация?", "acceptedAnswer": {"@type": "Answer", "text": "При правильном уходе — 5–10 лет."}}, {"@type": "Question", "name": "Можно ли закрыть щель между передними зубами?", "acceptedAnswer": {"@type": "Answer", "text": "Да, это решается за один визит."}}]}</script>
@@ -209,6 +206,5 @@ try {
 <script src="services-data.js?v=20260923k"></script>
 <script src="ux.js?v=20260923k"></script>
 <script src="service.js?v=20260923k"></script>
-<script src="a11y.js?v=20260923k"></script>
 </body>
 </html>

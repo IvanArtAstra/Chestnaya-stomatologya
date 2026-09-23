@@ -166,10 +166,6 @@
   .svc-reel, .svc-reel__panel { transition: none !important; }
 }
 
-/* версия для слабовидящих: без рельефа и анимаций */
-:root.bvi .services__grid--neu > .svc-card { box-shadow: none; border: 2px solid currentColor; }
-:root.bvi .svc-play { display: none; }
-
 /* ═══════════════ КАРУСЕЛЬ ПРОЦЕДУР ═══════════════
    Открывается по «плей». Слайды листаются на scroll-snap:
    палец, стрелки, точки, клавиши ← →. */
@@ -308,4 +304,129 @@ html.svc-reel-open { overflow: hidden; }
   .svc-reel__slide figcaption { grid-template-columns: 1fr; }
   .svc-reel__num { grid-row: auto; justify-self: start; }
   .svc-reel__close { width: 40px; height: 40px; }
+}
+
+/* ═══════════════ АКЦИИ: СТЕКЛЯННЫЕ ПЛАШКИ ═══════════════
+   Материал — как у стеклянного зуба в скролле: прозрачное тело,
+   толстая скошенная кромка (двойной блик по краю — второй рисует
+   ::before), лёгкие сиреневые отсветы внутри и мягкая тень под
+   плашкой. За рядом — размытые цветные пятна: без них стеклу
+   нечего преломлять, и оно выглядит просто белым. */
+.promo__row--glass { position: relative; isolation: isolate; gap: clamp(22px, 2.6vw, 34px); }
+.promo__row--glass::before {
+  content: ""; position: absolute; inset: -8% -6%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 55% at 14% 32%, rgba(155, 139, 255, 0.30), transparent 70%),
+    radial-gradient(34% 50% at 86% 68%, rgba(124, 107, 255, 0.24), transparent 70%),
+    radial-gradient(30% 40% at 52% 96%, rgba(190, 196, 214, 0.55), transparent 72%);
+  filter: blur(12px);
+}
+
+.promo__row--glass > .promo-card {
+  --pg-r: 28px;
+  border-radius: var(--pg-r);
+  padding: 32px 28px 28px;
+  color: var(--ink);
+  background: linear-gradient(150deg,
+    rgba(255, 255, 255, 0.64) 0%,
+    rgba(255, 255, 255, 0.22) 44%,
+    rgba(236, 234, 250, 0.42) 100%);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 1.5px 0 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1.5px 0 rgba(110, 100, 170, 0.22),
+    inset -1.5px 0 0 rgba(110, 100, 170, 0.14),
+    inset 12px 14px 28px -14px rgba(255, 255, 255, 0.95),
+    inset -16px -18px 32px -16px rgba(120, 110, 200, 0.2),
+    0 34px 60px -30px rgba(40, 36, 90, 0.38),
+    0 10px 22px -12px rgba(40, 36, 90, 0.16);
+  transition: transform 0.5s cubic-bezier(0.22, 0.7, 0.2, 1), box-shadow 0.5s ease;
+}
+.promo__row--glass > .promo-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 1.5px 0 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1.5px 0 rgba(110, 100, 170, 0.24),
+    inset -1.5px 0 0 rgba(110, 100, 170, 0.16),
+    inset 12px 14px 28px -14px rgba(255, 255, 255, 1),
+    inset -16px -18px 32px -16px rgba(120, 110, 200, 0.24),
+    0 44px 70px -30px rgba(40, 36, 90, 0.42),
+    0 12px 26px -12px rgba(40, 36, 90, 0.18);
+}
+/* Внутренний контур толстого стекла + диагональный блик.
+   Бегущий луч по рамке и цветная подсветка у курсора здесь не нужны. */
+.promo__row--glass > .promo-card::before {
+  content: ""; position: absolute; inset: 7px; z-index: 0; pointer-events: none;
+  border-radius: calc(var(--pg-r) - 7px);
+  padding: 0; animation: none;
+  -webkit-mask: none; mask: none;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 1px 0 rgba(110, 100, 170, 0.1);
+  background: linear-gradient(118deg, transparent 34%, rgba(255, 255, 255, 0.38) 44%, transparent 54%) no-repeat;
+  background-size: 260% 100%;
+  background-position: 100% 0;
+  transition: background-position 1.1s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.promo__row--glass > .promo-card:hover::before { background-position: 0 0; }
+.promo__row--glass > .promo-card::after,
+.promo__row--glass .spot { content: none; display: none; }
+.promo__row--glass > .promo-card > * { position: relative; z-index: 1; }
+
+/* фото — внутри стекла, со своим скруглением, а не во всю ширину */
+.promo__row--glass .promo-card__pic {
+  order: -1;                         /* снимок — первым, бейдж даты под ним */
+  width: calc(100% + 32px); max-width: none; height: auto; aspect-ratio: 16 / 10;
+  margin: -20px -16px 6px;
+  border-radius: calc(var(--pg-r) - 10px);
+  box-shadow: 0 10px 24px -14px rgba(40, 36, 90, 0.35);
+}
+/* иконка больше не наезжает на снимок */
+.promo__row--glass .promo-card__icon { margin-top: 0; color: var(--aqua); }
+.promo__row--glass .promo-card__badge {
+  background: rgba(255, 255, 255, 0.55); color: var(--aqua);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 #fff, 0 4px 10px -6px rgba(40, 36, 90, 0.3);
+}
+.promo__row--glass .promo-card h3 { color: var(--ink); }
+.promo__row--glass .promo-card__price b { color: var(--aqua); }
+
+/* средняя плашка — сиреневое стекло */
+.promo__row--glass > .promo-card--alt {
+  color: #fff;
+  background: linear-gradient(150deg,
+    rgba(138, 124, 250, 0.82) 0%,
+    rgba(98, 84, 230, 0.62) 48%,
+    rgba(74, 63, 207, 0.78) 100%);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+.promo__row--glass > .promo-card--alt::before { border-color: rgba(255, 255, 255, 0.35); }
+.promo__row--glass > .promo-card--alt h3,
+.promo__row--glass > .promo-card--alt .promo-card__price b,
+.promo__row--glass > .promo-card--alt .promo-card__icon { color: #fff; }
+.promo__row--glass > .promo-card--alt p { color: rgba(255, 255, 255, 0.88); }
+.promo__row--glass > .promo-card--alt .promo-card__badge {
+  background: rgba(255, 255, 255, 0.18); color: #fff; border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* графит: то же стекло, но темнее и прозрачнее */
+:root:not([data-theme="light"]) .promo__row--glass > .promo-card:not(.promo-card--alt) {
+  background: linear-gradient(150deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 44%,
+    rgba(155, 139, 255, 0.08) 100%);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+:root:not([data-theme="light"]) .promo__row--glass > .promo-card::before { border-color: rgba(255, 255, 255, 0.14); }
+:root:not([data-theme="light"]) .promo__row--glass .promo-card__badge {
+  background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.18); box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo__row--glass > .promo-card,
+  .promo__row--glass > .promo-card::before { transition: none; }
 }

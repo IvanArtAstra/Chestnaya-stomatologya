@@ -61,26 +61,50 @@
   align-items: center;
   justify-content: center;
   opacity: 1;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition:
+    opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 :root[data-theme="light"] #preloader { background: var(--deep-1, #f7f6fe); }
 #preloader.is-done {
   opacity: 0;
-  transform: scale(1.08);
+  transform: scale(1.04);
+  filter: blur(6px);
   pointer-events: none;
 }
-/* Сборка логотипа: ладони съезжаются с боков, затем проявляется зуб */
-#preloader .pl-logo { position: relative; width: 150px; height: 120px; }
+/* Сборка логотипа: ладони мягко съезжаются с боков, затем из лёгкой
+   дымки проявляется зуб, и знак один раз «дышит» свечением.
+   Кривая с долгим торможением — движение гаснет плавно, без рывка. */
+#preloader .pl-logo {
+  position: relative;
+  width: clamp(220px, 46vw, 360px);
+  aspect-ratio: 549 / 438;
+}
+#preloader .pl-logo::before {
+  content: ""; position: absolute; inset: -30%; z-index: -1; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(var(--acc-rgb, 155, 139, 255), 0.22), transparent 72%);
+  animation: plGlow 2.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
 #preloader .pl-logo img {
   position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: contain;
+  will-change: transform, opacity, filter;
 }
-#preloader .pl-l { animation: plHandL 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-#preloader .pl-r { animation: plHandR 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-#preloader .pl-t { animation: plTooth 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.32s both; }
-@keyframes plHandL { from { opacity: 0; transform: translateX(-30px) rotate(-7deg); } }
-@keyframes plHandR { from { opacity: 0; transform: translateX(30px) rotate(7deg); } }
-@keyframes plTooth { from { opacity: 0; transform: scale(0.5); } }
+#preloader .pl-l { animation: plHandL 1.15s cubic-bezier(0.16, 1, 0.3, 1) both; }
+#preloader .pl-r { animation: plHandR 1.15s cubic-bezier(0.16, 1, 0.3, 1) both; }
+#preloader .pl-t { animation: plTooth 1s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both; }
+@keyframes plHandL { from { opacity: 0; transform: translateX(-18%) rotate(-9deg); filter: blur(6px); } }
+@keyframes plHandR { from { opacity: 0; transform: translateX(18%) rotate(9deg); filter: blur(6px); } }
+@keyframes plTooth {
+  from { opacity: 0; transform: scale(0.72) translateY(4%); filter: blur(8px); }
+  60%  { opacity: 1; filter: blur(0); }
+}
+@keyframes plGlow {
+  0%   { opacity: 0; transform: scale(0.7); }
+  55%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.55; transform: scale(1.06); }
+}
 
 /* ---------- 5. Бегущие строки-разделители ---------- */
 .ticker {
