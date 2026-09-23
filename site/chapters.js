@@ -4,17 +4,17 @@
    выбирает главу и «проваливается» только в неё. Остальные главы
    скрыты, но остаются в разметке целиком — ничего не удалено.
 
-   Любая ссылка на раздел (#team, #promo, index.html#contacts с другой
-   страницы, кнопки «Смотреть цены», пункты меню и подвала) сама
-   открывает нужную главу и докручивает до раздела.
+   Переключаться между главами можно пунктами шапки: любая ссылка на
+   раздел (#team, #promo, index.html#contacts с другой страницы, кнопки
+   «Смотреть цены», пункты меню и подвала) сама открывает нужную главу
+   и докручивает до раздела.
    Без JS класса chapters-on нет — страница видна полностью, как раньше. */
 (function () {
   "use strict";
   var root = document.documentElement;
   var hub = document.getElementById("hub");
-  var bar = document.getElementById("chapters");
   var sections = Array.prototype.slice.call(document.querySelectorAll("[data-chapter]"));
-  if (!hub || !bar || !sections.length) return;
+  if (!hub || !sections.length) return;
 
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var current = null;
@@ -39,7 +39,7 @@
   function headerOffset() {
     var nav = document.getElementById("nav");
     var h = nav ? nav.getBoundingClientRect().height : 64;
-    return h + (current ? bar.getBoundingClientRect().height : 0) + 12;
+    return h + 12;
   }
 
   function scrollToEl(el, smooth) {
@@ -57,20 +57,6 @@
       s.classList.toggle("is-chapter", s.getAttribute("data-chapter") === ch);
     });
     root.classList.add("chapter-open");
-    bar.hidden = false;
-    Array.prototype.forEach.call(bar.querySelectorAll("[data-chapter-open]"), function (a) {
-      var on = a.getAttribute("data-chapter-open") === ch;
-      a.classList.toggle("is-current", on);
-      if (on) {
-        a.setAttribute("aria-current", "true");
-        /* активная вкладка видна в строке и на узком экране */
-        var track = bar.querySelector(".chapters__track");
-        if (track) {
-          var tr = track.getBoundingClientRect(), ar = a.getBoundingClientRect();
-          track.scrollLeft += (ar.left - tr.left) - (tr.width - ar.width) / 2;  /* пункт — по центру строки */
-        }
-      } else a.removeAttribute("aria-current");
-    });
     Array.prototype.forEach.call(hub.querySelectorAll("[data-chapter-open]"), function (a) {
       a.classList.toggle("is-current", a.getAttribute("data-chapter-open") === ch);
     });
@@ -96,9 +82,8 @@
     current = null;
     sections.forEach(function (s) { s.classList.remove("is-chapter"); });
     root.classList.remove("chapter-open");
-    bar.hidden = true;
-    Array.prototype.forEach.call(document.querySelectorAll("[data-chapter-open].is-current"), function (a) {
-      a.classList.remove("is-current"); a.removeAttribute("aria-current");
+    Array.prototype.forEach.call(hub.querySelectorAll("[data-chapter-open].is-current"), function (a) {
+      a.classList.remove("is-current");
     });
     syncTickers();
     if (opts.scroll !== false) scrollToEl(hub, true);

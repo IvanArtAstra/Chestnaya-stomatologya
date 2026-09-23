@@ -17,9 +17,9 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923t">
-<link rel="stylesheet" href="admin.css?v=20260923v">
-<link rel="stylesheet" href="glass.css?v=20260923k">
+<link rel="stylesheet" href="styles.css?v=20260923y">
+<link rel="stylesheet" href="admin.css?v=20260923y">
+<link rel="stylesheet" href="glass.css?v=20260923zb">
 </head>
 <body class="adm-body">
 
@@ -116,6 +116,10 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
         <svg class="icon"><use href="#i-pen"/></svg><span>Блог и новости</span>
         <em class="adm-side__badge" id="navPostCount"></em>
       </button>
+      <button class="adm-side__item adm__tab" data-tab="promos" data-admin-only>
+        <svg class="icon"><use href="#i-promo-percent"/></svg><span>Акции</span>
+        <em class="adm-side__badge" id="navPromoCount"></em>
+      </button>
       <button class="adm-side__item adm__tab" data-tab="banners" data-admin-only>
         <svg class="icon"><use href="#i-feed"/></svg><span>Баннеры</span>
       </button>
@@ -188,8 +192,6 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
           <label>Эстетическая реставрация (от)<input name="restore"></label>
           <label>Протезирование (от)<input name="prosthetics"></label>
           <label>Удаление зубов (от)<input name="extraction"></label>
-          <label class="adm--promo">Акция: профгигиена 1+1<input name="promoHygiene"></label>
-          <label class="adm--promo">Акция: циркониевая коронка<input name="promoCrown"></label>
         </div>
         <div class="adm__actions">
           <button type="submit" class="btn btn--primary">Сохранить цены</button>
@@ -220,6 +222,27 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
     </section>
 
     <!-- ═══ БАННЕРЫ ═══ -->
+    <!-- ═══ АКЦИИ ═══ -->
+    <section class="adm__panel" id="panel-promos" data-admin-only>
+      <form class="adm-card" id="promosForm">
+        <div class="adm-card__head">
+          <h2>Честные скидки — акции на сайте</h2>
+          <p>Раздел «Акции» на главной собирается отсюда. Акция показывается, пока включена и не прошла дата «действует до», — истёкшие пропадают с сайта сами. Порядок карточек — как в списке.</p>
+        </div>
+        <div id="promoList"><!-- рендерится из admin.js --></div>
+        <label class="adm-promo__note">Условия акций — сноска под разделом
+          <textarea name="note" id="promoNote" rows="2" placeholder="Акции не суммируются с другими скидками…"></textarea>
+        </label>
+        <div class="adm__actions">
+          <button type="submit" class="btn btn--primary">Сохранить акции</button>
+          <button type="button" class="btn btn--ghost" id="promoAdd">+ Добавить акцию</button>
+          <span class="adm__saved" id="promosSaved" hidden>✓ Сохранено — обновите вкладку с сайтом</span>
+        </div>
+        <p class="adm__hint">Фото сохраняется сразу после загрузки, остальное — кнопкой «Сохранить акции».
+          Как и остальные правки, акции сначала видны только в этом браузере: для всех их публикует «⬇ Скачать db.json» на вкладке «Цены».</p>
+      </form>
+    </section>
+
     <section class="adm__panel" id="panel-banners" data-admin-only>
       <form class="adm-card" id="bannersForm">
         <div class="adm-card__head">
@@ -289,6 +312,19 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
           </div>
           <label>Текст<textarea name="text" rows="6" placeholder="Расскажите пациентам..." required></textarea></label>
           <p class="adm__hint">Поддерживается Markdown: <code>**жирный**</code>, <code>*курсив*</code>, <code>- список</code>, <code>[ссылка](https://…)</code>, <code>### подзаголовок</code></p>
+          <div class="adm-img">
+            <span class="adm-img__pic" id="postImgPic" hidden></span>
+            <div class="adm-doc__photo-ctl">
+              <b>Изображение к посту</b>
+              <span class="adm-post__meta">Необязательно. Лучше всего смотрится горизонтальное фото; уменьшим до 1200 px по ширине. JPG, PNG или WebP.</span>
+              <div class="adm-doc__photo-btns">
+                <label class="btn btn--ghost btn--sm adm-doc__upload"><span id="postImgLabel">Добавить изображение</span>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" id="postImgInput" hidden>
+                </label>
+                <button type="button" class="btn btn--ghost btn--sm adm-doc__nophoto" id="postImgDel" hidden>Убрать</button>
+              </div>
+            </div>
+          </div>
           <div class="adm__preview" id="postPreview" hidden>
             <span class="adm__preview-label">Превью на сайте</span>
             <div class="post">
@@ -297,6 +333,7 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
                 <span class="post__meta"><b id="pvAuthor">Честная стоматология</b><span id="pvRole">Новости клиники · сегодня</span></span>
                 <span class="post__tag" id="pvTag">Тег</span>
               </header>
+              <img class="post__img" id="pvImg" alt="" hidden>
               <h3 id="pvTitle"></h3>
               <div class="post__body" id="pvBody"></div>
             </div>
@@ -320,9 +357,9 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
   </div>
 </div>
 
-<script src="db.js?v=20260923k"></script>
+<script src="db.js?v=20260923y"></script>
 <script src="auth.js?v=20260923k"></script>
 <script src="md.js?v=20260923k"></script>
-<script src="admin.js?v=20260923v"></script>
+<script src="admin.js?v=20260923y"></script>
 </body>
 </html>

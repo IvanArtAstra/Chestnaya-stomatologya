@@ -108,25 +108,101 @@
   border-color: var(--glass-edge-hi);
 }
 
-/* Заливные кнопки остаются цветными, но получают то же ребро и блик —
-   иначе они выглядели бы плоскими рядом со стеклянными. */
+/* ── Главные кнопки: сиреневое стекло ──
+   Как на образце: полупрозрачное тело акцентного цвета, сквозь
+   которое размыт фон; толстая светлая кромка с двойным контуром
+   (второй рисует ::after); блик-полоса сверху и точечный блик в углу
+   (::before); внутреннее свечение снизу и мягкая цветная тень под
+   кнопкой. Цвет — наш акцент, чтобы кнопка оставалась главной. */
 .btn--primary,
 .mobile-cta__book,
 .tm-intro__btn,
 .fab__toggle {
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; isolation: isolate;
+  color: #fff;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0.05) 46%,
+      rgba(255, 255, 255, 0) 54%,
+      rgba(255, 255, 255, 0.08) 100%),
+    linear-gradient(120deg, rgba(104, 88, 232, 0.88), rgba(58, 46, 186, 0.84));
+  -webkit-backdrop-filter: blur(14px) saturate(1.7);
+  backdrop-filter: blur(14px) saturate(1.7);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  text-shadow: 0 1px 2px rgba(30, 20, 90, 0.35);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
-    0 12px 28px -10px rgba(var(--acc-rgb), 0.6);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
+    inset 1px 0 0 rgba(255, 255, 255, 0.35),
+    inset -1px 0 0 rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(40, 24, 140, 0.35),
+    inset 0 -10px 18px -10px rgba(210, 200, 255, 0.55),
+    0 14px 30px -12px rgba(74, 63, 207, 0.55),
+    0 4px 10px -4px rgba(40, 36, 90, 0.25);
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1.2),
+    box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
+.btn--primary:hover,
+.mobile-cta__book:hover,
+.tm-intro__btn:hover,
+.fab__toggle:hover {
+  border-color: rgba(255, 255, 255, 0.85);
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(255, 255, 255, 0.07) 46%,
+      rgba(255, 255, 255, 0) 54%,
+      rgba(255, 255, 255, 0.12) 100%),
+    linear-gradient(120deg, rgba(116, 100, 242, 0.9), rgba(66, 54, 200, 0.86));
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 1px 0 0 rgba(255, 255, 255, 0.4),
+    inset -1px 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(40, 24, 140, 0.35),
+    inset 0 -12px 20px -10px rgba(220, 212, 255, 0.65),
+    0 18px 36px -12px rgba(74, 63, 207, 0.62),
+    0 5px 12px -4px rgba(40, 36, 90, 0.28);
+}
+.btn--primary:active,
+.mobile-cta__book:active,
+.tm-intro__btn:active {
+  box-shadow:
+    inset 0 2px 6px rgba(30, 20, 110, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 6px 14px -8px rgba(74, 63, 207, 0.5);
+}
+/* блик: широкая полоса по верху и яркая искра в левом верхнем углу */
 .btn--primary::before,
 .mobile-cta__book::before,
 .tm-intro__btn::before,
 .fab__toggle::before {
-  content: ""; position: absolute; inset: 0 0 auto 0; height: 52%;
+  content: ""; position: absolute; inset: 0; z-index: -1;
   pointer-events: none; border-radius: inherit;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.26), transparent);
+  background:
+    radial-gradient(10px 5px at 16% 16%, rgba(255, 255, 255, 0.95), transparent 70%),
+    radial-gradient(60% 55% at 50% -8%, rgba(255, 255, 255, 0.55), transparent 70%),
+    linear-gradient(100deg, transparent 58%, rgba(255, 255, 255, 0.16) 66%, transparent 74%);
+}
+/* второй, внутренний контур — «толщина» стекла */
+.btn--primary::after,
+.mobile-cta__book::after,
+.tm-intro__btn::after {
+  content: ""; position: absolute; inset: 3px; z-index: -1;
+  pointer-events: none; border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+/* на графите стекло чуть плотнее — фон тёмный, преломлять нечего */
+:root:not([data-theme="light"]) .btn--primary,
+:root:not([data-theme="light"]) .mobile-cta__book,
+:root:not([data-theme="light"]) .tm-intro__btn,
+:root:not([data-theme="light"]) .fab__toggle { border-color: rgba(255, 255, 255, 0.42); }
+@media (prefers-reduced-transparency: reduce) {
+  .btn--primary, .mobile-cta__book, .tm-intro__btn, .fab__toggle {
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    background: linear-gradient(120deg, #7a6cf0, #4a3fcf);
+  }
 }
 
 /* ── Шапка и нижняя панель: стекло поверх содержимого страницы ── */

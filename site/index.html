@@ -77,13 +77,13 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923t">
+<link rel="stylesheet" href="styles.css?v=20260923y">
 <link rel="stylesheet" href="effects.css?v=20260923t">
 <link rel="stylesheet" href="cards-fx.css?v=20260923m">
 <link rel="stylesheet" href="polish.css?v=20260923m">
-<link rel="stylesheet" href="glass.css?v=20260923m">
-<link rel="stylesheet" href="neu.css?v=20260923w">
-<link rel="stylesheet" href="chapters.css?v=20260923x">
+<link rel="stylesheet" href="glass.css?v=20260923zb">
+<link rel="stylesheet" href="neu.css?v=20260923y">
+<link rel="stylesheet" href="chapters.css?v=20260923z">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -437,7 +437,8 @@ try {
 
 <!-- ══════════ КАРТА РАЗДЕЛОВ ══════════
      Главная разложена на пять глав: человек выбирает нужную и
-     «проваливается» только в неё, без долгой прокрутки. Разделы остаются
+     «проваливается» только в неё, без долгой прокрутки. Переключаться
+     между главами можно пунктами шапки. Разделы остаются
      в разметке целиком; прячет и показывает их chapters.js. Без JS
      страница видна полностью, как раньше. -->
 <section class="section hub" id="hub" aria-labelledby="hubTitle">
@@ -475,17 +476,6 @@ try {
   </div>
 </section>
 
-<!-- Переключатель глав: липкая строка под шапкой, видна, пока открыта глава -->
-<nav class="chapters" id="chapters" aria-label="Разделы сайта" hidden>
-  <div class="chapters__track">
-    <a class="chapters__all" href="#hub" data-chapter-close><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span data-i18n="ch.all">Все разделы</span></a>
-    <a href="#services" data-chapter-open="services" data-i18n="ch.services.h">Услуги и цены</a>
-    <a href="#team" data-chapter-open="team" data-i18n="ch.team.h">Врачи и результаты</a>
-    <a href="#sterile" data-chapter-open="clinic" data-i18n="ch.clinic.h">О клинике</a>
-    <a href="#news" data-chapter-open="news" data-i18n="ch.news.h">Новости</a>
-    <a href="#contacts" data-chapter-open="contacts" data-i18n="ch.contacts.h">Контакты и запись</a>
-  </div>
-</nav>
 
 
 <!-- ══════════ УСЛУГИ И ЦЕНЫ (реальный прайс) ══════════ -->
@@ -671,7 +661,9 @@ try {
     <span class="section__tag" data-i18n="promo.tag">Акции</span>
     <h2><span data-i18n="promo.title">Честные скидки — без звёздочек</span><a class="fn-ref" href="#footnotes" aria-label="Примечание 2"><sup>2</sup></a></h2>
   </div>
-  <div class="promo__row promo__row--glass">
+  <div class="promo__row promo__row--glass" id="promoRow">
+    <!-- Карточки собирает app.js из базы (вкладка «Акции» в админке).
+         Разметка ниже — запасной вариант без JS. -->
     <article class="promo-card reveal">
       <span class="promo-card__badge" data-i18n="promo.till">до 31.08.2026</span>
       <img class="promo-card__pic" src="svc/profgigiena-xs.jpg" width="560" height="420"
@@ -916,7 +908,7 @@ try {
     <h3 data-i18n="fn.title">Примечания</h3>
     <ol class="footnotes__list">
       <li id="fn-1"><span data-i18n="fn.prices">Информация о ценах носит справочный характер и не является публичной офертой. Точная стоимость определяется после осмотра и фиксируется в договоре.</span></li>
-      <li id="fn-2"><span data-i18n="fn.promo">Акции действуют до 31.08.2026 и не суммируются с другими скидками. Подробности — по телефону +7 999 115-24-19.</span></li>
+      <li id="fn-2"><span id="fnPromo" data-i18n="fn.promo">Акции действуют до 31.08.2026 и не суммируются с другими скидками. Подробности — по телефону +7 999 115-24-19.</span></li>
           </ol>
     <p class="footnotes__med">
       <svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>
@@ -1013,12 +1005,12 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260923v"></script>
-<script src="db.js?v=20260923m"></script>
+<script src="i18n.js?v=20260923z"></script>
+<script src="db.js?v=20260923y"></script>
 <script src="auth.js?v=20260923m"></script>
 <script src="md.js?v=20260923m"></script>
 <script src="ux.js?v=20260923m"></script>
-<script src="app.js?v=20260923m"></script>
+<script src="app.js?v=20260923y"></script>
 <script src="water.js?v=20260923m" defer></script>
 <script src="effects.js?v=20260923t" defer></script>
 <script src="teeth-map.js?v=20260923m" defer></script>
@@ -1028,6 +1020,6 @@ try {
 <script src="motion-fx.js?v=20260923m" defer></script>
 <script src="polish.js?v=20260923m" defer></script>
 <script src="svc-play.js?v=20260923r" defer></script>
-<script src="chapters.js?v=20260923x" defer></script>
+<script src="chapters.js?v=20260923z" defer></script>
 </body>
 </html>

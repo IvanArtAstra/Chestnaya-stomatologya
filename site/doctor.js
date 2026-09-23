@@ -85,6 +85,7 @@
           <span class="post__meta"><b>${esc(n.author)}</b><span>${esc(n.role)} · ${fmtDate(n.date)}</span></span>
           <span class="post__tag">${esc(n.tag)}</span>
         </header>
+        ${n.image ? `<img class="post__img" src="${esc(n.image)}" alt="" loading="lazy" decoding="async">` : ""}
         <h3>${MD.inlineHtml(n.title)}</h3>
         <div class="post__body">${MD.toHtml(n.text)}</div>
       </article>`).join("")
