@@ -187,6 +187,30 @@
 .tm-summary .btn { width: 100%; text-align: center; justify-content: center; }
 .tm-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 4px; }
 
+/* ── Заявка прямо под сметой ── */
+.tm-lead { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 6px; }
+.tm-lead[hidden] { display: none; }
+.tm-lead label { display: flex; flex-direction: column; gap: 6px; }
+.tm-lead label span { font-size: 0.82rem; font-weight: 700; color: var(--ink-dim); }
+.tm-lead input {
+  width: 100%; padding: 12px 16px; border-radius: 14px;
+  font: inherit; font-size: 0.95rem; color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid var(--card-line); transition: border-color 0.22s, background 0.22s;
+}
+.tm-lead input::placeholder { color: var(--ink-dim); opacity: 0.7; }
+.tm-lead input:focus { outline: none; border-color: var(--aqua); background: rgba(255, 255, 255, 0.08); }
+.tm-lead input:disabled { opacity: 0.6; }
+.tm-lead__legal { color: var(--ink-dim); font-size: 0.74rem; line-height: 1.5; }
+.tm-lead__ok {
+  padding: 12px 16px; border-radius: 14px; font-weight: 700; font-size: 0.9rem;
+  color: var(--aqua); background: rgba(66, 57, 184, 0.12);
+  border: 1px solid rgba(66, 57, 184, 0.24);
+}
+.tm-lead__ok[hidden] { display: none; }
+/* iOS зумит страницу, если шрифт поля меньше 16 px */
+@media (max-width: 860px) { .tm-lead input { font-size: 16px; } }
+
 /* цвет контура — фирменный индиго (прежний бирюзовый остался от старой палитры) */
 :root[data-theme="light"] .tm-summary { background: rgba(255, 255, 255, 0.7); }
 
@@ -293,10 +317,22 @@
     `<span class="tm-summary__count" id="tmCount">${t("tm.count")} 0</span>` +
     `<b class="tm-summary__sum" id="tmSum" hidden></b>` +
     `<span class="tm-summary__hint" id="tmHint" data-i18n="tm.hint">${t("tm.hint")}</span>` +
+    /* Заявка собирается прямо здесь, а не в модалке: человек уже отметил
+       зубы и увидел сумму — уводить его в отдельное окно значит терять
+       половину. Выбранные зубы и смета уезжают вместе с заявкой. */
+    `<form class="tm-lead" id="tmLead" hidden novalidate>` +
+    `<label><span data-i18n="form.name">${t("form.name")}</span>` +
+    `<input type="text" name="name" autocomplete="name" data-ph="ph.name" placeholder="${t("ph.name")}" required></label>` +
+    `<label><span data-i18n="form.phone">${t("form.phone")}</span>` +
+    `<input type="tel" name="phone" autocomplete="tel" data-ph="ph.phone" placeholder="${t("ph.phone")}" required></label>` +
+    `<input type="hidden" name="request" id="tmRequest">` +
     `<div class="tm-actions">` +
-    `<button class="btn btn--primary" id="tmBook" data-open-booking hidden data-i18n="tm.book">${t("tm.book")}</button>` +
-    `<button class="btn btn--ghost" id="tmReset" type="button" hidden data-i18n="tm.reset">${t("tm.reset")}</button>` +
+    `<button class="btn btn--primary" type="submit" data-i18n="tm.send">${t("tm.send")}</button>` +
+    `<button class="btn btn--ghost" id="tmReset" type="button" data-i18n="tm.reset">${t("tm.reset")}</button>` +
     `</div>` +
+    `<small class="tm-lead__legal" data-i18n="tm.legal">${t("tm.legal")}</small>` +
+    `<div class="tm-lead__ok" role="status" aria-live="polite" hidden data-i18n="form.ok">${t("form.ok")}</div>` +
+    `</form>` +
     `<span class="tm-summary__note" data-i18n="tm.note">${t("tm.note")}</span>` +
     `</div>` +
     `</div>` +
@@ -332,7 +368,8 @@
   const countEl = host.querySelector("#tmCount");
   const sumEl = host.querySelector("#tmSum");
   const hintEl = host.querySelector("#tmHint");
-  const bookBtn = host.querySelector("#tmBook");
+  const leadForm = host.querySelector("#tmLead");
+  const requestEl = host.querySelector("#tmRequest");
   const resetBtn = host.querySelector("#tmReset");
   const selected = new Set();
 
@@ -347,8 +384,7 @@
     countEl.textContent = `${t("tm.count")} ${n}`;
     if (!n) {
       sumEl.hidden = true;
-      bookBtn.hidden = true;
-      resetBtn.hidden = true;
+      leadForm.hidden = true;
       hintEl.hidden = false;
       return;
     }
@@ -360,9 +396,9 @@
       : `${t("tm.approx")} ${fmt(low)} – ${fmt(high)} ₽`;
     sumEl.hidden = false;
     hintEl.hidden = true;
-    bookBtn.hidden = false;
-    resetBtn.hidden = false;
-    bookBtn.dataset.service = `${t("tm.title")}: ${n} ${plural(n)}, ${problemLabel(pid)}`;
+    leadForm.hidden = false;
+    requestEl.value =
+      `${n} ${plural(n)}, ${problemLabel(pid)}, ${sumEl.textContent}`;
   };
 
   /* кнопки «весь ряд» подсвечиваются, когда ряд выбран целиком */
@@ -417,6 +453,20 @@
     teeth.forEach((g) => g.setAttribute("aria-pressed", "false"));
     syncRows();
     render();
+  });
+
+  /* Отправка — демо, как и у остальных форм сайта: на проде здесь
+     будет запрос к API или Telegram-боту. */
+  leadForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = leadForm.elements.name;
+    const phone = leadForm.elements.phone;
+    if (!name.value.trim() || !phone.value.trim()) {
+      (name.value.trim() ? phone : name).focus();
+      return;
+    }
+    Array.from(leadForm.querySelectorAll("input, button")).forEach((el) => (el.disabled = true));
+    leadForm.querySelector(".tm-lead__ok").hidden = false;
   });
 
   render();
