@@ -77,11 +77,11 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923y">
+<link rel="stylesheet" href="styles.css?v=20260923ze">
 <link rel="stylesheet" href="effects.css?v=20260923t">
 <link rel="stylesheet" href="cards-fx.css?v=20260923m">
 <link rel="stylesheet" href="polish.css?v=20260923m">
-<link rel="stylesheet" href="glass.css?v=20260923zb">
+<link rel="stylesheet" href="glass.css?v=20260923zd">
 <link rel="stylesheet" href="neu.css?v=20260923y">
 <link rel="stylesheet" href="chapters.css?v=20260923zc">
 </head>
@@ -389,34 +389,45 @@ try {
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="tour.tag">Клиника</span>
     <h2 data-i18n="tour.title">Прогуляйтесь по клинике</h2>
-    <p data-i18n="tour.sub">Четыре помещения, в которых проходит приём. Листайте пальцем или стрелками.</p>
+    <p data-i18n="tour.sub">Регистратура, кабинеты, стерилизация и холл — листайте пальцем или стрелками.</p>
   </div>
 
   <div class="tour__box reveal">
     <div class="tour__track" id="tourTrack" tabindex="0" aria-label="Фотографии помещений клиники">
       <figure class="tour__slide">
-        <img src="tour/reception.jpg?v=2" width="1920" height="1080"
-             srcset="tour/reception-sm.jpg?v=2 1024w, tour/reception.jpg?v=2 1920w" sizes="(max-width: 860px) 100vw, 1120px"
-             alt="Стойка регистрации «Честной стоматологии»" loading="lazy" decoding="async">
+        <img src="tour/reception-p.jpg" width="1200" height="1600"
+             srcset="tour/reception-p-sm.jpg 720w, tour/reception-p.jpg 1200w"
+             sizes="(max-width: 620px) 84vw, (max-width: 1000px) 46vw, 360px"
+             alt="Стойка регистрации «Честной стоматологии» со светящимся логотипом" loading="lazy" decoding="async">
         <figcaption><b data-i18n="tour.s1">Стойка регистрации</b></figcaption>
       </figure>
       <figure class="tour__slide">
-        <img src="tour/cab1.jpg" width="1920" height="1080"
-             srcset="tour/cab1-sm.jpg 1024w, tour/cab1.jpg 1920w" sizes="(max-width: 860px) 100vw, 1120px"
-             alt="Кабинет № 1 с креслом и стоматологической установкой" loading="lazy" decoding="async">
+        <img src="tour/cab1-p.jpg" width="1200" height="1600"
+             srcset="tour/cab1-p-sm.jpg 720w, tour/cab1-p.jpg 1200w"
+             sizes="(max-width: 620px) 84vw, (max-width: 1000px) 46vw, 360px"
+             alt="Кабинет № 1: стоматологическое кресло и рабочая зона врача" loading="lazy" decoding="async">
         <figcaption><b data-i18n="tour.s2">Кабинет № 1</b></figcaption>
       </figure>
       <figure class="tour__slide">
-        <img src="tour/cab2.jpg" width="1920" height="1080"
-             srcset="tour/cab2-sm.jpg 1024w, tour/cab2.jpg 1920w" sizes="(max-width: 860px) 100vw, 1120px"
-             alt="Кабинет № 2 с креслом и рабочей зоной" loading="lazy" decoding="async">
+        <img src="tour/cab2-p.jpg" width="1200" height="1600"
+             srcset="tour/cab2-p-sm.jpg 720w, tour/cab2-p.jpg 1200w"
+             sizes="(max-width: 620px) 84vw, (max-width: 1000px) 46vw, 360px"
+             alt="Кабинет № 2 с креслом и стоматологической установкой" loading="lazy" decoding="async">
         <figcaption><b data-i18n="tour.s3">Кабинет № 2</b></figcaption>
       </figure>
       <figure class="tour__slide">
-        <img src="tour/sterile.jpg" width="1920" height="1080"
-             srcset="tour/sterile-sm.jpg 1024w, tour/sterile.jpg 1920w" sizes="(max-width: 860px) 100vw, 1120px"
-             alt="Зона стерилизации: рабочая поверхность и УФ-камера" loading="lazy" decoding="async">
+        <img src="tour/sterile-p.jpg" width="1200" height="1600"
+             srcset="tour/sterile-p-sm.jpg 720w, tour/sterile-p.jpg 1200w"
+             sizes="(max-width: 620px) 84vw, (max-width: 1000px) 46vw, 360px"
+             alt="Рабочая зона со шкафом для стерильных инструментов" loading="lazy" decoding="async">
         <figcaption><b data-i18n="tour.s4">Стерилизация</b></figcaption>
+      </figure>
+      <figure class="tour__slide">
+        <img src="tour/hall-p.jpg" width="1200" height="1600"
+             srcset="tour/hall-p-sm.jpg 720w, tour/hall-p.jpg 1200w"
+             sizes="(max-width: 620px) 84vw, (max-width: 1000px) 46vw, 360px"
+             alt="Холл клиники: стойка регистрации и зона ожидания" loading="lazy" decoding="async">
+        <figcaption><b data-i18n="tour.s5">Холл</b></figcaption>
       </figure>
     </div>
     <button class="tour__nav tour__nav--prev" type="button" id="tourPrev" aria-label="Предыдущее помещение">
@@ -507,25 +518,25 @@ try {
 <!-- ══════════ УСЛУГИ И ЦЕНЫ (реальный прайс) ══════════ -->
 <section class="section services" id="services" data-chapter="services">
   <div class="section__head reveal">
-    <span class="section__tag" data-i18n="svc.tag">Услуги и цены</span>
-    <h2 data-i18n-html="svc.title">Честный прайс.<br>Цена «от» = цена «до»</h2>
-    <p><span data-i18n="svc.sub">Реальные цены клиники. Анестезия, материалы и работа врача уже включены.</span><a class="fn-ref" href="#footnotes" aria-label="Примечание 1"><sup>1</sup></a></p>
+    <span class="section__tag" id="svcTag">Услуги и цены</span>
+    <h2 id="svcTitle">Честный прайс.<br>Цена «от» = цена «до»</h2>
+    <p><span id="svcSub">Реальные цены клиники. Анестезия, материалы и работа врача уже включены.</span><a class="fn-ref" href="#footnotes" aria-label="Примечание 1"><sup>1</sup></a></p>
   </div>
-  <!-- Снимок приёма: фотореалистичный кадр, собранный по портрету
-       главного врача и по кадрам нашего кабинета. -->
-  <figure class="band reveal">
+  <!-- Снимок раздела и карточки услуг собирает app.js из базы
+       (вкладка «Услуги» в админке). Разметка ниже — запасной вариант без JS. -->
+  <figure class="band reveal" id="svcBand">
     <img src="svc/konsultatsiya.jpg" width="900" height="1200"
          srcset="svc/konsultatsiya-sm.jpg 450w, svc/konsultatsiya.jpg 900w"
          sizes="(max-width: 860px) 100vw, 1180px"
          alt="Мохамад Рамдун осматривает пациентку в защитных очках в кабинете клиники"
          loading="lazy" decoding="async">
     <figcaption class="band__cap">
-      <b data-i18n="band.priem.h">Осмотр — с объяснением каждого шага</b>
-      <span data-i18n="band.priem.p">Врач показывает, что видит, и называет цену до начала лечения.</span>
+      <b>Осмотр — с объяснением каждого шага</b>
+      <span>Врач показывает, что видит, и называет цену до начала лечения.</span>
     </figcaption>
   </figure>
 
-  <div class="services__grid services__grid--neu">
+  <div class="services__grid services__grid--neu" id="svcGrid">
     <article class="svc-card reveal" data-video="svc/anim/konsultatsiya.mp4?v=20260923o" data-poster="svc/anim/konsultatsiya.jpg?v=20260923o">
       <span class="svc-card__icon"><svg class="icon icon--xl"><use href="#i-exam"/></svg></span>
       <h3 data-i18n="svc.1.h">Приём и консультация</h3>
@@ -1031,21 +1042,21 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260923z"></script>
-<script src="db.js?v=20260923y"></script>
+<script src="i18n.js?v=20260923ze"></script>
+<script src="db.js?v=20260923zf"></script>
 <script src="auth.js?v=20260923m"></script>
 <script src="md.js?v=20260923m"></script>
 <script src="ux.js?v=20260923m"></script>
-<script src="app.js?v=20260923y"></script>
+<script src="app.js?v=20260923zf"></script>
 <script src="water.js?v=20260923m" defer></script>
 <script src="effects.js?v=20260923t" defer></script>
 <script src="teeth-map.js?v=20260923m" defer></script>
 <script src="hero-seq.js?v=20260923o" defer></script>
-<script src="tour.js?v=20260923m" defer></script>
+<script src="tour.js?v=20260923ze" defer></script>
 <script src="cards-fx.js?v=20260923u" defer></script>
 <script src="motion-fx.js?v=20260923m" defer></script>
 <script src="polish.js?v=20260923m" defer></script>
-<script src="svc-play.js?v=20260923r" defer></script>
+<script src="svc-play.js?v=20260923zf" defer></script>
 <script src="chapters.js?v=20260923z" defer></script>
 </body>
 </html>

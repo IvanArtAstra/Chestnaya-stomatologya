@@ -113,11 +113,16 @@
    которое размыт фон; толстая светлая кромка с двойным контуром
    (второй рисует ::after); блик-полоса сверху и точечный блик в углу
    (::before); внутреннее свечение снизу и мягкая цветная тень под
-   кнопкой. Цвет — наш акцент, чтобы кнопка оставалась главной. */
+   кнопкой. Цвет — наш акцент, чтобы кнопка оставалась главной.
+   Тот же стиль у всех кнопок акцентного цвета: светлые кнопки
+   на светлой теме (они там сиреневые — «Рассчитать стоимость»,
+   «Успеть записаться») и активный пункт меню админки. */
 .btn--primary,
 .mobile-cta__book,
 .tm-intro__btn,
-.fab__toggle {
+.fab__toggle,
+:root[data-theme="light"] .btn--light,
+.adm-side__item.is-active {
   position: relative; overflow: hidden; isolation: isolate;
   color: #fff;
   background:
@@ -146,7 +151,8 @@
 .btn--primary:hover,
 .mobile-cta__book:hover,
 .tm-intro__btn:hover,
-.fab__toggle:hover {
+.fab__toggle:hover,
+:root[data-theme="light"] .btn--light:hover {
   border-color: rgba(255, 255, 255, 0.85);
   background:
     linear-gradient(180deg,
@@ -166,7 +172,8 @@
 }
 .btn--primary:active,
 .mobile-cta__book:active,
-.tm-intro__btn:active {
+.tm-intro__btn:active,
+:root[data-theme="light"] .btn--light:active {
   box-shadow:
     inset 0 2px 6px rgba(30, 20, 110, 0.45),
     inset 0 -1px 0 rgba(255, 255, 255, 0.4),
@@ -176,7 +183,9 @@
 .btn--primary::before,
 .mobile-cta__book::before,
 .tm-intro__btn::before,
-.fab__toggle::before {
+.fab__toggle::before,
+:root[data-theme="light"] .btn--light::before,
+.adm-side__item.is-active::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
   pointer-events: none; border-radius: inherit;
   background:
@@ -187,7 +196,8 @@
 /* второй, внутренний контур — «толщина» стекла */
 .btn--primary::after,
 .mobile-cta__book::after,
-.tm-intro__btn::after {
+.tm-intro__btn::after,
+:root[data-theme="light"] .btn--light::after {
   content: ""; position: absolute; inset: 3px; z-index: -1;
   pointer-events: none; border-radius: inherit;
   border: 1px solid rgba(255, 255, 255, 0.28);
@@ -199,7 +209,8 @@
 :root:not([data-theme="light"]) .tm-intro__btn,
 :root:not([data-theme="light"]) .fab__toggle { border-color: rgba(255, 255, 255, 0.42); }
 @media (prefers-reduced-transparency: reduce) {
-  .btn--primary, .mobile-cta__book, .tm-intro__btn, .fab__toggle {
+  .btn--primary, .mobile-cta__book, .tm-intro__btn, .fab__toggle,
+  :root[data-theme="light"] .btn--light, .adm-side__item.is-active {
     -webkit-backdrop-filter: none; backdrop-filter: none;
     background: linear-gradient(120deg, #7a6cf0, #4a3fcf);
   }

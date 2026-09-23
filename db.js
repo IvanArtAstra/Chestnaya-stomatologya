@@ -119,6 +119,55 @@ const ChestomDB = (() => {
       right: { on: true, badge: "Неотложка", title: "Острая боль?", text: "Неотложная помощь взрослым — примем сегодня",  url: "tel:+79991152419", cta: "Позвонить" }
     },
 
+    /* ── УСЛУГИ И ЦЕНЫ (раздел на главной, управляется из админки) ──
+       Цена карточки живёт в общем прайсе prices[priceKey] — им же
+       пользуются калькулятор и страницы услуг. i18n — ключ перевода
+       из словаря сайта: пока текст не правили, английская и арабская
+       версии берут перевод оттуда; после правки — из en/ar карточки
+       (или показывают русский текст). */
+    services: {
+      head: {
+        tag: "Услуги и цены",
+        title: "Честный прайс.\nЦена «от» = цена «до»",
+        sub: "Реальные цены клиники. Анестезия, материалы и работа врача уже включены.",
+        i18n: true
+      },
+      band: {
+        on: true,
+        image: "svc/konsultatsiya.jpg", imageSm: "svc/konsultatsiya-sm.jpg",
+        alt: "Мохамад Рамдун осматривает пациентку в защитных очках в кабинете клиники",
+        title: "Осмотр — с объяснением каждого шага",
+        text: "Врач показывает, что видит, и называет цену до начала лечения.",
+        i18n: "band.priem"
+      },
+      items: [
+        { id: "s1", on: true, icon: "i-exam", priceKey: "exam", from: false, i18n: "svc.1",
+          title: "Приём и консультация", text: "Осмотр врача-стоматолога, фото состояния зубов, понятный план лечения.",
+          service: "Консультация", page: "konsultatsiya.html",
+          video: "svc/anim/konsultatsiya.mp4?v=20260923o", poster: "svc/anim/konsultatsiya.jpg?v=20260923o" },
+        { id: "s2", on: true, icon: "i-tooth", priceKey: "caries", from: false, i18n: "svc.2",
+          title: "Лечение кариеса", text: "Лечение кариеса и пульпита с фотопротоколом. Глубокий кариес — 4 500 ₽.",
+          service: "Лечение кариеса", page: "lechenie-kariesa.html",
+          video: "svc/anim/karies.mp4?v=20260923r", poster: "svc/anim/karies.jpg?v=20260923r", vtt: "svc/anim/karies.vtt?v=20260923r" },
+        { id: "s3", on: true, icon: "i-shine", priceKey: "hygiene", from: false, i18n: "svc.3",
+          title: "Профессиональная гигиена", text: "Ультразвук + Air-Flow + реминерализующая терапия за один визит.",
+          service: "Профгигиена", page: "profgigiena.html",
+          video: "svc/anim/gigiena.mp4?v=20260923o", poster: "svc/anim/gigiena.jpg?v=20260923o" },
+        { id: "s4", on: true, icon: "i-restore", priceKey: "restore", from: true, i18n: "svc.4",
+          title: "Эстетическая реставрация", text: "Восстановление формы и цвета зубов. Красивая улыбка без коронок.",
+          service: "Реставрация", page: "restavratsiya.html",
+          video: "svc/anim/restavratsiya.mp4?v=20260923r", poster: "svc/anim/restavratsiya.jpg?v=20260923r", vtt: "svc/anim/restavratsiya.vtt?v=20260923r" },
+        { id: "s5", on: true, icon: "i-crown", priceKey: "prosthetics", from: true, i18n: "svc.5",
+          title: "Протезирование", text: "Коронка цельнолитая «под ключ» — 10 440 ₽, съёмный протез (7+ зубов) — 26 025 ₽.",
+          service: "Протезирование", page: "protezirovanie.html",
+          video: "svc/anim/protezirovanie.mp4?v=20260923o", poster: "svc/anim/protezirovanie.jpg?v=20260923o" },
+        { id: "s6", on: true, icon: "i-extract", priceKey: "extraction", from: true, i18n: "svc.6",
+          title: "Удаление зубов", text: "Бережное удаление, в том числе неотложная помощь для взрослых.",
+          service: "Удаление зуба", page: "udalenie-zubov.html",
+          video: "svc/anim/udalenie.mp4?v=20260923r", poster: "svc/anim/udalenie.jpg?v=20260923r", vtt: "svc/anim/udalenie.vtt?v=20260923r" }
+      ]
+    },
+
     /* ── АКЦИИ (раздел «Честные скидки», управляется из админки) ──
        till — последний день акции (ГГГГ-ММ-ДД): после него акция сама
        пропадает с сайта. en/ar — необязательные переводы; без них
@@ -203,6 +252,16 @@ const ChestomDB = (() => {
     return out;
   };
 
+  /* Услуги: берём из базы, недостающие части — из встроенных */
+  const normServices = (v) => {
+    if (!v || !Array.isArray(v.items)) return deepCopy(SEED.services);
+    return {
+      head: { ...SEED.services.head, ...(v.head || {}) },
+      band: { ...SEED.services.band, ...(v.band || {}) },
+      items: v.items
+    };
+  };
+
   const load = () => {
     try {
       const raw = localStorage.getItem(KEY);
@@ -215,6 +274,7 @@ const ChestomDB = (() => {
         news:    Array.isArray(db.news) ? db.news : deepCopy(SEED.news),
         accounts: Array.isArray(db.accounts) && db.accounts.length ? db.accounts : deepCopy(SEED.accounts),
         promos:  normPromos(db.promos, db.prices),
+        services: normServices(db.services),
         banners: {
           left:  { ...SEED.banners.left,  ...(db.banners && db.banners.left) },
           right: { ...SEED.banners.right, ...(db.banners && db.banners.right) }
@@ -236,6 +296,7 @@ const ChestomDB = (() => {
     news:    Array.isArray(remote.news) && remote.news.length ? remote.news : db.news,
     accounts: db.accounts, /* аккаунты никогда не публикуются в db.json */
     promos:  remote.promos && Array.isArray(remote.promos.items) ? normPromos(remote.promos) : db.promos,
+    services: remote.services && Array.isArray(remote.services.items) ? normServices(remote.services) : db.services,
     banners: {
       left:  { ...db.banners.left,  ...(remote.banners && remote.banners.left) },
       right: { ...db.banners.right, ...(remote.banners && remote.banners.right) }

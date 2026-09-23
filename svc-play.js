@@ -6,14 +6,22 @@
    клик по фону закрывают окно.
    Играет только видимый слайд; ролики грузятся лишь при открытии
    окна, чтобы не тянуть трафик заранее.
-   Пока слайд плашки на экране, по контуру её иконки бежит штрих света. */
+   Пока слайд плашки на экране, по контуру её иконки бежит штрих света.
+
+   Карточки собирает app.js из базы и пересобирает при смене языка или
+   после загрузки опубликованных данных — тогда приходит событие
+   chestom:services, и карусель разбирается и собирается заново. */
 (function () {
   "use strict";
-  var grid = document.querySelector(".services__grid--neu");
-  if (!grid) return;
   var SVG = "http://www.w3.org/2000/svg";
+  var destroy = null;
+
+  function mount() {
+  var grid = document.querySelector(".services__grid--neu");
+  if (!grid) return null;
   var cards = Array.prototype.slice.call(grid.querySelectorAll(".svc-card"));
   var items = cards.filter(function (c) { return c.hasAttribute("data-video"); });
+  var io = null;
 
   function icon(id, cls) {
     return '<svg class="icon' + (cls ? " " + cls : "") + '" aria-hidden="true"><use href="#' + id + '"/></svg>';
@@ -36,7 +44,17 @@
     }
   });
 
-  if (!items.length) return;
+  /* при первом появлении плашки иконка один раз прорисовывается линией */
+  if ("IntersectionObserver" in window) {
+    io = new IntersectionObserver(function (en) {
+      en.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("is-drawn"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.35 });
+    cards.forEach(function (c) { io.observe(c); });
+  }
+
+  if (!items.length) return function () { if (io) io.disconnect(); };
 
   /* ── Окно-карусель ── */
   var box = document.createElement("div");
@@ -222,7 +240,7 @@
 
   box.querySelector(".svc-reel__close").addEventListener("click", close);
   box.addEventListener("click", function (e) { if (!panel.contains(e.target)) close(); });
-  document.addEventListener("keydown", function (e) {
+  function onKey(e) {
     if (box.hidden) return;
     var rtl = document.documentElement.dir === "rtl";
     if (e.key === "Escape") { e.preventDefault(); close(); }
@@ -236,19 +254,30 @@
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
-  });
-  window.addEventListener("resize", function () { if (!box.hidden && active >= 0) go(active, true); });
-  document.addEventListener("visibilitychange", function () {
-    if (!document.hidden && !box.hidden && slides[active]) kick(slides[active].querySelector("video"));
-  });
-
-  /* при первом появлении плашки иконка один раз прорисовывается линией */
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function (en) {
-      en.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add("is-drawn"); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.35 });
-    cards.forEach(function (c) { io.observe(c); });
   }
+  function onResize() { if (!box.hidden && active >= 0) go(active, true); }
+  function onVisible() {
+    if (!document.hidden && !box.hidden && slides[active]) kick(slides[active].querySelector("video"));
+  }
+  document.addEventListener("keydown", onKey);
+  window.addEventListener("resize", onResize);
+  document.addEventListener("visibilitychange", onVisible);
+
+  /* разобрать: закрыть окно, снять обработчики, убрать разметку */
+  return function () {
+    if (!box.hidden) close();
+    document.documentElement.classList.remove("svc-reel-open");
+    document.removeEventListener("keydown", onKey);
+    window.removeEventListener("resize", onResize);
+    document.removeEventListener("visibilitychange", onVisible);
+    if (io) io.disconnect();
+    if (box.parentNode) box.parentNode.removeChild(box);
+  };
+  }
+
+  destroy = mount();
+  document.addEventListener("chestom:services", function () {
+    if (destroy) destroy();
+    destroy = mount();
+  });
 })();
