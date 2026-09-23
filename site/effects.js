@@ -25,6 +25,9 @@
       var MAX_DEG = 5;
       var cards = document.querySelectorAll(".svc-card, a.doc-card, .promo-card");
       Array.prototype.forEach.call(cards, function (card) {
+        /* неоморфные плашки услуг «вылеплены» из фона: наклон и блик
+           ломают ощущение мягкого рельефа, поэтому их не трогаем */
+        if (card.closest(".services__grid--neu")) return;
         var glare = document.createElement("span");
         glare.className = "tilt-glare";
         glare.setAttribute("aria-hidden", "true");
