@@ -80,11 +80,11 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923e">
-<link rel="stylesheet" href="effects.css?v=20260923e">
-<link rel="stylesheet" href="cards-fx.css?v=20260923e">
-<link rel="stylesheet" href="polish.css?v=20260923e">
-<link rel="stylesheet" href="glass.css?v=20260923e">
+<link rel="stylesheet" href="styles.css?v=20260923h">
+<link rel="stylesheet" href="effects.css?v=20260923h">
+<link rel="stylesheet" href="cards-fx.css?v=20260923h">
+<link rel="stylesheet" href="polish.css?v=20260923h">
+<link rel="stylesheet" href="glass.css?v=20260923h">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -99,10 +99,10 @@ try {
       <stop offset="0" stop-color="#4239b8"/><stop offset="1" stop-color="#7a6cf0"/>
     </linearGradient>
   </defs>
-  <!-- зуб с пульсом честности -->
-  <symbol id="i-tooth" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 3C8 3 5.5 5.6 5.5 8.8c0 2.6 1.3 3.9 1.9 6.5.5 2 .9 5.7 2.2 5.7 1.5 0 1-4.4 2.4-4.4s.9 4.4 2.4 4.4c1.3 0 1.7-3.7 2.2-5.7.6-2.6 1.9-3.9 1.9-6.5C18.5 5.6 16 3 12 3z"/>
-    <path d="M8.5 9.5h2l1-1.7 1.4 3 1-1.3h1.6"/>
+  <!-- зуб, одной линией -->
+  <symbol id="i-tooth" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M38.0 24.0 C41.0 22.0 44.0 24.0 44.0 27.0 C44.0 30.0 41.0 32.0 38.0 30.0 C36.0 28.0 36.0 26.0 38.0 24.0"/>
   </symbol>
   <symbol id="i-logo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
     <path d="M32 6.5 L37 13.5 L32 20.5 L27 13.5 Z"/>
@@ -117,37 +117,35 @@ try {
     <path d="M32 23.5c-5.2 0-8.6 3-8.6 6.8 0 2.8 1.7 4.3 2.5 6.9 .7 2.2 1 5.6 2.6 5.6 1.7 0 1.4-4 3-4h1c1.6 0 1.3 4 3 4 1.6 0 1.9-3.4 2.6-5.6 .8-2.6 2.5-4.1 2.5-6.9 0-3.8-3.4-6.8-8.6-6.8z"/>
   </symbol>
 
-  <!-- лупа-осмотр над зубом -->
-  <symbol id="i-exam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="10.5" cy="10.5" r="6.5"/>
-    <path d="M20.5 20.5 15.2 15.2"/>
-    <path d="M8 10c0-1.6 1.1-2.7 2.5-2.7S13 8.4 13 10c0 1.3-.7 1.9-1 3.2-.2.8-.4 1.3-.9 1.3s-.5-.7-.6-1.3c-.3-1.3-1.5-1.9-1.5-3.2z" stroke-width="1.4"/>
+  <!-- осмотр, одной линией -->
+  <symbol id="i-exam" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M41.0 30.0 C47.0 28.0 53.0 32.0 53.0 38.0 C53.0 44.0 48.0 48.0 42.0 46.0 C38.0 44.0 36.0 39.0 39.0 35.0 M50.0 44.0 C53.0 47.0 55.0 49.0 58.0 52.0"/>
   </symbol>
-  <!-- капля-щётка: гигиена -->
-  <symbol id="i-shine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 3.5c2.5 3.6 6 6.7 6 10.3a6 6 0 0 1-12 0c0-3.6 3.5-6.7 6-10.3z"/>
-    <path d="M9.5 13.5a2.6 2.6 0 0 0 2.5 2.7"/>
-    <path d="M17.5 4.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" stroke-width="1.4"/>
+  <!-- гигиена, одной линией -->
+  <symbol id="i-shine" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M60.0 58.0 C57.0 52.0 54.0 46.0 52.0 42.0 C51.0 39.0 52.0 37.0 55.0 36.0 C58.0 35.0 60.0 36.0 61.0 39.0 M52.0 38.0 C50.0 36.0 49.0 34.0 47.0 32.0 M56.0 36.0 C55.0 33.0 54.0 31.0 53.0 28.0 M60.0 37.0 C60.0 34.0 60.0 31.0 60.0 28.0"/>
   </symbol>
-  <!-- реставрация: зуб + кисть-звезда -->
-  <symbol id="i-restore" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M9.5 4.2C6.6 4.6 4.8 6.8 4.8 9.4c0 2.3 1.1 3.4 1.7 5.7.4 1.8.8 5 1.9 5 1.3 0 .9-3.9 2.1-3.9s.8 3.9 2.1 3.9c1.1 0 1.5-3.2 1.9-5 .2-.9.5-1.7.9-2.4"/>
-    <path d="M18.2 3.2l.9 2.2 2.2.9-2.2.9-.9 2.2-.9-2.2-2.2-.9 2.2-.9z"/>
+  <!-- реставрация, одной линией -->
+  <symbol id="i-restore" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M51.0 12.0 C52.0 16.0 54.0 18.0 58.0 19.0 C54.0 20.0 52.0 22.0 51.0 26.0 C50.0 22.0 48.0 20.0 44.0 19.0 C48.0 18.0 50.0 16.0 51.0 12.0 M53.0 34.0 C54.0 36.0 55.0 37.0 57.0 38.0 C55.0 39.0 54.0 40.0 53.0 42.0 C52.0 40.0 51.0 39.0 49.0 38.0 C51.0 37.0 52.0 36.0 53.0 34.0"/>
   </symbol>
-  <!-- коронка -->
-  <symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4.5 9.5 7 15.5h10l2.5-6-4 2.2L12 6.8l-3.5 4.9z"/>
-    <path d="M7.5 18.5h9"/>
+  <!-- имплант, одной линией -->
+  <symbol id="i-crown" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 24.0 C10.0 24.0 13.0 22.0 15.0 19.0 C16.0 13.0 22.0 9.0 31.0 9.0 C40.0 9.0 47.0 12.0 48.0 17.0 C49.0 22.0 49.0 27.0 47.0 30.0 C45.0 33.0 38.0 34.0 31.0 34.0 C23.0 34.0 16.0 33.0 15.0 29.0 C14.0 24.0 17.0 20.0 23.0 18.0 C31.0 16.0 41.0 17.0 46.0 21.0 M48.0 24.0 C53.0 24.0 56.0 23.0 59.0 22.0 M26.0 34.0 C24.0 37.0 38.0 37.0 37.0 40.0 C36.0 43.0 25.0 42.0 27.0 45.0 C29.0 48.0 36.0 47.0 35.0 50.0 C34.0 53.0 30.0 53.0 31.0 56.0"/>
   </symbol>
-  <!-- щипцы-удаление (бережно): зуб со стрелкой вверх -->
-  <symbol id="i-extract" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 13.5c-2.6 0-4.2 1.7-4.2 3.7 0 1.7.9 3.3 1.9 3.3.9 0 .8-1.8 2.3-1.8s1.4 1.8 2.3 1.8c1 0 1.9-1.6 1.9-3.3 0-2-1.6-3.7-4.2-3.7z"/>
-    <path d="M12 10.5V3.5M9 6l3-2.9L15 6"/>
+  <!-- удаление, одной линией -->
+  <symbol id="i-extract" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.0 27.0 C10.0 27.0 13.0 25.0 15.0 21.0 C16.0 15.0 22.0 11.0 30.0 11.0 C38.0 11.0 45.0 14.0 47.0 20.0 C49.0 27.0 48.0 38.0 45.0 47.0 C43.0 52.0 39.0 53.0 37.0 48.0 C35.0 43.0 34.0 37.0 33.0 33.0 C32.0 37.0 31.0 43.0 29.0 48.0 C27.0 53.0 23.0 52.0 21.0 47.0 C18.0 38.0 17.0 27.0 19.0 21.0 C21.0 16.0 26.0 14.0 31.0 14.0 M54.0 26.0 C54.0 34.0 54.0 42.0 54.0 52.0 M48.0 45.0 C50.0 48.0 52.0 50.0 54.0 53.0 C56.0 50.0 58.0 48.0 60.0 45.0"/>
   </symbol>
-  <!-- калькулятор-смета -->
-  <symbol id="i-calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="5" y="3.5" width="14" height="17" rx="2.5"/>
-    <path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 15.5h.01M12 15.5h.01M15.5 15.5v.01"/>
+  <!-- калькулятор, одной линией -->
+  <symbol id="i-calc" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.0 30.0 C11.0 30.0 14.0 28.0 16.0 24.0 C16.0 16.0 19.0 12.0 27.0 12.0 C38.0 12.0 45.0 13.0 47.0 17.0 C49.0 25.0 49.0 41.0 47.0 48.0 C45.0 52.0 38.0 52.0 27.0 52.0 C19.0 52.0 16.0 49.0 16.0 41.0 C16.0 33.0 16.0 27.0 16.0 24.0 M23.0 21.0 C30.0 20.0 37.0 20.0 42.0 21.0 M23.0 32.0 C26.0 32.0 28.0 32.0 30.0 32.0 M36.0 32.0 C38.0 32.0 40.0 32.0 42.0 32.0 M23.0 42.0 C26.0 42.0 28.0 42.0 30.0 42.0 M36.0 42.0 C38.0 42.0 40.0 42.0 42.0 42.0"/>
   </symbol>
   <!-- щит-гарантия -->
   <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -251,6 +249,21 @@ try {
     <path d="M12.6 21l1.2-5.3-2.6-2.3.9-4.4-3 1.6-1.2 2.7"/>
     <path d="M12.1 9l3 1.8 1.1 3.1 2.3.9M9.6 15.8 7.2 21"/>
   </symbol>
+  <!-- акция · щётка, одной линией -->
+  <symbol id="i-promo-hygiene" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.0 55.0 C16.0 46.0 23.0 35.0 29.0 26.0 C31.0 23.0 33.0 22.0 36.0 24.0 C40.0 27.0 42.0 30.0 41.0 33.0 C39.0 37.0 35.0 39.0 31.0 37.0 C27.0 35.0 25.0 31.0 27.0 28.0 M36.0 22.0 C37.0 19.0 38.0 16.0 39.0 13.0 M41.0 24.0 C43.0 21.0 45.0 19.0 47.0 16.0 M44.0 29.0 C47.0 27.0 50.0 26.0 53.0 25.0"/>
+  </symbol>
+  <!-- акция · скидка, одной линией -->
+  <symbol id="i-promo-percent" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13.0 50.0 C24.0 37.0 37.0 24.0 50.0 12.0 M20.0 13.0 C25.0 13.0 29.0 17.0 29.0 21.0 C29.0 26.0 25.0 29.0 20.0 29.0 C15.0 29.0 12.0 26.0 12.0 21.0 C12.0 17.0 15.0 13.0 20.0 13.0 M44.0 33.0 C49.0 33.0 52.0 37.0 52.0 41.0 C52.0 46.0 49.0 49.0 44.0 49.0 C39.0 49.0 36.0 46.0 36.0 41.0 C36.0 37.0 39.0 33.0 44.0 33.0"/>
+  </symbol>
+  <!-- акция · коронка, одной линией -->
+  <symbol id="i-promo-crown" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.0 48.0 C10.0 48.0 13.0 46.0 14.0 42.0 C15.0 33.0 16.0 24.0 19.0 20.0 C21.0 17.0 24.0 19.0 27.0 21.0 C30.0 23.0 34.0 23.0 37.0 20.0 C40.0 17.0 43.0 16.0 45.0 20.0 C48.0 25.0 49.0 34.0 50.0 42.0 C51.0 46.0 54.0 48.0 58.0 47.0 M14.0 42.0 C23.0 47.0 41.0 47.0 50.0 42.0"/>
+  </symbol>
 </svg>
 
 
@@ -296,8 +309,8 @@ try {
     <canvas class="reveal-seq__canvas" id="seqCanvas" aria-hidden="true"></canvas>
     <!-- Запасной кадр — первый в секвенции, иначе без JS страница открывалась бы
          сразу рецепцией, минуя заставку -->
-    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260923e" width="1920" height="1080"
-         srcset="hero-seq/m/01.jpg?v=20260923e 1024w, hero-seq/01.jpg?v=20260923e 1920w"
+    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260923h" width="1920" height="1080"
+         srcset="hero-seq/m/01.jpg?v=20260923h 1024w, hero-seq/01.jpg?v=20260923h 1920w"
          sizes="100vw"
          alt="Руки бережно держат здоровый зуб — символ заботы клиники о здоровье пациента" loading="lazy">
     <div class="reveal-seq__steps">
@@ -305,15 +318,15 @@ try {
         <h2 data-i18n="care.h1">Сначала — диагностика</h2>
         <p data-i18n="care.p1">Показываем состояние зубов на фото.</p>
       </div>
-      <div class="reveal-seq__step" data-step="2" data-from="5" data-to="8.5">
+      <div class="reveal-seq__step" data-step="2" data-from="5" data-to="9">
         <h2 data-i18n="care.h2">План и цена — до начала</h2>
         <p data-i18n="care.p2">Стоимость фиксируем в договоре.</p>
       </div>
-      <div class="reveal-seq__step" data-step="3" data-from="8.5" data-to="12">
+      <div class="reveal-seq__step" data-step="3" data-from="9" data-to="13">
         <h2 data-i18n="care.h3">Только то, что нужно</h2>
         <p data-i18n="care.p3">Не назначаем процедуры без показаний.</p>
       </div>
-      <div class="reveal-seq__step" data-step="4" data-from="12" data-to="15.6">
+      <div class="reveal-seq__step" data-step="4" data-from="13" data-to="18.5">
         <h2 data-i18n="care.h4">Решение принимаете вы</h2>
         <p data-i18n="care.p4">Объясняем варианты и отвечаем на вопросы.</p>
       </div>
@@ -365,8 +378,8 @@ try {
   <!-- Снимок приёма: фотореалистичный кадр, собранный по портрету
        главного врача и по кадрам нашего кабинета. -->
   <figure class="band reveal">
-    <img src="scenes/priem.jpg" width="1600" height="900"
-         srcset="scenes/priem-sm.jpg 800w, scenes/priem.jpg 1600w"
+    <img src="svc/konsultatsiya.jpg" width="900" height="1200"
+         srcset="svc/konsultatsiya-sm.jpg 450w, svc/konsultatsiya.jpg 900w"
          sizes="(max-width: 860px) 100vw, 1180px"
          alt="Мохамад Рамдун осматривает пациентку в защитных очках в кабинете клиники"
          loading="lazy" decoding="async">
@@ -541,6 +554,7 @@ try {
   <div class="promo__row">
     <article class="promo-card reveal">
       <span class="promo-card__badge" data-i18n="promo.till">до 31.08.2026</span>
+      <span class="promo-card__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-promo-hygiene"/></svg></span>
       <h3 data-i18n="promo.1.h">Профгигиена 1+1</h3>
       <p data-i18n="promo.1.p">Профессиональная гигиена для двоих — приходите вместе.</p>
       <div class="promo-card__price"><s>9 800 ₽</s><b data-price-id="promoHygiene">6 990 ₽</b></div>
@@ -548,6 +562,7 @@ try {
     </article>
     <article class="promo-card promo-card--alt reveal">
       <span class="promo-card__badge" data-i18n="promo.till">до 31.08.2026</span>
+      <span class="promo-card__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-promo-percent"/></svg></span>
       <h3 data-i18n="promo.2.h">−15% на лечение кариеса</h3>
       <p data-i18n="promo.2.p">При прохождении профессиональной гигиены.</p>
       <div class="promo-card__price"><b>−15%</b></div>
@@ -555,6 +570,7 @@ try {
     </article>
     <article class="promo-card reveal">
       <span class="promo-card__badge" data-i18n="promo.till">до 31.08.2026</span>
+      <span class="promo-card__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-promo-crown"/></svg></span>
       <h3 data-i18n="promo.3.h">Циркониевая коронка «под ключ»</h3>
       <p data-i18n="promo.3.p">Полная стоимость с работой и материалами.</p>
       <div class="promo-card__price"><b data-price-id="promoCrown">24 500 ₽</b></div>
@@ -871,19 +887,19 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260923e"></script>
-<script src="db.js?v=20260923e"></script>
-<script src="auth.js?v=20260923e"></script>
-<script src="md.js?v=20260923e"></script>
-<script src="ux.js?v=20260923e"></script>
-<script src="app.js?v=20260923e"></script>
-<script src="water.js?v=20260923e" defer></script>
-<script src="effects.js?v=20260923e" defer></script>
-<script src="teeth-map.js?v=20260923e" defer></script>
-<script src="hero-seq.js?v=20260923e" defer></script>
-<script src="cards-fx.js?v=20260923e" defer></script>
-<script src="motion-fx.js?v=20260923e" defer></script>
-<script src="polish.js?v=20260923e" defer></script>
-<script src="a11y.js?v=20260923e"></script>
+<script src="i18n.js?v=20260923h"></script>
+<script src="db.js?v=20260923h"></script>
+<script src="auth.js?v=20260923h"></script>
+<script src="md.js?v=20260923h"></script>
+<script src="ux.js?v=20260923h"></script>
+<script src="app.js?v=20260923h"></script>
+<script src="water.js?v=20260923h" defer></script>
+<script src="effects.js?v=20260923h" defer></script>
+<script src="teeth-map.js?v=20260923h" defer></script>
+<script src="hero-seq.js?v=20260923h" defer></script>
+<script src="cards-fx.js?v=20260923h" defer></script>
+<script src="motion-fx.js?v=20260923h" defer></script>
+<script src="polish.js?v=20260923h" defer></script>
+<script src="a11y.js?v=20260923h"></script>
 </body>
 </html>
