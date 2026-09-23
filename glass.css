@@ -1,0 +1,183 @@
+/* ═══════════════════════════════════════════════════════════════
+   ЖИДКОЕ СТЕКЛО
+   Слой поверх основных стилей: один набор правил на все плашки,
+   кнопки и карточки, чтобы поверхности вели себя одинаково.
+
+   Стекло здесь собрано из четырёх слоёв, как в iOS:
+     1. полупрозрачная заливка — сквозь неё видно фон;
+     2. размытие и подъём насыщенности за элементом (backdrop-filter);
+     3. светлая кромка сверху и тёмная снизу (inset-тени) — ребро стекла;
+     4. широкая мягкая тень наружу — элемент «лежит» над фоном.
+   Блик по верхнему краю рисует ::before, поэтому цвет заливки
+   остаётся ровным и не спорит с бликом.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --glass-tint:      rgba(255, 255, 255, 0.07);
+  --glass-tint-hi:   rgba(255, 255, 255, 0.13);
+  --glass-edge:      rgba(255, 255, 255, 0.16);
+  --glass-edge-hi:   rgba(255, 255, 255, 0.28);
+  --glass-blur:      22px;
+  --glass-sat:       1.7;
+  --glass-shadow:    0 18px 44px -18px rgba(4, 2, 24, 0.65);
+  --glass-shadow-hi: 0 26px 60px -20px rgba(4, 2, 24, 0.75);
+}
+:root[data-theme="light"] {
+  --glass-tint:      rgba(255, 255, 255, 0.55);
+  --glass-tint-hi:   rgba(255, 255, 255, 0.72);
+  --glass-edge:      rgba(255, 255, 255, 0.8);
+  --glass-edge-hi:   rgba(255, 255, 255, 0.95);
+  --glass-shadow:    0 18px 40px -18px rgba(23, 18, 62, 0.28);
+  --glass-shadow-hi: 0 26px 56px -20px rgba(23, 18, 62, 0.34);
+}
+
+/* ── Общая поверхность ── */
+.svc-card,
+.promo-card,
+.review,
+.fact,
+.doc-card,
+.route__card,
+.route__step,
+.sterile__card,
+.tm-card,
+.booking-form,
+.modal__card,
+.post,
+.svcpage__faq details,
+.dpage__hero,
+.seq-offer {
+  background: var(--glass-tint);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  box-shadow:
+    inset 0 1px 0 var(--glass-edge-hi),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    var(--glass-shadow);
+  transition:
+    background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease,
+    transform 0.45s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.svc-card:hover,
+.promo-card:hover,
+.review:hover,
+.doc-card:hover,
+.route__card:hover,
+.route__step:hover,
+.sterile__card:hover {
+  background: var(--glass-tint-hi);
+  border-color: var(--glass-edge-hi);
+  box-shadow:
+    inset 0 1px 0 var(--glass-edge-hi),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    var(--glass-shadow-hi);
+}
+
+/* ── Кнопки ── */
+.btn--ghost,
+.btn--light,
+.tm-row,
+.route__link,
+.contacts__msgrs a,
+.theme-btn,
+.account-btn,
+.lang__btn,
+.fab__item,
+.mobile-cta__call,
+.svc-card__page {
+  background: var(--glass-tint);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(16px) saturate(var(--glass-sat));
+  backdrop-filter: blur(16px) saturate(var(--glass-sat));
+  box-shadow:
+    inset 0 1px 0 var(--glass-edge-hi),
+    0 8px 20px -10px rgba(4, 2, 24, 0.5);
+}
+.btn--ghost:hover,
+.btn--light:hover,
+.tm-row:hover,
+.route__link:hover,
+.contacts__msgrs a:hover,
+.theme-btn:hover,
+.account-btn:hover,
+.lang__btn:hover,
+.fab__item:hover,
+.mobile-cta__call:hover {
+  background: var(--glass-tint-hi);
+  border-color: var(--glass-edge-hi);
+}
+
+/* Заливные кнопки остаются цветными, но получают то же ребро и блик —
+   иначе они выглядели бы плоскими рядом со стеклянными. */
+.btn--primary,
+.mobile-cta__book,
+.tm-intro__btn,
+.fab__toggle {
+  position: relative; overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 12px 28px -10px rgba(66, 57, 184, 0.6);
+}
+.btn--primary::before,
+.mobile-cta__book::before,
+.tm-intro__btn::before,
+.fab__toggle::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 52%;
+  pointer-events: none; border-radius: inherit;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.26), transparent);
+}
+
+/* ── Шапка и нижняя панель: стекло поверх содержимого страницы ── */
+.nav.is-scrolled {
+  background: var(--glass-tint-hi);
+  -webkit-backdrop-filter: blur(26px) saturate(1.9);
+  backdrop-filter: blur(26px) saturate(1.9);
+  box-shadow: inset 0 -1px 0 var(--glass-edge), 0 10px 32px -14px rgba(4, 2, 24, 0.6);
+}
+.mobile-cta {
+  background: var(--glass-tint-hi);
+  -webkit-backdrop-filter: blur(26px) saturate(1.9);
+  backdrop-filter: blur(26px) saturate(1.9);
+  box-shadow: inset 0 1px 0 var(--glass-edge), 0 -10px 32px -14px rgba(4, 2, 24, 0.5);
+}
+
+/* ── Плашки на скролле: стекло прозрачнее, кадр читается насквозь ── */
+.reveal-seq__step {
+  background: rgba(255, 255, 255, 0.38);
+  border-color: rgba(255, 255, 255, 0.58);
+  -webkit-backdrop-filter: blur(30px) saturate(1.9);
+  backdrop-filter: blur(30px) saturate(1.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 6px rgba(23, 18, 62, 0.04),
+    0 28px 64px -18px rgba(23, 18, 62, 0.22);
+}
+.reveal-seq__step.is-active:hover {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+/* Текст на прозрачном стекле нуждается в собственной тени, иначе на
+   светлых участках кадра он тонет. */
+.reveal-seq__step h2,
+.reveal-seq__step h2 + p { text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7); }
+.seq-room {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(26px) saturate(1.8);
+  backdrop-filter: blur(26px) saturate(1.8);
+}
+
+/* Браузеры без backdrop-filter (Firefox со старой настройкой, старые
+   сборки) получают плотную заливку — иначе текст лёг бы прямо на фон. */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  :root { --glass-tint: rgba(18, 14, 58, 0.86); --glass-tint-hi: rgba(18, 14, 58, 0.94); }
+  :root[data-theme="light"] { --glass-tint: rgba(255, 255, 255, 0.94); --glass-tint-hi: #fff; }
+  .reveal-seq__step, .seq-room { background: rgba(255, 255, 255, 0.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .svc-card, .promo-card, .review, .doc-card,
+  .route__card, .route__step, .sterile__card { transition: none; }
+}
