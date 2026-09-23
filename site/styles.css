@@ -1881,3 +1881,19 @@ h1, h2, h3, .seq-title { overflow-wrap: break-word; }
   .band img { transition: none; }
   .band:hover img { transform: none; }
 }
+
+/* ═══════════════ ЗАГОЛОВОК СТРАНИЦЫ В ГЕРОЕ ═══════════════
+   Раньше он жил на плашке скролла поверх белого стекла, поэтому
+   акцентные цвета там фиксированные. В герое фон — сама страница,
+   и цвета снова берём из темы. */
+.hero__inner { --seq-accent: var(--aqua); --seq-accent-2: var(--cyan); }
+.hero__inner .seq-eyebrow {
+  color: var(--aqua-soft);
+  background: rgba(139, 130, 245, 0.1);
+  border-color: rgba(139, 130, 245, 0.22);
+}
+.hero__inner .seq-title { color: var(--ink); margin-bottom: 16px; }
+.hero__inner .seq-motto { color: var(--ink-dim); margin-bottom: 26px; }
+:root[data-theme="light"] .hero__inner .seq-eyebrow {
+  color: var(--aqua); background: rgba(66, 57, 184, 0.08); border-color: rgba(66, 57, 184, 0.16);
+}
