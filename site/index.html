@@ -80,11 +80,11 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260923i">
-<link rel="stylesheet" href="effects.css?v=20260923i">
-<link rel="stylesheet" href="cards-fx.css?v=20260923i">
-<link rel="stylesheet" href="polish.css?v=20260923i">
-<link rel="stylesheet" href="glass.css?v=20260923i">
+<link rel="stylesheet" href="styles.css?v=20260923k">
+<link rel="stylesheet" href="effects.css?v=20260923k">
+<link rel="stylesheet" href="cards-fx.css?v=20260923k">
+<link rel="stylesheet" href="polish.css?v=20260923k">
+<link rel="stylesheet" href="glass.css?v=20260923k">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -275,6 +275,7 @@ try {
   </a>
   <nav class="nav__links" id="navLinks">
     <a href="#services" data-i18n="nav.services">Услуги и цены</a>
+    <a href="#tour" data-i18n="nav.tour">Клиника</a>
     <a href="#team" data-i18n="nav.team">Команда</a>
     <a href="#cases" data-i18n="nav.cases">До / после</a>
     <a href="#promo" data-i18n="nav.promo">Акции</a>
@@ -309,24 +310,24 @@ try {
     <canvas class="reveal-seq__canvas" id="seqCanvas" aria-hidden="true"></canvas>
     <!-- Запасной кадр — первый в секвенции, иначе без JS страница открывалась бы
          сразу рецепцией, минуя заставку -->
-    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260923i" width="1920" height="1080"
-         srcset="hero-seq/m/01.jpg?v=20260923i 1024w, hero-seq/01.jpg?v=20260923i 1920w"
+    <img class="reveal-seq__fallback" src="hero-seq/01.jpg?v=20260923k" width="1920" height="1080"
+         srcset="hero-seq/m/01.jpg?v=20260923k 1024w, hero-seq/01.jpg?v=20260923k 1920w"
          sizes="100vw"
          alt="Руки бережно держат здоровый зуб — символ заботы клиники о здоровье пациента" loading="lazy">
     <div class="reveal-seq__steps">
-      <div class="reveal-seq__step" data-step="1" data-from="1" data-to="5">
+      <div class="reveal-seq__step" data-step="1" data-from="1" data-to="4">
         <h2 data-i18n="care.h1">Сначала — диагностика</h2>
         <p data-i18n="care.p1">Показываем состояние зубов на фото.</p>
       </div>
-      <div class="reveal-seq__step" data-step="2" data-from="5" data-to="9">
+      <div class="reveal-seq__step" data-step="2" data-from="4" data-to="7">
         <h2 data-i18n="care.h2">План и цена — до начала</h2>
         <p data-i18n="care.p2">Стоимость фиксируем в договоре.</p>
       </div>
-      <div class="reveal-seq__step" data-step="3" data-from="9" data-to="13">
+      <div class="reveal-seq__step" data-step="3" data-from="7" data-to="10">
         <h2 data-i18n="care.h3">Только то, что нужно</h2>
         <p data-i18n="care.p3">Не назначаем процедуры без показаний.</p>
       </div>
-      <div class="reveal-seq__step" data-step="4" data-from="13" data-to="18.5">
+      <div class="reveal-seq__step" data-step="4" data-from="10" data-to="13.5">
         <h2 data-i18n="care.h4">Решение принимаете вы</h2>
         <p data-i18n="care.p4">Объясняем варианты и отвечаем на вопросы.</p>
       </div>
@@ -334,6 +335,54 @@ try {
     <!-- Название зоны, в которой мы сейчас находимся: меняется вместе с кадром -->
     <p class="seq-room" id="seqRoom" hidden></p>
   </div>
+</section>
+
+<!-- ══════════ ПРОГУЛЯЙТЕСЬ ПО КЛИНИКЕ ══════════
+     Слайды листаются пальцем и стрелками. Листание сделано на
+     scroll-snap: браузер сам доводит слайд до края, поэтому
+     инерция на телефоне родная, а не эмулированная скриптом. -->
+<section class="section tour" id="tour">
+  <div class="section__head reveal">
+    <span class="section__tag" data-i18n="tour.tag">Клиника</span>
+    <h2 data-i18n="tour.title">Прогуляйтесь по клинике</h2>
+    <p data-i18n="tour.sub">Четыре помещения, в которых проходит приём. Листайте пальцем или стрелками.</p>
+  </div>
+
+  <div class="tour__box reveal">
+    <div class="tour__track" id="tourTrack" tabindex="0" aria-label="Фотографии помещений клиники">
+      <figure class="tour__slide">
+        <img src="tour/reception.jpg" width="1920" height="1080"
+             srcset="tour/reception-sm.jpg 1024w, tour/reception.jpg 1920w" sizes="(max-width: 860px) 100vw, 1120px"
+             alt="Стойка регистрации «Честной стоматологии»" loading="lazy" decoding="async">
+        <figcaption><b data-i18n="tour.s1">Стойка регистрации</b></figcaption>
+      </figure>
+      <figure class="tour__slide">
+        <img src="tour/cab1.jpg" width="1920" height="1080"
+             srcset="tour/cab1-sm.jpg 1024w, tour/cab1.jpg 1920w" sizes="(max-width: 860px) 100vw, 1120px"
+             alt="Кабинет № 1 с креслом и стоматологической установкой" loading="lazy" decoding="async">
+        <figcaption><b data-i18n="tour.s2">Кабинет № 1</b></figcaption>
+      </figure>
+      <figure class="tour__slide">
+        <img src="tour/cab2.jpg" width="1920" height="1080"
+             srcset="tour/cab2-sm.jpg 1024w, tour/cab2.jpg 1920w" sizes="(max-width: 860px) 100vw, 1120px"
+             alt="Кабинет № 2 с креслом и рабочей зоной" loading="lazy" decoding="async">
+        <figcaption><b data-i18n="tour.s3">Кабинет № 2</b></figcaption>
+      </figure>
+      <figure class="tour__slide">
+        <img src="tour/sterile.jpg" width="1920" height="1080"
+             srcset="tour/sterile-sm.jpg 1024w, tour/sterile.jpg 1920w" sizes="(max-width: 860px) 100vw, 1120px"
+             alt="Зона стерилизации: рабочая поверхность и УФ-камера" loading="lazy" decoding="async">
+        <figcaption><b data-i18n="tour.s4">Стерилизация</b></figcaption>
+      </figure>
+    </div>
+    <button class="tour__nav tour__nav--prev" type="button" id="tourPrev" aria-label="Предыдущее помещение">
+      <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+    </button>
+    <button class="tour__nav tour__nav--next" type="button" id="tourNext" aria-label="Следующее помещение">
+      <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+    </button>
+  </div>
+  <div class="tour__dots" id="tourDots" role="tablist" aria-label="Выбор помещения"></div>
 </section>
 
 <!-- ══════════ ГЕРОЙ ══════════ -->
@@ -554,6 +603,8 @@ try {
   <div class="promo__row">
     <article class="promo-card reveal">
       <span class="promo-card__badge" data-i18n="promo.till">до 31.08.2026</span>
+      <img class="promo-card__pic" src="svc/profgigiena-xs.jpg" width="560" height="420"
+           alt="Насадка ультразвукового скалера" loading="lazy" decoding="async">
       <span class="promo-card__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-promo-hygiene"/></svg></span>
       <h3 data-i18n="promo.1.h">Профгигиена 1+1</h3>
       <p data-i18n="promo.1.p">Профессиональная гигиена для двоих — приходите вместе.</p>
@@ -562,6 +613,8 @@ try {
     </article>
     <article class="promo-card promo-card--alt reveal">
       <span class="promo-card__badge" data-i18n="promo.till">до 31.08.2026</span>
+      <img class="promo-card__pic" src="svc/karies-xs.jpg" width="560" height="420"
+           alt="Наконечник бормашины с бором" loading="lazy" decoding="async">
       <span class="promo-card__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-promo-percent"/></svg></span>
       <h3 data-i18n="promo.2.h">−15% на лечение кариеса</h3>
       <p data-i18n="promo.2.p">При прохождении профессиональной гигиены.</p>
@@ -570,6 +623,8 @@ try {
     </article>
     <article class="promo-card reveal">
       <span class="promo-card__badge" data-i18n="promo.till">до 31.08.2026</span>
+      <img class="promo-card__pic" src="svc/protezirovanie-xs.jpg" width="560" height="420"
+           alt="Керамическая коронка" loading="lazy" decoding="async">
       <span class="promo-card__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-promo-crown"/></svg></span>
       <h3 data-i18n="promo.3.h">Циркониевая коронка «под ключ»</h3>
       <p data-i18n="promo.3.p">Полная стоимость с работой и материалами.</p>
@@ -887,19 +942,20 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260923i"></script>
-<script src="db.js?v=20260923i"></script>
-<script src="auth.js?v=20260923i"></script>
-<script src="md.js?v=20260923i"></script>
-<script src="ux.js?v=20260923i"></script>
-<script src="app.js?v=20260923i"></script>
-<script src="water.js?v=20260923i" defer></script>
-<script src="effects.js?v=20260923i" defer></script>
-<script src="teeth-map.js?v=20260923i" defer></script>
-<script src="hero-seq.js?v=20260923i" defer></script>
-<script src="cards-fx.js?v=20260923i" defer></script>
-<script src="motion-fx.js?v=20260923i" defer></script>
-<script src="polish.js?v=20260923i" defer></script>
-<script src="a11y.js?v=20260923i"></script>
+<script src="i18n.js?v=20260923k"></script>
+<script src="db.js?v=20260923k"></script>
+<script src="auth.js?v=20260923k"></script>
+<script src="md.js?v=20260923k"></script>
+<script src="ux.js?v=20260923k"></script>
+<script src="app.js?v=20260923k"></script>
+<script src="water.js?v=20260923k" defer></script>
+<script src="effects.js?v=20260923k" defer></script>
+<script src="teeth-map.js?v=20260923k" defer></script>
+<script src="hero-seq.js?v=20260923k" defer></script>
+<script src="tour.js?v=20260923k" defer></script>
+<script src="cards-fx.js?v=20260923k" defer></script>
+<script src="motion-fx.js?v=20260923k" defer></script>
+<script src="polish.js?v=20260923k" defer></script>
+<script src="a11y.js?v=20260923k"></script>
 </body>
 </html>
