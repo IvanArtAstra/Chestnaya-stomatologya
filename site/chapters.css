@@ -34,12 +34,13 @@ html.chapters-on .ticker.is-folded { display: none !important; }
 }
 .hub-tile:focus-visible { outline: 2px solid var(--aqua); outline-offset: 4px; }
 .hub-tile__icon {
-  width: 58px; height: 58px; margin-bottom: 8px;
+  width: 72px; height: 72px; margin-bottom: 8px;
   display: grid; place-items: center; color: var(--aqua);
   border-radius: calc(var(--neu-radius, 28px) * 0.6);
   box-shadow: inset 4px 4px 10px var(--neu-lo), inset -4px -4px 10px var(--neu-hi);
 }
-.hub-tile__icon .icon--xl { width: 36px; height: 36px; }
+/* иконки одной линией — того же размера и толщины, что у плашек услуг */
+.hub-tile__icon .icon--xl { width: 46px; height: 46px; stroke-width: 1.4; overflow: visible; }
 .hub-tile b {
   font-family: var(--font-display); font-weight: 700; font-size: 1.02rem;
   line-height: 1.25; letter-spacing: -0.02em;
@@ -56,8 +57,8 @@ html.chapters-on .ticker.is-folded { display: none !important; }
 [dir="rtl"] .hub-tile:hover::after { transform: translateX(-3px); }
 @media (max-width: 720px) {
   .hub-tile { min-height: 0; padding: 18px 16px; }
-  .hub-tile__icon { width: 48px; height: 48px; }
-  .hub-tile__icon .icon--xl { width: 30px; height: 30px; }
+  .hub-tile__icon { width: 60px; height: 60px; }
+  .hub-tile__icon .icon--xl { width: 40px; height: 40px; }
   /* пятая плитка — во всю ширину, чтобы сетка не оставляла дыру */
   .hub-tile:last-child { grid-column: 1 / -1; }
 }
