@@ -87,6 +87,24 @@
           <a class="adm-doc__link" href="doctor.html?id=${esc(d.id)}" target="_blank" rel="noopener">Открыть страницу →</a>
           ${isAdmin ? `<button type="button" class="adm-post__del adm-doc__del" data-del-doc="${esc(d.id)}" title="Удалить врача" aria-label="Удалить врача"><svg class="icon"><use href="#i-trash"/></svg></button>` : ""}
         </div>
+        <div class="adm-doc__photo">
+          <span class="adm-doc__pic" style="--hue:${+d.hue || 190}">${
+            d.photo
+              ? `<img src="${esc(d.photo)}" alt="Фото: ${esc(d.name)}">`
+              : `<span>${esc(ChestomDB.initials(d.name))}</span>`
+          }</span>
+          <div class="adm-doc__photo-ctl">
+            <b>Фотокарточка</b>
+            <span class="adm-post__meta">Портрет 3:4 — обрежем по центру и уменьшим до 600×800. JPG, PNG или WebP.</span>
+            <div class="adm-doc__photo-btns">
+              <label class="btn btn--ghost btn--sm adm-doc__upload">${d.photo ? "Заменить фото" : "Загрузить фото"}
+                <input type="file" accept="image/jpeg,image/png,image/webp" data-photo-input="${esc(d.id)}" hidden>
+              </label>
+              ${d.photo ? `<button type="button" class="btn btn--ghost btn--sm adm-doc__nophoto" data-photo-del="${esc(d.id)}">Удалить фото</button>` : ""}
+            </div>
+            <span class="adm__saved" data-photo-saved hidden>✓ Фото сохранено</span>
+          </div>
+        </div>
         <label>Имя на карточке<input data-field="name" value="${esc(d.name)}"></label>
         <label>Полное имя (на странице)<input data-field="fullName" value="${esc(d.fullName || d.name)}"></label>
         <label>Специализация<input data-field="role" value="${esc(d.role)}"></label>
@@ -128,6 +146,78 @@
       updateStats();
       const fs = $(`.adm-doc[data-doc="${id}"]`);
       if (fs) { fs.scrollIntoView({ behavior: "smooth", block: "center" }); $("input", fs).select(); }
+    });
+
+    /* ── фото врача: загрузка, замена, удаление ──
+       Сразу сохраняем в базу — как и удаление врача. Перерисовываем только
+       блок фото этой карточки, чтобы не потерять несохранённый текст. */
+    const PHOTO_W = 600, PHOTO_H = 800;
+    const toPortrait = (file) => new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        /* центр-кроп под 3:4 с небольшим сдвигом вверх — лицо обычно выше центра */
+        const k = PHOTO_W / PHOTO_H;
+        let sw = img.naturalWidth, sh = img.naturalHeight, sx = 0, sy = 0;
+        if (sw / sh > k) { const w = sh * k; sx = (sw - w) / 2; sw = w; }
+        else { const h = sw / k; sy = Math.max(0, (sh - h) * 0.3); sh = h; }
+        const c = document.createElement("canvas");
+        c.width = PHOTO_W; c.height = PHOTO_H;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, PHOTO_W, PHOTO_H); /* прозрачный PNG — на белом */
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, PHOTO_W, PHOTO_H);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL("image/jpeg", 0.84));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+      img.src = url;
+    });
+    const refreshPhoto = (doc) => {
+      const fs = $(`.adm-doc[data-doc="${doc.id}"]`);
+      if (!fs) return;
+      const pic = $(".adm-doc__pic", fs);
+      pic.innerHTML = doc.photo ? `<img src="${esc(doc.photo)}" alt="Фото: ${esc(doc.name)}">` : `<span>${esc(ChestomDB.initials(doc.name))}</span>`;
+      $(".adm-doc__ava", fs).innerHTML = doc.photo ? `<img src="${esc(doc.photo)}" alt="" loading="lazy">` : esc(ChestomDB.initials(doc.name));
+      const btns = $(".adm-doc__photo-btns", fs);
+      $(".adm-doc__upload", btns).firstChild.textContent = doc.photo ? "Заменить фото" : "Загрузить фото";
+      const del = $(".adm-doc__nophoto", btns);
+      if (doc.photo && !del) btns.insertAdjacentHTML("beforeend", `<button type="button" class="btn btn--ghost btn--sm adm-doc__nophoto" data-photo-del="${esc(doc.id)}">Удалить фото</button>`);
+      if (!doc.photo && del) del.remove();
+      const ok = $("[data-photo-saved]", fs);
+      ok.hidden = false; clearTimeout(ok._t); ok._t = setTimeout(() => { ok.hidden = true; }, 2500);
+    };
+    const savePhoto = (doc, value) => {
+      const prev = doc.photo;
+      if (value) doc.photo = value; else delete doc.photo;
+      try { ChestomDB.save(db); }
+      catch (err) {
+        if (prev) doc.photo = prev; else delete doc.photo;
+        alert("Не хватило места в хранилище браузера для этого фото. Попробуйте фото меньшего размера или удалите старые посты с картинками.");
+        return false;
+      }
+      refreshPhoto(doc);
+      return true;
+    };
+    $("#doctorsList").addEventListener("change", async (e) => {
+      const inp = e.target.closest("[data-photo-input]");
+      if (!inp || !inp.files || !inp.files[0]) return;
+      const doc = db.doctors.find((d) => d.id === inp.dataset.photoInput);
+      const file = inp.files[0];
+      inp.value = "";                       /* чтобы то же фото можно было выбрать снова */
+      if (!doc) return;
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { alert("Нужна картинка в формате JPG, PNG или WebP."); return; }
+      if (file.size > 15 * 1024 * 1024) { alert("Файл больше 15 МБ — выберите фото поменьше."); return; }
+      try { savePhoto(doc, await toPortrait(file)); }
+      catch (err) { alert("Не получилось прочитать это изображение. Попробуйте другой файл."); }
+    });
+    $("#doctorsList").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-photo-del]");
+      if (!btn) return;
+      const doc = db.doctors.find((d) => d.id === btn.dataset.photoDel);
+      if (!doc) return;
+      if (!confirm(`Удалить фото врача «${doc.name}»?\nНа сайте вместо фото будут инициалы.`)) return;
+      savePhoto(doc, "");
     });
 
     /* удаление врача (только админ): чистим связанные посты/отзывы/аккаунты */
