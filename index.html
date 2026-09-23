@@ -83,6 +83,7 @@ try {
 <link rel="stylesheet" href="polish.css?v=20260923m">
 <link rel="stylesheet" href="glass.css?v=20260923m">
 <link rel="stylesheet" href="neu.css?v=20260923w">
+<link rel="stylesheet" href="chapters.css?v=20260923x">
 </head>
 <body data-theme="deep">
 <a class="skip-link" href="#care">Перейти к содержанию</a>
@@ -434,8 +435,61 @@ try {
 </section>
 
 
+<!-- ══════════ КАРТА РАЗДЕЛОВ ══════════
+     Главная разложена на пять глав: человек выбирает нужную и
+     «проваливается» только в неё, без долгой прокрутки. Разделы остаются
+     в разметке целиком; прячет и показывает их chapters.js. Без JS
+     страница видна полностью, как раньше. -->
+<section class="section hub" id="hub" aria-labelledby="hubTitle">
+  <div class="section__head reveal">
+    <span class="section__tag" data-i18n="hub.tag">Разделы</span>
+    <h2 id="hubTitle" data-i18n="hub.title">Что вы хотите узнать?</h2>
+    <p data-i18n="hub.sub">Выберите раздел — откроем только его, без долгой прокрутки.</p>
+  </div>
+  <div class="hub__grid">
+    <a class="hub-tile reveal" href="#services" data-chapter-open="services">
+      <span class="hub-tile__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-tooth"/></svg></span>
+      <b data-i18n="ch.services.h">Услуги и цены</b>
+      <span data-i18n="ch.services.p">Прайс · калькулятор · акции</span>
+    </a>
+    <a class="hub-tile reveal" href="#team" data-chapter-open="team">
+      <span class="hub-tile__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-restore"/></svg></span>
+      <b data-i18n="ch.team.h">Врачи и результаты</b>
+      <span data-i18n="ch.team.p">Команда · до и после · отзывы</span>
+    </a>
+    <a class="hub-tile reveal" href="#sterile" data-chapter-open="clinic">
+      <span class="hub-tile__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-shield"/></svg></span>
+      <b data-i18n="ch.clinic.h">О клинике</b>
+      <span data-i18n="ch.clinic.p">Стерилизация · кто мы</span>
+    </a>
+    <a class="hub-tile reveal" href="#news" data-chapter-open="news">
+      <span class="hub-tile__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-pen"/></svg></span>
+      <b data-i18n="ch.news.h">Новости</b>
+      <span data-i18n="ch.news.p">Блог врачей клиники</span>
+    </a>
+    <a class="hub-tile reveal" href="#contacts" data-chapter-open="contacts">
+      <span class="hub-tile__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-pin"/></svg></span>
+      <b data-i18n="ch.contacts.h">Контакты и запись</b>
+      <span data-i18n="ch.contacts.p">Адрес · как добраться · запись</span>
+    </a>
+  </div>
+</section>
+
+<!-- Переключатель глав: липкая строка под шапкой, видна, пока открыта глава -->
+<nav class="chapters" id="chapters" aria-label="Разделы сайта" hidden>
+  <div class="chapters__track">
+    <a class="chapters__all" href="#hub" data-chapter-close><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span data-i18n="ch.all">Все разделы</span></a>
+    <a href="#services" data-chapter-open="services" data-i18n="ch.services.h">Услуги и цены</a>
+    <a href="#team" data-chapter-open="team" data-i18n="ch.team.h">Врачи и результаты</a>
+    <a href="#sterile" data-chapter-open="clinic" data-i18n="ch.clinic.h">О клинике</a>
+    <a href="#news" data-chapter-open="news" data-i18n="ch.news.h">Новости</a>
+    <a href="#contacts" data-chapter-open="contacts" data-i18n="ch.contacts.h">Контакты и запись</a>
+  </div>
+</nav>
+
+
 <!-- ══════════ УСЛУГИ И ЦЕНЫ (реальный прайс) ══════════ -->
-<section class="section services" id="services">
+<section class="section services" id="services" data-chapter="services">
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="svc.tag">Услуги и цены</span>
     <h2 data-i18n-html="svc.title">Честный прайс.<br>Цена «от» = цена «до»</h2>
@@ -508,7 +562,7 @@ try {
 </section>
 
 <!-- ══════════ КАЛЬКУЛЯТОР ══════════ -->
-<section class="section calc" id="calc">
+<section class="section calc" id="calc" data-chapter="services">
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="calc.tag">Смета</span>
     <h2 data-i18n="calc.title">Сколько будет стоить лечение</h2>
@@ -519,7 +573,7 @@ try {
 </section>
 
 <!-- ══════════ КОМАНДА ══════════ -->
-<section class="section doctors" id="team">
+<section class="section doctors" id="team" data-chapter="team">
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="team.tag">Команда</span>
     <h2 data-i18n-html="team.title">Люди, которым не страшно<br>доверить улыбку</h2>
@@ -532,7 +586,7 @@ try {
 </section>
 
 <!-- ══════════ ДО / ПОСЛЕ ══════════ -->
-<section class="section cases" id="cases">
+<section class="section cases" id="cases" data-chapter="team">
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="cases.tag">Работы</span>
     <h2 data-i18n="cases.title">До / после — двигайте ползунок</h2>
@@ -576,7 +630,7 @@ try {
 </section>
 
 <!-- ══════════ СТЕРИЛИЗАЦИЯ ══════════ -->
-<section class="section sterile" id="sterile">
+<section class="section sterile" id="sterile" data-chapter="clinic">
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="ster.tag">Стерильность</span>
     <h2 data-i18n="ster.title">Каждый инструмент — из крафт-пакета</h2>
@@ -612,7 +666,7 @@ try {
 </section>
 
 <!-- ══════════ АКЦИИ (реальные из ВК) ══════════ -->
-<section class="section promo" id="promo">
+<section class="section promo" id="promo" data-chapter="services">
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="promo.tag">Акции</span>
     <h2><span data-i18n="promo.title">Честные скидки — без звёздочек</span><a class="fn-ref" href="#footnotes" aria-label="Примечание 2"><sup>2</sup></a></h2>
@@ -652,7 +706,7 @@ try {
 </section>
 
 <!-- ══════════ НОВОСТИ / БЛОГ ВРАЧЕЙ ══════════ -->
-<section class="section news" id="news">
+<section class="section news" id="news" data-chapter="news">
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="news.tag">Новости и блог</span>
     <h2 data-i18n="news.title">Лента клиники</h2>
@@ -671,7 +725,7 @@ try {
 </section>
 
 <!-- ══════════ ОТЗЫВЫ ══════════ -->
-<section class="section reviews" id="reviews">
+<section class="section reviews" id="reviews" data-chapter="team">
   <div class="section__head reveal">
     <span class="section__tag" data-i18n="rev.tag">Отзывы</span>
     <h2 data-i18n="rev.title">5,0 из 5 — говорят пациенты</h2>
@@ -691,7 +745,7 @@ try {
 </section>
 
 <!-- ══════════ О КЛИНИКЕ ══════════ -->
-<section class="section about" id="about">
+<section class="section about" id="about" data-chapter="clinic">
   <div class="about__grid">
     <!-- Цифры — только те, что можно проверить: карточка клиники в 2ГИС
          и год начала работы из лицензии. -->
@@ -736,7 +790,7 @@ try {
 </section>
 
 <!-- ══════════ КОНТАКТЫ + ЗАПИСЬ ══════════ -->
-<section class="section contacts" id="contacts">
+<section class="section contacts" id="contacts" data-chapter="contacts">
   <div class="contacts__grid">
     <div class="contacts__info reveal">
       <span class="section__tag section__tag--light" data-i18n="cont.tag">Контакты</span>
@@ -959,7 +1013,7 @@ try {
   </div>
 </div>
 
-<script src="i18n.js?v=20260923m"></script>
+<script src="i18n.js?v=20260923v"></script>
 <script src="db.js?v=20260923m"></script>
 <script src="auth.js?v=20260923m"></script>
 <script src="md.js?v=20260923m"></script>
@@ -974,5 +1028,6 @@ try {
 <script src="motion-fx.js?v=20260923m" defer></script>
 <script src="polish.js?v=20260923m" defer></script>
 <script src="svc-play.js?v=20260923r" defer></script>
+<script src="chapters.js?v=20260923x" defer></script>
 </body>
 </html>

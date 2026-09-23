@@ -204,6 +204,23 @@
 }
 .adm-doc__link { margin-inline-start: auto; color: var(--aqua-soft); font-size: 0.83rem; font-weight: 700; transition: 0.2s; }
 .adm-doc__link:hover { color: var(--cyan); }
+/* фото врача */
+.adm-doc__photo { grid-column: 1 / -1; display: flex; align-items: center; gap: 18px; }
+.adm-doc__pic {
+  width: 96px; aspect-ratio: 3 / 4; flex: none; border-radius: 14px; overflow: hidden;
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 1.3rem; color: rgba(255, 255, 255, 0.75);
+  background: linear-gradient(180deg, hsl(var(--hue, 190) 45% 18%), hsl(var(--hue, 190) 50% 28%));
+  border: 1px solid var(--card-line);
+}
+.adm-doc__pic img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; }
+:root[data-theme="light"] .adm-doc__pic { color: rgba(11, 52, 70, 0.6); background: linear-gradient(180deg, hsl(var(--hue, 190) 55% 88%), hsl(var(--hue, 190) 45% 76%)); }
+.adm-doc__photo-ctl { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.adm-doc__photo-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.adm-doc__upload { cursor: pointer; }
+.adm-doc__upload:focus-within { outline: 2px solid var(--aqua); outline-offset: 2px; }
+.adm-doc__nophoto { color: #d9534f; }
+@media (max-width: 480px) { .adm-doc__photo { align-items: flex-start; } .adm-doc__pic { width: 76px; } }
 .adm-doc label:has(textarea) { grid-column: 1 / -1; }
 .adm-doc textarea { resize: vertical; }
 @media (max-width: 720px) { .adm-doc { grid-template-columns: 1fr; } }

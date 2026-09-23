@@ -280,6 +280,22 @@ const I18N = {
   "foot.contacts":  { ru: "Связаться", en: "Contact", ar: "تواصل" },
   "foot.made":      { ru: "Разработка сайта — по договору «Оптимальный»", en: "Website built under the \"Optimal\" package contract", ar: "تم تطوير الموقع بموجب عقد «الباقة المثلى»" },
 
+  /* — карта разделов главной — */
+  "hub.tag":        { ru: "Разделы", en: "Sections", ar: "الأقسام" },
+  "hub.title":      { ru: "Что вы хотите узнать?", en: "What would you like to know?", ar: "ماذا تريد أن تعرف؟" },
+  "hub.sub":        { ru: "Выберите раздел — откроем только его, без долгой прокрутки.", en: "Pick a section — we'll open just that one, no long scrolling.", ar: "اختر قسماً — سنفتحه وحده دون تمرير طويل." },
+  "ch.services.h":  { ru: "Услуги и цены", en: "Services & prices", ar: "الخدمات والأسعار" },
+  "ch.services.p":  { ru: "Прайс · калькулятор · акции", en: "Prices · calculator · offers", ar: "الأسعار · الحاسبة · العروض" },
+  "ch.team.h":      { ru: "Врачи и результаты", en: "Doctors & results", ar: "الأطباء والنتائج" },
+  "ch.team.p":      { ru: "Команда · до и после · отзывы", en: "Team · before & after · reviews", ar: "الفريق · قبل وبعد · الآراء" },
+  "ch.clinic.h":    { ru: "О клинике", en: "About the clinic", ar: "عن العيادة" },
+  "ch.clinic.p":    { ru: "Стерилизация · кто мы", en: "Sterilisation · who we are", ar: "التعقيم · من نحن" },
+  "ch.news.h":      { ru: "Новости", en: "News", ar: "الأخبار" },
+  "ch.news.p":      { ru: "Блог врачей клиники", en: "Our doctors' blog", ar: "مدونة أطبائنا" },
+  "ch.contacts.h":  { ru: "Контакты и запись", en: "Contacts & booking", ar: "التواصل والحجز" },
+  "ch.contacts.p":  { ru: "Адрес · как добраться · запись", en: "Address · directions · booking", ar: "العنوان · الطريق · الحجز" },
+  "ch.all":         { ru: "Все разделы", en: "All sections", ar: "كل الأقسام" },
+
   /* — единицы — */
   "u.rub":          { ru: "₽", en: "₽", ar: "₽" }
 };
