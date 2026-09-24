@@ -117,7 +117,7 @@
 .ticker__track {
   display: inline-block;
   white-space: nowrap;
-  font-family: var(--font-display, "Unbounded", sans-serif);
+  font-family: var(--font-display, "Open Sans", sans-serif);
   font-size: clamp(1.1rem, 2.4vw, 1.7rem);
   font-weight: 600;
   color: var(--ink-dim, #9cc3d1);

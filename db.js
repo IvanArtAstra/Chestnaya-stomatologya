@@ -115,8 +115,8 @@ const ChestomDB = (() => {
 
     /* ── БОКОВЫЕ БАННЕРЫ (управляются из админки) ── */
     banners: {
-      left:  { on: true, badge: "Акция",    title: "Гигиена 1+1",  text: "Профчистка для двоих — всего 6 990 ₽ до 31.08", url: "#promo", cta: "Подробнее" },
-      right: { on: true, badge: "Неотложка", title: "Острая боль?", text: "Неотложная помощь взрослым — примем сегодня",  url: "tel:+79991152419", cta: "Позвонить" }
+      left:  { on: true, badge: "Честно",   title: "Цена — до лечения", text: "Прайс, акции и расчёт стоимости за 30 секунд", url: "#services", cta: "Смотреть цены" },
+      right: { on: true, badge: "Экстренно", title: "Острая боль?", text: "Примем экстренно — в день обращения",  url: "tel:+79991152419", cta: "Позвонить" }
     },
 
     /* ── УСЛУГИ И ЦЕНЫ (раздел на главной, управляется из админки) ──
@@ -148,7 +148,7 @@ const ChestomDB = (() => {
         { id: "s2", on: true, icon: "i-tooth", priceKey: "caries", from: false, i18n: "svc.2",
           title: "Лечение кариеса", text: "Лечение кариеса и пульпита с фотопротоколом. Глубокий кариес — 4 500 ₽.",
           service: "Лечение кариеса", page: "lechenie-kariesa.html",
-          video: "svc/anim/karies.mp4?v=20260923r", poster: "svc/anim/karies.jpg?v=20260923r", vtt: "svc/anim/karies.vtt?v=20260923r" },
+          video: "svc/anim/karies.mp4?v=20260924d", poster: "svc/anim/karies.jpg?v=20260924d", vtt: "svc/anim/karies.vtt?v=20260924d" },
         { id: "s3", on: true, icon: "i-shine", priceKey: "hygiene", from: false, i18n: "svc.3",
           title: "Профессиональная гигиена", text: "Ультразвук + Air-Flow + реминерализующая терапия за один визит.",
           service: "Профгигиена", page: "profgigiena.html",
@@ -162,7 +162,7 @@ const ChestomDB = (() => {
           service: "Протезирование", page: "protezirovanie.html",
           video: "svc/anim/protezirovanie.mp4?v=20260923o", poster: "svc/anim/protezirovanie.jpg?v=20260923o" },
         { id: "s6", on: true, icon: "i-extract", priceKey: "extraction", from: true, i18n: "svc.6",
-          title: "Удаление зубов", text: "Бережное удаление, в том числе неотложная помощь для взрослых.",
+          title: "Удаление зубов", text: "Бережное удаление. При острой боли — экстренный приём в день обращения.",
           service: "Удаление зуба", page: "udalenie-zubov.html",
           video: "svc/anim/udalenie.mp4?v=20260923r", poster: "svc/anim/udalenie.jpg?v=20260923r", vtt: "svc/anim/udalenie.vtt?v=20260923r" }
       ]
