@@ -69,7 +69,7 @@
     var el = target || sections.filter(function (s) { return s.getAttribute("data-chapter") === ch; })[0];
     if (opts.scroll !== false && el) {
       /* даём раскладке встать, потом едем */
-      requestAnimationFrame(function () { scrollToEl(el, opts.smooth !== false); });
+      setTimeout(function () { scrollToEl(el, opts.smooth !== false); }, 20);
       setTimeout(function () { scrollToEl(el, false); }, reduce ? 0 : 700);
     }
     if (opts.hash !== false && el && el.id) {
@@ -98,7 +98,14 @@
     var el = document.getElementById(id);
     if (!el) return false;
     var ch = chapterOf(el);
-    if (!ch) return false;                       /* раздел вне глав — обычный переход */
+    if (!ch) {
+      /* раздел вне глав (прогулка, подвал, сноски) — та же прокрутка
+         с отступом под шапку и точной доводкой, что и у глав */
+      scrollToEl(el, smooth);
+      setTimeout(function () { scrollToEl(el, false); }, reduce ? 0 : 700);
+      try { history.replaceState(null, "", "#" + id); } catch (e) { /* noop */ }
+      return true;
+    }
     open(ch, el, { smooth: smooth });
     return true;
   }
