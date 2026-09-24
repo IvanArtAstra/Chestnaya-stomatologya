@@ -17,8 +17,10 @@
   --card: rgba(255, 255, 255, 0.05);
   --card-line: rgba(255, 255, 255, 0.1);
   --radius: 22px;
-  --font: "Manrope", "Cairo", -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Unbounded", "Cairo", sans-serif;
+  /* Open Sans — один шрифт на весь сайт: хорошо читается и в тексте,
+     и в жирных заголовках; кириллица полная. Cairo — для арабской версии. */
+  --font: "Open Sans", "Cairo", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Open Sans", "Cairo", -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,7 +36,7 @@ img, svg { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
 
-h1, h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.01em; line-height: 1.12; }
+h1, h2 { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; line-height: 1.12; }
 h3 { font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
 h2 { font-size: clamp(1.6rem, 3.6vw, 2.7rem); }
 h3 { font-size: 1.25rem; }
@@ -210,7 +212,7 @@ h3 { font-size: 1.25rem; }
   grid-area: 1 / 1; position: relative; isolation: isolate;
   max-width: 640px; text-align: center;
   padding: clamp(24px, 3vw, 34px) clamp(24px, 3.4vw, 40px);
-  border-radius: 34px 34px 34px 10px;
+  border-radius: 32px;
   background:
     linear-gradient(152deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.62) 58%, rgba(244, 243, 255, 0.7));
   border: 1px solid rgba(255, 255, 255, 0.78);
@@ -273,12 +275,24 @@ h3 { font-size: 1.25rem; }
   .reveal-seq__step { transition: opacity 0.2s linear; transform: none; }
   .reveal-seq__step.is-active:hover { transform: none; }
 }
+/* номер шага — «01 / 04»: видно, что это история из четырёх частей */
+.reveal-seq__num {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-bottom: 14px; padding: 6px 14px; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.74rem; letter-spacing: 0.14em;
+  color: var(--seq-accent);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 #fff, 0 6px 14px -8px rgba(47, 13, 128, 0.35);
+}
+.reveal-seq__num i { font-style: normal; opacity: 0.4; }
+/* плашки скролла всегда белое стекло — текст тёмный в любой теме */
 .reveal-seq__step h2 {
-  margin: 0 0 10px; color: var(--ink);
+  margin: 0 0 12px; color: #1f2027;
   font-size: clamp(1.22rem, 2.6vw, 1.85rem); line-height: 1.2; letter-spacing: -0.022em;
 }
 .reveal-seq__step h2 + p {
-  margin: 0; color: var(--ink-dim);
+  margin: 0 auto; max-width: 44ch; color: #5d6270;
   font-size: clamp(0.92rem, 1.6vw, 1.04rem); line-height: 1.55;
 }
 /* ── Визитка клиники: выходит вторым планом, после чистого кадра ── */
@@ -298,30 +312,29 @@ html:not(.js) .reveal-seq__step--brand { opacity: 1; transform: none; }
   font-size: clamp(0.62rem, 1.1vw, 0.74rem); font-weight: 800;
   letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.45;
 }
-/* Заголовок собран из двух шрифтов: плотный гротеск Unbounded держит
-   строку, а одно слово уходит в наклонную антикву Playfair — контраст
-   двух характеров вместо одного ровного набора. */
+/* Заголовок первого экрана: жирный Open Sans, одно слово — курсивом
+   с градиентом акцента. */
 .seq-title {
   margin: 0 0 18px; color: var(--ink);
-  font-family: "Unbounded", system-ui, sans-serif; font-weight: 700;
+  font-family: var(--font-display); font-weight: 800;
   font-size: clamp(1.6rem, 4.2vw, 3.05rem); line-height: 1.06; letter-spacing: -0.025em;
 }
 .seq-title span { display: block; }
 .seq-title em {
-  font-family: "Playfair Display", Georgia, serif;
-  font-style: italic; font-weight: 600;
-  font-size: 1.12em; letter-spacing: -0.005em;
+  font-family: var(--font-display);
+  font-style: italic; font-weight: 700;
+  font-size: 1em; letter-spacing: -0.02em;
   background: linear-gradient(100deg, var(--seq-accent), var(--seq-accent-2));
   -webkit-background-clip: text; background-clip: text;
   color: transparent; -webkit-text-fill-color: transparent;
   padding-inline-end: 0.06em;   /* курсив иначе обрезается по правому краю */
 }
-/* В арабской версии курсивной антиквы нет — возвращаем Cairo и цвет */
+/* В арабской версии курсива нет — возвращаем Cairo и цвет */
 [dir="rtl"] .seq-title em {
   font-family: "Cairo", var(--font-display); font-style: normal; font-size: 1em;
   background: none; color: var(--seq-accent); -webkit-text-fill-color: var(--seq-accent);
 }
-/* Если Playfair не загрузился, градиентный текст не должен пропасть */
+/* Если градиентный текст не поддерживается, слово не должно пропасть */
 @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
   .seq-title em { color: var(--seq-accent); -webkit-text-fill-color: var(--seq-accent); }
 }
@@ -1401,6 +1414,18 @@ a.doc-card:hover .doc-card__more { color: var(--aqua-soft); transform: translate
 }
 .rail__title { font-size: 1.02rem; line-height: 1.25; }
 .rail__text { color: var(--ink-dim); font-size: 0.82rem; line-height: 1.5; }
+/* Баннеры и в тёмной теме — светлое стекло с тёмным текстом, как в
+   светлой: так они одинаково читаются на любом фоне страницы */
+.rail__card {
+  color: #1f2027;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.74));
+  border-color: rgba(255, 255, 255, 0.9);
+}
+.rail__card .rail__title { color: #1f2027; }
+.rail__card .rail__text { color: #5d6270; }
+.rail__card .rail__badge { color: #2f0d80; background: rgba(47, 13, 128, 0.07); border-color: rgba(47, 13, 128, 0.14); }
+.rail__card .rail__close { color: #5d6270; background: rgba(0, 0, 0, 0.05); }
+.rail__card .rail__close:hover { color: #1f2027; background: rgba(0, 0, 0, 0.09); }
 
 /* ═══════════════ НОВОСТИ: FEATURED-СЕТКА ═══════════════ */
 @media (min-width: 900px) {
