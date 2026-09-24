@@ -318,8 +318,14 @@
        набора и повторяем его столько раз, сколько нужно. */
     track.innerHTML = cards;
     const holder = track.parentElement;
-    const setW = Math.max(track.scrollWidth, 1);
-    const k = Math.max(1, Math.ceil((holder.clientWidth || innerWidth) / setW));
+    /* Скрытая лента (закрытая глава «Врачи») имеет ширину 0 — делить на
+       неё нельзя: раньше это давало 2 × 1280 повторов, десятки тысяч
+       карточек и тормоза. Тогда берём примерную ширину карточки;
+       при открытии главы придёт resize, и лента пересоберётся по
+       настоящей ширине. Потолок повторов — страховка от любых сбоев. */
+    const realW = track.scrollWidth;
+    const setW = realW > 50 ? realW : db.doctors.length * 300;
+    const k = Math.min(6, Math.max(1, Math.ceil((holder.clientWidth || innerWidth) / setW)));
     track.innerHTML = cards.repeat(2 * k);
     [...track.children].forEach((el, i) => {
       if (i >= db.doctors.length) { el.setAttribute("aria-hidden", "true"); el.tabIndex = -1; }
