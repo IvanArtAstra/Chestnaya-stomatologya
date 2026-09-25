@@ -166,6 +166,11 @@ h3 { font-size: 1.25rem; }
   opacity: 0; transition: opacity 0.6s ease;
 }
 .reveal-seq__intro.is-on { opacity: var(--intro, 1); transition: none; }
+/* шире 16:9 кадр режется сверху и снизу — держим коронку в кадре,
+   так же, как холст в hero-seq.js */
+@media (min-aspect-ratio: 9/10) {
+  .reveal-seq__intro, .reveal-seq__fallback { object-position: 50% 20%; }
+}
 /* мягкое затемнение снизу — под подписи */
 .reveal-seq__sticky::after {
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
@@ -295,6 +300,43 @@ h3 { font-size: 1.25rem; }
   margin: 0 auto; max-width: 44ch; color: #5d6270;
   font-size: clamp(0.92rem, 1.6vw, 1.04rem); line-height: 1.55;
 }
+/* Вертикальный экран (телефон, планшет стоя): кадры здесь свои, 1:2,
+   зуб стоит чуть выше центра — плашка уходит вниз и становится
+   компактнее, чтобы не закрывать вращающийся зуб. */
+@media (max-aspect-ratio: 9/10) {
+  /* .reveal-seq впереди — иначе правило «max-width: 640px» ниже по файлу
+     сбросит отступ снизу шорткатом padding */
+  .reveal-seq .reveal-seq__steps {
+    align-items: end;
+    padding-bottom: calc(44px + env(safe-area-inset-bottom, 0px));
+  }
+  .reveal-seq__step {
+    width: 100%; max-width: 520px;
+    padding: 16px 20px 18px; border-radius: 26px;
+  }
+  .reveal-seq__num { margin-bottom: 8px; padding: 4px 12px; font-size: 0.7rem; }
+  .reveal-seq__step h2 { margin-bottom: 6px; font-size: clamp(1.05rem, 4.6vw, 1.3rem); }
+  .reveal-seq__step h2 + p { font-size: clamp(0.86rem, 3.6vw, 0.96rem); line-height: 1.45; }
+}
+/* Низкий широкий экран (телефон лёжа): плашка компактная, чтобы
+   не закрывать весь кадр */
+@media (max-height: 520px) and (min-aspect-ratio: 9/10) {
+  .reveal-seq__step { max-width: 460px; padding: 12px 20px 14px; border-radius: 24px; }
+  .reveal-seq__num { margin-bottom: 6px; padding: 3px 11px; font-size: 0.68rem; }
+  .reveal-seq__step h2 { margin-bottom: 4px; font-size: 1.05rem; }
+  .reveal-seq__step h2 + p { font-size: 0.85rem; line-height: 1.4; }
+}
+/* на телефоне снизу панель «Позвонить / Записаться»; кнопку чата
+   на время погружения прячем (ux.js ставит html.in-seq) */
+@media (max-aspect-ratio: 9/10) and (max-width: 640px) {
+  .reveal-seq .reveal-seq__steps { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 640px) {
+  .fab { transition: opacity 0.35s ease, transform 0.35s ease; }
+  html.in-seq .fab { opacity: 0; transform: translateY(12px) scale(0.9); pointer-events: none; }
+  html.in-seq .fab * { pointer-events: none; }
+}
+
 /* ── Визитка клиники: выходит вторым планом, после чистого кадра ── */
 .reveal-seq__step--brand {
   max-width: 780px; padding: clamp(30px, 4vw, 46px) clamp(28px, 4.4vw, 52px);
