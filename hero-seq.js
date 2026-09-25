@@ -53,7 +53,7 @@
     var mode = pickMode();
     /* Кадры менялись, а имена файлов оставались прежними — браузер отдавал
        старые картинки из кэша. Версия в запросе это снимает. */
-    var VER = "?v=20260925p";
+    var VER = "?v=20260925w";
     var steps = Array.prototype.slice.call(section.querySelectorAll(".reveal-seq__step"));
     var roomEl = document.getElementById("seqRoom");
 
@@ -163,7 +163,7 @@
        прокрутки растворяется, и дальше работает покадровое погружение.
        Ушла — ставим на паузу, чтобы не грузить процессор впустую. */
     var intro = document.getElementById("seqIntro");
-    var INTRO_FADE = 0.035;           /* доля прокрутки, за которую заставка тает */
+    var INTRO_FADE = 0.06;            /* доля прокрутки, за которую заставка тает (секция стала короче) */
     function setIntroSrc(m) {
       intro.poster = MODES[m].base + "01.jpg" + VER;
       intro.src = MODES[m].intro + VER;
