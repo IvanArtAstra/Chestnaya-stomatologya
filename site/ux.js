@@ -31,7 +31,17 @@
   toTop.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19.5v-15M6 10l6-5.8L18 10"/></svg>';
   document.body.appendChild(toTop);
   toTop.addEventListener("click", () => scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
-  const onScrollTop = () => toTop.classList.toggle("is-visible", scrollY > 700);
+  /* Внутри погружения в зуб кнопка не нужна (это и есть начало страницы),
+     а на телефоне она ложилась на плашку с подписью — показываем её
+     только после секции. */
+  const seqEl = document.querySelector(".reveal-seq");
+  const onScrollTop = () => {
+    const after = seqEl ? seqEl.offsetTop + seqEl.offsetHeight - innerHeight : 0;
+    toTop.classList.toggle("is-visible", scrollY > Math.max(700, after));
+    /* пока идёт погружение — на телефоне прячем и кнопку чата:
+       внизу уже есть «Позвонить / Записаться», а место нужно плашке */
+    if (seqEl) document.documentElement.classList.toggle("in-seq", scrollY < after);
+  };
   addEventListener("scroll", onScrollTop, { passive: true });
   onScrollTop();
 
