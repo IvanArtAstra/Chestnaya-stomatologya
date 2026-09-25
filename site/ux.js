@@ -38,9 +38,6 @@
   const onScrollTop = () => {
     const after = seqEl ? seqEl.offsetTop + seqEl.offsetHeight - innerHeight : 0;
     toTop.classList.toggle("is-visible", scrollY > Math.max(700, after));
-    /* пока идёт погружение — на телефоне прячем и кнопку чата:
-       внизу уже есть «Позвонить / Записаться», а место нужно плашке */
-    if (seqEl) document.documentElement.classList.toggle("in-seq", scrollY < after);
   };
   addEventListener("scroll", onScrollTop, { passive: true });
   onScrollTop();

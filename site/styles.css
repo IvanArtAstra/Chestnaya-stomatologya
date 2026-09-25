@@ -145,7 +145,10 @@ h3 { font-size: 1.25rem; }
 .hero__stats b { display: block; font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 800; color: var(--aqua-soft); }
 .hero__stats span { font-size: 0.85rem; color: var(--ink-dim); }
 /* ═══════════════ СЕКВЕНЦИЯ «в наших руках» (sticky-скролл) ═══════════════ */
-.reveal-seq { height: 560vh; position: relative; }
+/* Длина секции = сколько листать сквозь погружение. Было 560vh —
+   ощущалось медленно; 300vh даёт быстрый проход, но все четыре
+   плашки успевают прочитаться. */
+.reveal-seq { height: 300vh; position: relative; }
 .reveal-seq__sticky {
   position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -229,10 +232,11 @@ h3 { font-size: 1.25rem; }
     0 2px 6px rgba(var(--shade-rgb), 0.05),
     0 28px 64px -18px rgba(var(--shade-rgb), 0.28);
   opacity: 0; transform: translateY(38px) scale(0.965);
+  /* прокрутка быстрая — плашка должна успевать за ней */
   transition:
-    opacity 0.8s cubic-bezier(0.22, 0.7, 0.2, 1),
-    transform 0.9s cubic-bezier(0.22, 0.7, 0.2, 1),
-    box-shadow 0.5s ease, border-color 0.5s ease;
+    opacity 0.45s cubic-bezier(0.22, 0.7, 0.2, 1),
+    transform 0.5s cubic-bezier(0.22, 0.7, 0.2, 1),
+    box-shadow 0.4s ease, border-color 0.4s ease;
 }
 /* Плашки всегда лежат на белом стекле, а не на тёмном фоне страницы,
    поэтому акцентные цвета здесь фиксированные, не из темы: в тёмной
@@ -300,16 +304,9 @@ h3 { font-size: 1.25rem; }
   margin: 0 auto; max-width: 44ch; color: #5d6270;
   font-size: clamp(0.92rem, 1.6vw, 1.04rem); line-height: 1.55;
 }
-/* Вертикальный экран (телефон, планшет стоя): кадры здесь свои, 1:2,
-   зуб стоит чуть выше центра — плашка уходит вниз и становится
-   компактнее, чтобы не закрывать вращающийся зуб. */
+/* Вертикальный экран (телефон, планшет стоя): кадры здесь свои, 1:2.
+   Плашка по центру, как на компьютере, но компактнее. */
 @media (max-aspect-ratio: 9/10) {
-  /* .reveal-seq впереди — иначе правило «max-width: 640px» ниже по файлу
-     сбросит отступ снизу шорткатом padding */
-  .reveal-seq .reveal-seq__steps {
-    align-items: end;
-    padding-bottom: calc(44px + env(safe-area-inset-bottom, 0px));
-  }
   .reveal-seq__step {
     width: 100%; max-width: 520px;
     padding: 16px 20px 18px; border-radius: 26px;
@@ -326,17 +323,6 @@ h3 { font-size: 1.25rem; }
   .reveal-seq__step h2 { margin-bottom: 4px; font-size: 1.05rem; }
   .reveal-seq__step h2 + p { font-size: 0.85rem; line-height: 1.4; }
 }
-/* на телефоне снизу панель «Позвонить / Записаться»; кнопку чата
-   на время погружения прячем (ux.js ставит html.in-seq) */
-@media (max-aspect-ratio: 9/10) and (max-width: 640px) {
-  .reveal-seq .reveal-seq__steps { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
-}
-@media (max-width: 640px) {
-  .fab { transition: opacity 0.35s ease, transform 0.35s ease; }
-  html.in-seq .fab { opacity: 0; transform: translateY(12px) scale(0.9); pointer-events: none; }
-  html.in-seq .fab * { pointer-events: none; }
-}
-
 /* ── Визитка клиники: выходит вторым планом, после чистого кадра ── */
 .reveal-seq__step--brand {
   max-width: 780px; padding: clamp(30px, 4vw, 46px) clamp(28px, 4.4vw, 52px);
@@ -761,7 +747,7 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   .nav__burger { display: flex; }
   .hero__stats { gap: 20px; }
   .hero__cta .btn { width: 100%; }
-  .reveal-seq { height: 470vh; }
+  .reveal-seq { height: 260vh; }
   .seq-offer { padding: 16px 18px; }
   .seq-offer h3 { font-size: 1rem; }
   .reveal-seq__steps { padding: 0 16px; }
