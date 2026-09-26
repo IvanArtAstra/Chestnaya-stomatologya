@@ -66,6 +66,12 @@
   box.innerHTML =
     '<div class="svc-reel__panel">' +
       '<button class="svc-reel__close" type="button" aria-label="Закрыть">' + icon("i-close") + '</button>' +
+      '<button class="svc-reel__sound" type="button" aria-pressed="true" aria-label="Выключить музыку">' +
+        '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/>' +
+          '<path class="svc-reel__wave" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11"/>' +
+          '<path class="svc-reel__mute" d="M16 9.5l5 5M21 9.5l-5 5"/>' +
+        '</svg></button>' +
       '<div class="svc-reel__track" tabindex="-1"></div>' +
       '<div class="svc-reel__bar">' +
         '<button class="svc-reel__nav svc-reel__nav--prev" type="button" aria-label="Предыдущая процедура">' + icon("i-arrow") + '</button>' +
@@ -215,6 +221,76 @@
   prevBtn.addEventListener("click", function () { go(active - 1); });
   nextBtn.addEventListener("click", function () { go(active + 1); });
 
+  /* ── Спокойная музыка к роликам ──
+     Отдельная дорожка, не зашитая в видео: включается при открытии окна
+     (нажатие «плей» — жест пользователя, поэтому телефоны разрешают
+     звук), плавно нарастает и затихает при закрытии. Громкость ведём
+     через Web Audio: на iPhone свойство volume у <audio> не работает.
+     Выбор «без звука» запоминаем. */
+  var soundBtn = box.querySelector(".svc-reel__sound");
+  var music = null, actx = null, gain = null, fadeT = 0;
+  var MUSIC_VOL = 0.45;
+  function soundOn() {
+    try { return localStorage.getItem("chestom_reel_sound") !== "off"; } catch (e) { return true; }
+  }
+  function syncSoundBtn() {
+    var on = soundOn();
+    soundBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    soundBtn.setAttribute("aria-label", on ? "Выключить музыку" : "Включить музыку");
+    soundBtn.classList.toggle("is-muted", !on);
+  }
+  function ensureMusic() {
+    if (music) return;
+    music = new Audio("audio/calm.m4a?v=20260926");
+    music.loop = true; music.preload = "auto";
+    music.setAttribute("playsinline", "");
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) {
+      try {
+        actx = new AC();
+        gain = actx.createGain(); gain.gain.value = 0;
+        actx.createMediaElementSource(music).connect(gain);
+        gain.connect(actx.destination);
+      } catch (e) { actx = null; gain = null; }
+    }
+    if (!gain) music.volume = 0;
+  }
+  function fadeTo(v, sec, done) {
+    clearTimeout(fadeT);
+    if (gain) {
+      var now = actx.currentTime;
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(v, now + sec);
+    } else {
+      /* запасной путь без Web Audio: шагами по volume */
+      var from = music.volume, steps = 20, k = 0;
+      (function step() {
+        k++; music.volume = Math.max(0, Math.min(1, from + (v - from) * k / steps));
+        if (k < steps) fadeT = setTimeout(step, sec * 1000 / steps);
+      })();
+    }
+    if (done) fadeT = setTimeout(done, sec * 1000 + 30);
+  }
+  function musicPlay() {
+    if (!soundOn()) return;
+    ensureMusic();
+    if (actx && actx.state === "suspended") actx.resume();
+    var p = music.play();
+    if (p && p.catch) p.catch(function () {});
+    fadeTo(MUSIC_VOL, 1.6);
+  }
+  function musicStop(quick) {
+    if (!music || music.paused) return;
+    fadeTo(0, quick ? 0.25 : 0.8, function () { music.pause(); });
+  }
+  soundBtn.addEventListener("click", function () {
+    var on = !soundOn();
+    try { localStorage.setItem("chestom_reel_sound", on ? "on" : "off"); } catch (e) {}
+    syncSoundBtn();
+    if (on) musicPlay(); else musicStop(true);
+  });
+
   function open(i, from) {
     opener = from || null;
     syncCaptions();
@@ -224,6 +300,8 @@
     void box.offsetWidth;             /* зафиксировать старт, чтобы сработал переход */
     box.classList.add("is-open");
     go(i, true);
+    syncSoundBtn();
+    musicPlay();
     box.querySelector(".svc-reel__close").focus({ preventScroll: true });
   }
 
@@ -232,6 +310,7 @@
     box.classList.remove("is-open");
     document.documentElement.classList.remove("svc-reel-open");
     slides.forEach(function (s) { s.querySelector("video").pause(); });
+    musicStop();
     items.forEach(function (c) { c.classList.remove("is-playing"); });
     active = -1;
     setTimeout(function () { if (!box.classList.contains("is-open")) box.hidden = true; }, 280);
@@ -257,7 +336,11 @@
   }
   function onResize() { if (!box.hidden && active >= 0) go(active, true); }
   function onVisible() {
-    if (!document.hidden && !box.hidden && slides[active]) kick(slides[active].querySelector("video"));
+    if (box.hidden) return;
+    /* ушли со вкладки — музыка не должна играть в фоне */
+    if (document.hidden) { if (music) music.pause(); return; }
+    if (slides[active]) kick(slides[active].querySelector("video"));
+    musicPlay();
   }
   document.addEventListener("keydown", onKey);
   window.addEventListener("resize", onResize);
@@ -271,6 +354,8 @@
     window.removeEventListener("resize", onResize);
     document.removeEventListener("visibilitychange", onVisible);
     if (io) io.disconnect();
+    if (music) { music.pause(); music.src = ""; }
+    if (actx && actx.close) actx.close();
     if (box.parentNode) box.parentNode.removeChild(box);
   };
   }

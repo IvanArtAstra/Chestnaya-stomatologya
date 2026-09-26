@@ -196,19 +196,8 @@
       } catch (e) {}
     }
 
-    window.addEventListener('mousemove', function (ev) {
-      updatePointer(ev.clientX, ev.clientY);
-    }, { passive: true });
-
-    window.addEventListener('mouseout', function (ev) {
-      if (!ev.relatedTarget) pointer.active = false;
-    }, { passive: true });
-
-    window.addEventListener('touchmove', function (ev) {
-      if (ev.touches && ev.touches.length) {
-        updatePointer(ev.touches[0].clientX, ev.touches[0].clientY);
-      }
-    }, { passive: true });
+    /* mousemove/touchmove сняты: пузыри выключены, координаты указателя
+       нигде не используются, а замер hero на каждом касании тормозил телефоны */
 
     window.addEventListener('touchend', function () {
       pointer.active = false;

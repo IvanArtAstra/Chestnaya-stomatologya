@@ -35,8 +35,12 @@
      а на телефоне она ложилась на плашку с подписью — показываем её
      только после секции. */
   const seqEl = document.querySelector(".reveal-seq");
+  let after = 0;
+  const measure = () => { after = seqEl ? seqEl.offsetTop + seqEl.offsetHeight - innerHeight : 0; };
+  measure();
+  addEventListener("resize", measure);
+  addEventListener("load", measure);
   const onScrollTop = () => {
-    const after = seqEl ? seqEl.offsetTop + seqEl.offsetHeight - innerHeight : 0;
     toTop.classList.toggle("is-visible", scrollY > Math.max(700, after));
   };
   addEventListener("scroll", onScrollTop, { passive: true });
