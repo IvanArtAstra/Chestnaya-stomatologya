@@ -227,15 +227,23 @@
      возвращается в самом верху страницы и после того, как сцена закончилась. */
   const nav = $("#nav");
   const seq = $(".reveal-seq");
+  /* геометрию секции меряем на ресайзе, а не на каждом событии прокрутки:
+     чтение offsetTop в обработчике scroll тормозило телефоны */
+  let seqStart = 0, seqEnd = 0;
+  const measureSeq = () => {
+    if (!seq) return;
+    seqStart = seq.offsetTop;
+    seqEnd = seqStart + seq.offsetHeight - innerHeight;
+  };
   const onNavScroll = () => {
     nav.classList.toggle("is-scrolled", scrollY > 30);
     if (!seq) return;
-    const start = seq.offsetTop;
-    const end = start + seq.offsetHeight - innerHeight;
-    nav.classList.toggle("is-away", scrollY > start + 40 && scrollY < end);
+    nav.classList.toggle("is-away", scrollY > seqStart + 40 && scrollY < seqEnd);
   };
+  measureSeq();
   addEventListener("scroll", onNavScroll, { passive: true });
-  addEventListener("resize", onNavScroll);
+  addEventListener("resize", () => { measureSeq(); onNavScroll(); });
+  addEventListener("load", () => { measureSeq(); onNavScroll(); });
   onNavScroll();
 
   const burger = $("#burger");
@@ -289,6 +297,7 @@
   /* Секвенцию «в наших руках» ведёт hero-seq.js */
 
   /* ══════════ Бегущая лента команды (marquee) ══════════ */
+  let marqueeW = -1;
   function renderDoctors() {
     const track = $("#doctorsTrack");
     if (!track) return;
@@ -327,17 +336,25 @@
     const setW = realW > 50 ? realW : db.doctors.length * 300;
     const k = Math.min(6, Math.max(1, Math.ceil((holder.clientWidth || innerWidth) / setW)));
     track.innerHTML = cards.repeat(2 * k);
+    marqueeW = holder.clientWidth;
     [...track.children].forEach((el, i) => {
       if (i >= db.doctors.length) { el.setAttribute("aria-hidden", "true"); el.tabIndex = -1; }
     });
     /* скорость постоянна: ~7с на карточку в половине трека */
     track.style.animationDuration = Math.max(20, db.doctors.length * k * 7) + "s";
   }
-  /* при изменении ширины окна пересобираем трек под новую геометрию */
+  /* при изменении ширины пересобираем трек под новую геометрию.
+     Только ширины: на iPhone resize приходит и когда при прокрутке
+     прячется адресная строка — пересборка ленты тогда давала рывки.
+     Открытие главы «Врачи» меняет ширину 0 → настоящая, и это ловится. */
   let marqueeResizeT = 0;
   addEventListener("resize", () => {
     clearTimeout(marqueeResizeT);
-    marqueeResizeT = setTimeout(renderDoctors, 250);
+    marqueeResizeT = setTimeout(() => {
+      const t = $("#doctorsTrack") || document.querySelector(".hscroll--marquee .hscroll__track");
+      const w = t && t.parentElement ? t.parentElement.clientWidth : -1;
+      if (w !== marqueeW) renderDoctors();
+    }, 250);
   });
 
   /* ══════════ Отзывы из 2ГИС/ВК (из БД) ══════════ */

@@ -99,11 +99,18 @@
     loadSet(mode);
 
     var cw = 0, ch = 0, dpr = 1;
+    /* На телефоне кадр рисуется при каждом шаге прокрутки: плотность 2
+       давала холст ~780×1690 и лишнюю работу. 1.5 на глаз не отличить —
+       фото мягкие, стекло без мелких деталей. */
+    var DPR_MAX = matchMedia("(pointer: coarse)").matches ? 1.5 : 2;
     function setup() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
       var r = canvas.getBoundingClientRect();
-      cw = Math.max(1, Math.round(r.width));
-      ch = Math.max(1, Math.round(r.height));
+      var nw = Math.max(1, Math.round(r.width)), nh = Math.max(1, Math.round(r.height));
+      var nd = Math.min(window.devicePixelRatio || 1, DPR_MAX);
+      /* iPhone шлёт resize, когда при прокрутке прячется адресная строка;
+         размер холста при этом тот же (100svh) — не пересоздаём буфер */
+      if (ready && nw === cw && nh === ch && nd === dpr) return;
+      dpr = nd; cw = nw; ch = nh;
       canvas.width = Math.round(cw * dpr);
       canvas.height = Math.round(ch * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -178,10 +185,12 @@
       if (!intro || !intro.paused) return;
       var pr = intro.play(); if (pr && pr.catch) pr.catch(function () {});
     }
+    var lastIntro = "";
     function updateIntro(p) {
       if (!intro) return;
       var k = 1 - Math.min(p / INTRO_FADE, 1);
-      intro.style.setProperty("--intro", k.toFixed(3));
+      var ks = k.toFixed(3);
+      if (ks !== lastIntro) { lastIntro = ks; intro.style.setProperty("--intro", ks); }
       if (k > 0) {
         if (intro.readyState >= 2) intro.classList.add("is-on");
         tryPlay();

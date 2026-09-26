@@ -270,7 +270,8 @@ html.svc-reel-open { overflow: hidden; }
 .svc-reel__dot[aria-selected="true"] { width: 26px; border-radius: 999px; background: var(--aqua); box-shadow: none; }
 
 .svc-reel__nav,
-.svc-reel__close {
+.svc-reel__close,
+.svc-reel__sound {
   width: 46px; height: 46px; border-radius: 50%; border: 0;
   display: grid; place-items: center; cursor: pointer;
   color: var(--aqua); background: var(--neu-bg);
@@ -283,13 +284,13 @@ html.svc-reel-open { overflow: hidden; }
 .svc-reel__nav--prev .icon { transform: rotate(180deg); }
 [dir="rtl"] .svc-reel__nav--prev .icon { transform: none; }
 [dir="rtl"] .svc-reel__nav--next .icon { transform: rotate(180deg); }
-.svc-reel__nav:active, .svc-reel__close:active {
+.svc-reel__nav:active, .svc-reel__close:active, .svc-reel__sound:active {
   box-shadow:
     inset 4px 4px 9px var(--neu-lo),
     inset -4px -4px 9px var(--neu-hi);
 }
 .svc-reel__nav:disabled { opacity: 0.35; cursor: default; box-shadow: none; }
-.svc-reel__nav:focus-visible, .svc-reel__close:focus-visible, .svc-reel__dot:focus-visible {
+.svc-reel__nav:focus-visible, .svc-reel__close:focus-visible, .svc-reel__sound:focus-visible, .svc-reel__dot:focus-visible {
   outline: 2px solid var(--aqua); outline-offset: 3px;
 }
 /* крестик — поверх ролика в углу */
@@ -297,13 +298,51 @@ html.svc-reel-open { overflow: hidden; }
   position: absolute; top: clamp(24px, 3vw, 34px); right: clamp(24px, 3vw, 34px); z-index: 2;
 }
 [dir="rtl"] .svc-reel__close { right: auto; left: clamp(24px, 3vw, 34px); }
+/* кнопка музыки — в другом верхнем углу ролика */
+.svc-reel__sound {
+  position: absolute; top: clamp(24px, 3vw, 34px); left: clamp(24px, 3vw, 34px); z-index: 2;
+}
+[dir="rtl"] .svc-reel__sound { left: auto; right: clamp(24px, 3vw, 34px); }
+.svc-reel__sound .icon { width: 22px; height: 22px; }
+.svc-reel__sound .svc-reel__mute { display: none; }
+.svc-reel__sound.is-muted .svc-reel__wave { display: none; }
+.svc-reel__sound.is-muted .svc-reel__mute { display: inline; }
+.svc-reel__sound.is-muted { color: var(--ink-dim); }
+/* пока играет — волны тихо «дышат» */
+@media (prefers-reduced-motion: no-preference) {
+  .svc-reel__sound:not(.is-muted) .svc-reel__wave { animation: svcWave 2.4s ease-in-out infinite; }
+}
+@keyframes svcWave { 50% { opacity: 0.45; } }
 
+/* Телефон: окно на весь экран, ролик от края до края и выше (4:3) —
+   так он примерно в полтора раза крупнее, а инструменты по краям кадра
+   не срезаются. */
 @media (max-width: 620px) {
-  .svc-reel { padding: 0; align-items: end; }
-  .svc-reel__panel { border-radius: var(--neu-radius) var(--neu-radius) 0 0; }
-  .svc-reel__slide figcaption { grid-template-columns: 1fr; }
+  .svc-reel { padding: 0; align-items: stretch; }
+  .svc-reel__panel {
+    width: 100%; height: 100dvh; max-height: none; border-radius: 0;
+    padding: 0 0 calc(12px + env(safe-area-inset-bottom, 0px));
+    display: flex; flex-direction: column;
+  }
+  .svc-reel__track { border-radius: 0; flex: none; }
+  .svc-reel__slide video {
+    aspect-ratio: 4 / 3; border-radius: 0; box-shadow: none;
+    padding-top: env(safe-area-inset-top, 0px); box-sizing: content-box;
+  }
+  .svc-reel__slide figcaption { grid-template-columns: 1fr; padding: 16px 18px 4px; }
   .svc-reel__num { grid-row: auto; justify-self: start; }
-  .svc-reel__close { width: 40px; height: 40px; }
+  .svc-reel__bar { margin-top: auto; padding-top: 12px; }
+  .svc-reel__close, .svc-reel__sound {
+    width: 42px; height: 42px;
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    background: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  }
+  .svc-reel__close { right: 12px; }
+  .svc-reel__sound { left: 12px; }
+  [dir="rtl"] .svc-reel__close { right: auto; left: 12px; }
+  [dir="rtl"] .svc-reel__sound { left: auto; right: 12px; }
 }
 
 /* ═══════════════ АКЦИИ: СТЕКЛЯННЫЕ ПЛАШКИ ═══════════════

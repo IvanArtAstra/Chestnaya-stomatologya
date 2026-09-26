@@ -1,0 +1,45 @@
+/* ═══════════════ ТЕЛЕФОНЫ И ПЛАНШЕТЫ: ЛЁГКИЙ РЕЖИМ ═══════════════
+   На сенсорных экранах при прокрутке заметно подтормаживало. Главные
+   причины — слои, которые перерисовываются на каждом кадре:
+   зерно «плёнки» на весь экран с режимом наложения, вложенные
+   размытия у закреплённых панелей, бесконечные анимации тени и
+   блика. Здесь они отключены или облегчены; на компьютере всё
+   остаётся как было. Файл подключается последним. */
+@media (hover: none) and (pointer: coarse) {
+  /* зерно: слой 4× экрана с mix-blend-mode, анимирован без остановки */
+  body::after { display: none; }
+
+  /* стекло: радиус размытия дешевле, вид почти тот же */
+  :root { --glass-blur: 12px; --glass-sat: 1.4; }
+
+  /* нижняя панель: размытие только у самой панели, не у кнопок внутри */
+  .mobile-cta__call, .mobile-cta__book,
+  .fab__toggle, .fab__item,
+  .lang__btn, .theme-btn, .account-btn {
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .mobile-cta { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .nav.is-scrolled { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .nav::before { -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+  /* бесконечные анимации тени и фона — перерисовка каждого кадра */
+  .fab__toggle { animation: none; }
+  .nav.is-scrolled::after { animation: none; display: none; }
+  .promo-card::before { animation: none; }
+
+  /* плашки погружения лежат над холстом, который меняется при каждом
+     шаге прокрутки: размытие под ними пересчитывалось постоянно.
+     Плотное стекло без размытия читается так же. */
+  .reveal-seq__step {
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    background: linear-gradient(152deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.78) 58%, rgba(244, 243, 255, 0.82));
+  }
+  .reveal-seq__step::after { display: none; }
+
+  /* карточки врачей едут в бегущей ленте — размытие под каждой
+     пересчитывалось на каждом кадре */
+  .hscroll--marquee .doc-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+  /* слои под анимацию заголовков не держим постоянно */
+  .section__head h2 .w { will-change: auto; }
+}
