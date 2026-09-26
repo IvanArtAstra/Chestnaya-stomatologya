@@ -21,10 +21,8 @@ try {
 <meta property="og:type" content="profile">
 <meta property="og:image" content="https://ivanartastra.github.io/Chestnaya-stomatologya/og-cover.jpg">
 <meta property="og:locale" content="ru_RU">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260924b">
+<link rel="stylesheet" href="fonts.css?v=20260926a">
+<link rel="stylesheet" href="styles.css?v=20260926b">
 <link rel="stylesheet" href="glass.css?v=20260923zd">
 <link rel="stylesheet" href="mobile-perf.css?v=20260926a">
 </head>
@@ -135,7 +133,7 @@ try {
     <div class="footer__col footer__col--brand">
       <p>© 2026 ООО «Честная стоматология» · Пермь, ул. Танкистов, 68 · <a href="tel:+79991152419">+7 999 115-24-19</a></p>
       <p>Имеются противопоказания. Необходима консультация специалиста.</p>
-      <p><a href="index.html#legal">Сведения о клинике и лицензия →</a></p>
+      <p><a href="index.html#legal">Сведения о клинике и лицензия →</a><br><span data-legal-links><a href="privacy.html">Политика обработки персональных данных</a> · <a href="consent.html">Согласие на обработку ПДн</a></span></p>
     </div>
   </div>
 </footer>
@@ -149,8 +147,9 @@ try {
     <form id="modalBooking">
       <label>Имя<input type="text" name="name" required placeholder="Ваше имя" autocomplete="name"></label>
       <label>Телефон<input type="tel" name="phone" required placeholder="+7 ___ ___-__-__" autocomplete="tel"></label>
+      <label class="pd-consent"><input type="checkbox" name="pd_consent" required><span data-i18n-html="pd.consent">Я даю <a href="consent.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a> и ознакомлен(а) с <a href="privacy.html" target="_blank" rel="noopener">политикой их обработки</a></span></label>
       <button type="submit" class="btn btn--primary btn--lg">Отправить заявку</button>
-      <small>Согласие на обработку персональных данных (152-ФЗ)</small>
+      <small>Имеются противопоказания — необходима консультация специалиста.</small>
       <div class="booking-form__ok" hidden>✓ Готово! Перезвоним в рабочее время.</div>
     </form>
   </div>

@@ -650,6 +650,18 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
   outline: none; border-color: var(--aqua); box-shadow: 0 0 0 4px rgba(var(--acc-rgb), 0.15);
 }
 .booking-form small, .modal__card small { color: var(--ink-dim); font-size: 0.75rem; line-height: 1.5; }
+/* Согласие на обработку ПДн — отдельной отметкой (152-ФЗ, ред. с 01.09.2025).
+   Поле не отмечено заранее: без отметки форма не отправится. */
+.booking-form .pd-consent, .modal__card .pd-consent, .tm-lead .pd-consent {
+  flex-direction: row; align-items: flex-start; gap: 10px;
+  font-size: 0.8rem; font-weight: 500; line-height: 1.45; color: var(--ink-dim); cursor: pointer;
+}
+.pd-consent input[type="checkbox"] {
+  flex: none; width: 20px; height: 20px; margin: 1px 0 0; padding: 0;
+  accent-color: var(--aqua); cursor: pointer;
+}
+.pd-consent a { color: var(--aqua-soft); text-decoration: underline; text-underline-offset: 2px; }
+:root[data-theme="light"] .pd-consent a { color: var(--aqua); }
 .booking-form small a { color: var(--aqua-soft); text-decoration: underline; }
 .booking-form__ok {
   padding: 14px 18px; border-radius: 13px; font-weight: 700;
@@ -1001,6 +1013,9 @@ html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; 
 .footer__legal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 10px 32px; }
 .footer__legal p { font-size: 0.78rem; line-height: 1.6; color: var(--ink-dim); }
 .footer__legal b { color: var(--ink); font-weight: 700; }
+.footer__legal-links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 14px 0 0; font-size: 0.85rem; }
+.footer__legal-links a { color: var(--aqua-soft); text-decoration: underline; text-underline-offset: 3px; }
+:root[data-theme="light"] .footer__legal-links a { color: var(--aqua); }
 .footer__legal-note { margin-top: 14px; opacity: 0.9; }
 @media (max-width: 760px) {
   .footer__grid { grid-template-columns: 1fr; gap: 28px; }
