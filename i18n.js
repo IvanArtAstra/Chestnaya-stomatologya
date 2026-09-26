@@ -220,7 +220,7 @@ const I18N = {
   "form.t2":        { ru: "День (13–17)", en: "Afternoon (13–17)", ar: "ظهراً (١٣–١٧)" },
   "form.t3":        { ru: "Вечер (17–20)", en: "Evening (17–20)", ar: "مساءً (١٧–٢٠)" },
   "form.submit":    { ru: "Записаться", en: "Book", ar: "احجز" },
-  "form.legal":     { ru: "Нажимая «Записаться», вы соглашаетесь с политикой обработки персональных данных (152-ФЗ). Имеются противопоказания — необходима консультация специалиста.", en: "By clicking \"Book\" you agree to the personal data processing policy. Contraindications exist — a specialist consultation is required.", ar: "بالنقر على «احجز» فإنك توافق على سياسة معالجة البيانات الشخصية. توجد موانع استعمال — استشارة الأخصائي مطلوبة." },
+  "form.legal":     { ru: "Имеются противопоказания — необходима консультация специалиста.", en: "Contraindications exist — a specialist consultation is required.", ar: "توجد موانع استعمال — استشارة الأخصائي مطلوبة." },
   "form.ok":        { ru: "✓ Заявка отправлена! Мы скоро перезвоним.", en: "✓ Request sent! We'll call you back soon.", ar: "✓ تم إرسال الطلب! سنتصل بك قريباً." },
 
   /* — модалка — */
@@ -229,7 +229,7 @@ const I18N = {
   "modal.doctor":   { ru: "Запись к специалисту:", en: "Booking with:", ar: "حجز مع:" },
   "modal.service":  { ru: "Услуга:", en: "Service:", ar: "الخدمة:" },
   "modal.submit":   { ru: "Отправить заявку", en: "Send request", ar: "أرسل الطلب" },
-  "modal.legal":    { ru: "Согласие на обработку персональных данных (152-ФЗ). Имеются противопоказания — необходима консультация специалиста.", en: "Consent to personal data processing. Contraindications exist — a specialist consultation is required.", ar: "الموافقة على معالجة البيانات الشخصية. توجد موانع استعمال — استشارة الأخصائي مطلوبة." },
+  "modal.legal":    { ru: "Имеются противопоказания — необходима консультация специалиста.", en: "Contraindications exist — a specialist consultation is required.", ar: "توجد موانع استعمال — استشارة الأخصائي مطلوبة." },
   "modal.ok":       { ru: "✓ Готово! Перезвоним в рабочее время.", en: "✓ Done! We'll call back during working hours.", ar: "✓ تم! سنتصل بك خلال ساعات العمل." },
 
   /* — виджет и футер — */
@@ -263,7 +263,11 @@ const I18N = {
   "tm.hint":        { ru: "Нажмите на зуб на схеме", en: "Tap a tooth on the chart", ar: "اضغط على سن في المخطط" },
   "tm.approx":      { ru: "Ориентировочно:", en: "Approximately:", ar: "تقريباً:" },
   "tm.send":        { ru: "Отправить заявку", en: "Send request", ar: "إرسال الطلب" },
-  "tm.legal":       { ru: "Отправляя заявку, вы соглашаетесь с политикой обработки персональных данных (152-ФЗ). Сумма ориентировочная — точную назовёт врач после осмотра.", en: "By sending the request you agree to the personal data processing policy. The amount is approximate — the exact one is set by the dentist after an examination.", ar: "بإرسال الطلب فإنك توافق على سياسة معالجة البيانات الشخصية. المبلغ تقريبي — يحدده الطبيب بدقة بعد الفحص." },
+  "tm.legal":       { ru: "Сумма ориентировочная — точную назовёт врач после осмотра.", en: "The amount is approximate — the exact one is set by the dentist after an examination.", ar: "المبلغ تقريبي — يحدده الطبيب بدقة بعد الفحص." },
+  "pd.consent":     { ru: 'Я даю <a href="consent.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a> и ознакомлен(а) с <a href="privacy.html" target="_blank" rel="noopener">политикой их обработки</a>', en: 'I give my <a href="consent.html" target="_blank" rel="noopener">consent to personal data processing</a> and have read the <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>', ar: 'أوافق على <a href="consent.html" target="_blank" rel="noopener">معالجة بياناتي الشخصية</a> واطلعت على <a href="privacy.html" target="_blank" rel="noopener">سياسة معالجتها</a>' },
+  "pd.need":        { ru: "Отметьте согласие на обработку персональных данных — без него заявку отправить нельзя.", en: "Please tick the consent to personal data processing — the request cannot be sent without it.", ar: "يرجى تحديد الموافقة على معالجة البيانات الشخصية — لا يمكن إرسال الطلب بدونها." },
+  "foot.privacy":   { ru: "Политика обработки персональных данных", en: "Privacy policy", ar: "سياسة معالجة البيانات الشخصية" },
+  "foot.consent":   { ru: "Согласие на обработку персональных данных", en: "Consent to personal data processing", ar: "الموافقة على معالجة البيانات الشخصية" },
   "tm.book":        { ru: "Записаться с этой сметой", en: "Book with this estimate", ar: "احجز بهذا التقدير" },
   "tm.reset":       { ru: "Сбросить", en: "Reset", ar: "إعادة تعيين" },
   "tm.note":        { ru: "Расчёт предварительный. Точную смету зафиксирует врач после осмотра — она не изменится в процессе лечения.", en: "This is a preliminary estimate. The dentist fixes the exact quote after an examination, and it does not change during treatment.", ar: "هذا تقدير أولي. يحدد الطبيب التكلفة الدقيقة بعد الفحص ولا تتغير أثناء العلاج." },

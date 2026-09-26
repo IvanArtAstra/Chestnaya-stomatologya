@@ -202,6 +202,8 @@
 .tm-lead input:focus { outline: none; border-color: var(--aqua); background: rgba(255, 255, 255, 0.08); }
 .tm-lead input:disabled { opacity: 0.6; }
 .tm-lead__legal { color: var(--ink-dim); font-size: 0.74rem; line-height: 1.5; }
+.tm-lead__err { color: #c0304a; font-size: 0.8rem; font-weight: 600; line-height: 1.45; }
+.tm-lead__err[hidden] { display: none; }
 .tm-lead__ok {
   padding: 12px 16px; border-radius: 14px; font-weight: 700; font-size: 0.9rem;
   color: var(--aqua); background: rgba(var(--acc-rgb), 0.12);
@@ -326,6 +328,11 @@
     `<label><span data-i18n="form.phone">${t("form.phone")}</span>` +
     `<input type="tel" name="phone" autocomplete="tel" data-ph="ph.phone" placeholder="${t("ph.phone")}" required></label>` +
     `<input type="hidden" name="request" id="tmRequest">` +
+    /* согласие — отдельной отметкой (152-ФЗ, ред. от 01.09.2025): в заявке
+       уходят отмеченные зубы, а это сведения о здоровье */
+    `<label class="pd-consent"><input type="checkbox" name="pd_consent" required>` +
+    `<span data-i18n-html="pd.consent">${t("pd.consent")}</span></label>` +
+    `<small class="tm-lead__err" id="tmConsentErr" role="alert" hidden data-i18n="pd.need">${t("pd.need")}</small>` +
     `<div class="tm-actions">` +
     `<button class="btn btn--primary" type="submit" data-i18n="tm.send">${t("tm.send")}</button>` +
     `<button class="btn btn--ghost" id="tmReset" type="button" data-i18n="tm.reset">${t("tm.reset")}</button>` +
@@ -457,6 +464,9 @@
 
   /* Отправка — демо, как и у остальных форм сайта: на проде здесь
      будет запрос к API или Telegram-боту. */
+  leadForm.addEventListener("change", (e) => {
+    if (e.target.name === "pd_consent" && e.target.checked) leadForm.querySelector("#tmConsentErr").hidden = true;
+  });
   leadForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const name = leadForm.elements.name;
@@ -465,6 +475,9 @@
       (name.value.trim() ? phone : name).focus();
       return;
     }
+    const consent = leadForm.elements.pd_consent;
+    leadForm.querySelector("#tmConsentErr").hidden = consent.checked;
+    if (!consent.checked) { consent.focus(); return; }
     Array.from(leadForm.querySelectorAll("input, button")).forEach((el) => (el.disabled = true));
     leadForm.querySelector(".tm-lead__ok").hidden = false;
   });
