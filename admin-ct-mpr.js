@@ -141,6 +141,19 @@
     };
     return { L, n, x, y, mx, my, step: L / (n - 1), at };
   }
+  /* порог Оцу только по значениям выше lo0 — по гистограмме объёма */
+  function otsuAbove(vol, lo0) {
+    const H = vol.hist, B = H.length, i0 = clamp(Math.ceil((lo0 - vol.histMin) / vol.histSpan * B), 0, B - 1);
+    let tot = 0, sum = 0;
+    for (let i = i0; i < B; i++) { tot += H[i]; sum += i * H[i]; }
+    let wb = 0, sb = 0, best = -1, bi = i0;
+    for (let i = i0; i < B; i++) {
+      wb += H[i]; if (!wb) continue; const wf = tot - wb; if (!wf) break;
+      sb += i * H[i]; const mb = sb / wb, mf = (sum - sb) / wf, v = wb * wf * (mb - mf) * (mb - mf);
+      if (v > best) { best = v; bi = i; }
+    }
+    return vol.histMin + (bi + 0.5) / B * vol.histSpan;
+  }
   /* Автопоиск дуги на уровне zc: максимум по слою ±4 мм, порог кости,
      самая большая связная область; лучи из точки за дугой — на каждом
      берём наружную полосу кости (у верхней челюсти внутри есть нёбо). */
@@ -151,8 +164,27 @@
     for (let k = k0; k <= k1; k++) for (let j = 0; j < gy; j++) for (let i = 0; i < gx; i++) {
       const v = d[i * f + j * f * vol.nx + k * P], q = i + j * gx; if (v > M[q]) M[q] = v;
     }
-    const thr = vol.otsu, mask = new Uint8Array(gx * gy);
+    /* порог кости: в HU — 300 (губчатая кость выше, мягкие ткани ниже); иначе
+       Оцу по значениям выше первого порога (первый делит воздух и ткани) */
+    const thr = vol.huLike ? 300 : otsuAbove(vol, vol.otsu);
+    let mask = new Uint8Array(gx * gy);
     for (let q = 0; q < mask.length; q++) mask[q] = M[q] > thr ? 1 : 0;
+    /* замыкание: кортикальные пластинки со светлой губчатой костью между
+       ними — одна полоса, а не две */
+    const morph = (src, grow) => {
+      const out = new Uint8Array(src.length), r = 2;
+      for (let y = 0; y < gy; y++) for (let x = 0; x < gx; x++) {
+        let v = grow ? 0 : 1;
+        for (let dy = -r; dy <= r && v === (grow ? 0 : 1); dy++) for (let dx = -r; dx <= r; dx++) {
+          if (dx * dx + dy * dy > r * r + 1) continue;
+          const xx = x + dx, yy = y + dy, s = xx < 0 || yy < 0 || xx >= gx || yy >= gy ? 0 : src[xx + yy * gx];
+          if (grow ? s : !s) { v = grow ? 1 : 0; break; }
+        }
+        out[x + y * gx] = v;
+      }
+      return out;
+    };
+    mask = morph(morph(mask, true), false);
     /* самая большая связная область */
     const lab = new Int32Array(gx * gy), stack = [];
     let best = 0, bestId = 0, id = 0;
@@ -200,7 +232,7 @@
   }
 
   /* ═══════════════ Измерения и пометки ═══════════════ */
-  const ANN_COLOR = { ruler: "#ffd166", angle: "#7ee0a1", arrow: "#ff5a5f", text: "#ffffff", canal: "#ff8a3d", calib: "#5ec8ff" };
+  const ANN_COLOR = { ruler: "#ffd166", angle: "#7ee0a1", arrow: "#ff5a5f", text: "#ffffff", canal: "#ff8a3d", calib: "#5ec8ff", roi: "#d9a8ff" };
   function annValue(view, a) {
     if (a.type === "ruler" || a.type === "calib") {
       const mm = view.mm(a.pts[0], a.pts[1]);
@@ -209,7 +241,22 @@
     if (a.type === "angle") return fmt1(view.angle(a.pts[0], a.pts[1], a.pts[2])) + "°";
     if (a.type === "canal") return "канал нерва";
     if (a.type === "text") return a.text;
+    if (a.type === "roi") {
+      const st = a.stats, unit = view.S.mode === "volume" && view.S.vol.huLike ? " HU" : "";
+      if (st) return `ср. ${Math.round(st.mean)} ± ${Math.round(st.sd)}${unit}`;
+      const mm = view.mm(a.pts[0], a.pts[1]);
+      return mm == null ? "" : "Ø " + fmt1(mm * 2) + " мм";
+    }
     return "";
+  }
+  /* среднее и разброс значений в области */
+  function stats(vals) {
+    if (!vals.length) return null;
+    let s = 0, mn = Infinity, mx = -Infinity;
+    for (const v of vals) { s += v; if (v < mn) mn = v; if (v > mx) mx = v; }
+    const mean = s / vals.length; let q = 0;
+    for (const v of vals) q += (v - mean) * (v - mean);
+    return { mean, sd: Math.sqrt(q / vals.length), n: vals.length, min: mn, max: mx };
   }
   function label(ctx, text, x, y, color, bg) {
     ctx.font = `600 12px ${FONT}`;
@@ -266,9 +313,279 @@
       ctx.beginPath(); sp.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke();
       ctx.globalAlpha = 0.35; ctx.lineWidth = 9 * k; ctx.stroke(); ctx.globalAlpha = 1;
       ctx.shadowBlur = 0;
+      if (sp.length === 1) { ctx.beginPath(); ctx.arc(sp[0][0], sp[0][1], 4 * k, 0, 7); ctx.fill(); }
       if (sp.length) label(ctx, "Канал", sp[0][0] + 8, sp[0][1] - 10, col);
+    } else if (a.type === "roi") {
+      const r = Math.hypot(sp[1][0] - sp[0][0], sp[1][1] - sp[0][1]);
+      ctx.lineWidth = 1.8 * k; ctx.beginPath(); ctx.arc(sp[0][0], sp[0][1], r, 0, 7); ctx.stroke();
+      ctx.globalAlpha = 0.12; ctx.fill(); ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.arc(sp[0][0], sp[0][1], 2 * k, 0, 7); ctx.fill();
+      ctx.shadowBlur = 0;
+      const t = annValue(view, a);
+      if (t) label(ctx, t, sp[0][0] + r * 0.72 + 6 * k, sp[0][1] - r * 0.72 - 4 * k, col);
     }
     ctx.restore();
+  }
+
+  /* ═══════════════ Канал нерва в объёме ═══════════════
+     Канал, отмеченный на панораме, — это высота z по точкам s. Смещение
+     к щеке/языку уточняется на сечениях (offs: [s, смещение]). Без
+     уточнений канал идёт по линии дуги — это приблизительно. */
+  const CANAL_R = 1.25;
+  function canalOff(an, s) {
+    const O = an.offs; if (!O || !O.length) return { off: 0, ref: false };
+    const P = O.slice().sort((a, b) => a[0] - b[0]);
+    let off = P[0][1];
+    if (s >= P[P.length - 1][0]) off = P[P.length - 1][1];
+    else if (s > P[0][0]) for (let k = 0; k < P.length - 1; k++) if (s >= P[k][0] && s <= P[k + 1][0]) {
+      const t = (s - P[k][0]) / ((P[k + 1][0] - P[k][0]) || 1); off = P[k][1] + (P[k + 1][1] - P[k][1]) * t; break;
+    }
+    let near = Infinity; for (const p of P) near = Math.min(near, Math.abs(p[0] - s));
+    return { off, ref: near <= 4 };
+  }
+  /* канал как ломаная в мире (мм) с шагом 0,5 мм по дуге */
+  function canalPath(G, an) {
+    const S0 = Math.min(...an.pts.map(p => p[0])), S1 = Math.max(...an.pts.map(p => p[0])), pts = [], ref = [];
+    const n = Math.max(1, Math.ceil((S1 - S0) / 0.5));
+    for (let i = 0; i <= (S1 > S0 ? n : 0); i++) {
+      const s = i === n ? S1 : S0 + (S1 - S0) * i / n, z = canalZ(an.pts, s); if (z == null) continue;
+      const o = canalOff(an, s), a = G.at(s);
+      pts.push([a.x + a.mx * o.off, a.y + a.my * o.off, z]); ref.push(o.ref);
+    }
+    return { pts, ref };
+  }
+  /* касательная к дуге и ближайшая точка дуги */
+  function archTangent(G, s) { const p = G.at(s - 0.5), q = G.at(s + 0.5); return V.norm([q.x - p.x, q.y - p.y, 0]); }
+  function archNearest(G, x, y) {
+    let best = Infinity, bi = 0;
+    for (let k = 0; k < G.n; k++) { const dx = x - G.x[k], dy = y - G.y[k], d = dx * dx + dy * dy; if (d < best) { best = d; bi = k; } }
+    return bi * G.step;
+  }
+  /* Автоуточнение канала: на сечениях через 1 мм ищем тёмное пятно канала
+     в светлом кольце его стенки — рядом с предыдущей найденной точкой */
+  function refineCanal(vol, G, an) {
+    const ss = an.pts.map(p => p[0]), S0 = Math.min(...ss), S1 = Math.max(...ss);
+    if (S1 - S0 < 2) return null;
+    const pix = 0.2, rx = Math.round(3.5 / pix), ry = Math.round(2.5 / pix), pad = 14;
+    const w = 2 * (rx + pad) + 1, hh = 2 * (ry + pad) + 1, cx0 = rx + pad, cy0 = ry + pad;
+    const buf = new Float32Array(w * hh), minC = vol.huLike ? 120 : (vol.hi - vol.lo) * 0.04;
+    /* кольцо — пять секторов: канал окружён костью со всех сторон, поэтому
+       берём самый тёмный сектор (у пятна рядом с краем кости одна сторона — мягкие ткани) */
+    const disc = [], ring = [[], [], [], [], []];
+    for (let dy = -5; dy <= 5; dy++) for (let dx = -5; dx <= 5; dx++) if (Math.hypot(dx, dy) * pix <= 0.8) disc.push(dx + dy * w);
+    for (let k = 0; k < 20; k++) { const a = k * Math.PI / 10; for (const r of [2, 2.5]) ring[k >> 2].push(Math.round(Math.cos(a) * r / pix) + Math.round(Math.sin(a) * r / pix) * w); }
+    const out = []; let prev = null, total = 0;
+    for (let s = S0; s <= S1 + 1e-6; s += 1) {
+      const z0 = canalZ(an.pts, Math.min(s, S1)); if (z0 == null) continue;
+      total++;
+      const off0 = prev ? prev.off : canalOff(an, s).off, zg = prev ? (prev.z + z0) / 2 : z0;
+      const a = G.at(s), t = archTangent(G, s), m = [a.mx, a.my, 0];
+      const o = [a.x + a.mx * (off0 - cx0 * pix), a.y + a.my * (off0 - cx0 * pix), zg + cy0 * pix];
+      /* три соседних сечения вместе — меньше шума */
+      samplePlane(vol, o, V.mul(m, pix), [0, 0, -pix], V.mul(t, 0.5), w, hh, 1, "avg", false, buf);
+      let best = -Infinity, bx = 0, by = 0, bc = 0;
+      for (let y = cy0 - ry; y <= cy0 + ry; y++) for (let x = cx0 - rx; x <= cx0 + rx; x++) {
+        const c0 = x + y * w;
+        let sd = 0, nd = 0, ringMin = Infinity, bad = false;
+        for (const d of disc) { const v = buf[c0 + d]; if (v !== SENT) { sd += v; nd++; } }
+        for (const sec of ring) {
+          let sr = 0, nr = 0;
+          for (const d of sec) { const v = buf[c0 + d]; if (v !== SENT) { sr += v; nr++; } }
+          if (nr < sec.length * 0.8) { bad = true; break; }
+          ringMin = Math.min(ringMin, sr / nr);
+        }
+        if (bad || nd < disc.length * 0.8) continue;
+        const c = ringMin - sd / nd, dist2 = ((x - cx0) ** 2 + (y - cy0) ** 2) * pix * pix;
+        const score = c - minC * 0.04 * dist2;
+        if (score > best) { best = score; bx = x; by = y; bc = c; }
+      }
+      if (bc >= minC) { prev = { off: off0 + (bx - cx0) * pix, z: zg - (by - cy0) * pix }; out.push([s, prev.off, prev.z]); }
+    }
+    if (out.length < 2 || out.length < total * 0.5) return { ok: false, found: out.length, total };
+    /* медиана по пяти соседним — отбрасываем случайные выбросы */
+    const med = (arr, i, c) => { const v = []; for (let k = Math.max(0, i - 2); k <= Math.min(arr.length - 1, i + 2); k++) v.push(arr[k][c]); v.sort((a, b) => a - b); return v[v.length >> 1]; };
+    return { ok: true, found: out.length, total, pts: out.map((p, i) => [p[0], med(out, i, 1), med(out, i, 2)]) };
+  }
+
+  /* ═══════════════ Импланты ═══════════════
+     Имплант — цилиндр с сужением к верхушке: a — центр платформы, b — центр
+     верхушки (мир, мм), d — диаметр. Окна со срезами умеют проецировать
+     точку мира: iproj(q) → {x, y, d}, где d — расстояние от плоскости окна. */
+  const IMP_COLOR = "#7fd6ff";
+  const safeColor = d => (d == null ? "#9896ae" : d < 1 ? "#ff5a5f" : d < 2 ? "#ffd166" : "#7ee0a1");
+  const impLen = imp => V.len(V.sub(imp.b, imp.a));
+  const impDir = imp => V.norm(V.sub(imp.b, imp.a));
+  const fmtN = v => String(Math.round(v * 100) / 100).replace(".", ",");
+  /* кратчайшее расстояние между отрезками p1–q1 и p2–q2 */
+  function segDist(p1, q1, p2, q2) {
+    const d1 = V.sub(q1, p1), d2 = V.sub(q2, p2), r = V.sub(p1, p2);
+    const a = V.dot(d1, d1), e = V.dot(d2, d2), f = V.dot(d2, r);
+    let s = 0, t = 0;
+    if (a < 1e-9 && e < 1e-9) return V.len(r);
+    if (a < 1e-9) t = clamp(f / e, 0, 1);
+    else {
+      const c = V.dot(d1, r);
+      if (e < 1e-9) s = clamp(-c / a, 0, 1);
+      else {
+        const b = V.dot(d1, d2), den = a * e - b * b;
+        s = den > 1e-9 ? clamp((b * f - c * e) / den, 0, 1) : 0;
+        t = (b * s + f) / e;
+        if (t < 0) { t = 0; s = clamp(-c / a, 0, 1); } else if (t > 1) { t = 1; s = clamp((b - c) / a, 0, 1); }
+      }
+    }
+    return V.len(V.sub(V.add(p1, V.mul(d1, s)), V.add(p2, V.mul(d2, t))));
+  }
+  /* от поверхности импланта до стенки канала; ref — канал в этом месте уточнён */
+  function implantToCanal(imp, paths) {
+    let best = Infinity, ref = false;
+    for (const p of paths) {
+      const n = p.pts.length;
+      for (let i = 0; i < Math.max(1, n - 1); i++) {
+        const d = segDist(imp.a, imp.b, p.pts[i], p.pts[Math.min(i + 1, n - 1)]);
+        if (d < best) { best = d; ref = p.ref[i]; }
+      }
+    }
+    return best === Infinity ? null : { d: best - imp.d / 2 - CANAL_R, ref };
+  }
+  /* средняя плотность кости в объёме импланта */
+  function implantDensity(vol, imp) {
+    const u = impDir(imp), L = impLen(imp), R = imp.d / 2;
+    const e1 = V.norm(V.cross(u, Math.abs(u[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0])), e2 = V.cross(u, e1);
+    let sum = 0, n = 0;
+    for (let t = 0.25; t < L - 0.2; t += 0.5) {
+      const c = V.add(imp.a, V.mul(u, t));
+      for (const rr of [0, 0.5 * R, 0.9 * R]) for (let k = 0; k < (rr ? 8 : 1); k++) {
+        const an = k * Math.PI / 4, v = CT.valueAt(vol, V.add(c, V.add(V.mul(e1, Math.cos(an) * rr), V.mul(e2, Math.sin(an) * rr))));
+        if (v != null) { sum += v; n++; }
+      }
+    }
+    return n ? sum / n : null;
+  }
+  /* класс плотности по Мишу (для КЛКТ — ориентировочно) */
+  const misch = hu => (hu > 1250 ? "D1" : hu > 850 ? "D2" : hu > 350 ? "D3" : hu > 150 ? "D4" : "D5");
+  /* толщина кости от поверхности импланта наружу (к щеке) и внутрь, на 2 мм ниже платформы */
+  function boneWalls(vol, imp, out, thr) {
+    const u = impDir(imp), R = imp.d / 2;
+    let m = V.sub(out, V.mul(u, V.dot(out, u))); if (V.len(m) < 1e-3) return null; m = V.norm(m);
+    const c = V.add(imp.a, V.mul(u, Math.min(2, impLen(imp) / 2)));
+    const walk = sg => {
+      let miss = 0, last = 0;
+      for (let r = R; r <= R + 12; r += 0.2) {
+        const v = CT.valueAt(vol, V.add(c, V.mul(m, r * sg)));
+        if (v != null && v >= thr) { last = r - R + 0.2; miss = 0; } else if (++miss >= 3) break;
+      }
+      return last;
+    };
+    return { buc: walk(1), lin: walk(-1) };
+  }
+  /* как имплант выглядит в окне: тело вдоль плоскости или сечение поперёк */
+  function implantScreen(view, imp) {
+    if (!view.iproj) return null;
+    const A = view.iproj(imp.a), B = view.iproj(imp.b); if (!A || !B) return null;
+    const L = impLen(imp) || 1, R = imp.d / 2, k = view.sc(), tol = view.itol ? view.itol() : 0;
+    const cos = clamp(Math.abs(A.d - B.d) / L, 0, 1), m = R * Math.sqrt(1 - cos * cos) + tol;
+    if ((A.d > m && B.d > m) || (A.d < -m && B.d < -m)) return null;
+    const g = { A, B, R: R * k, k, cos };
+    if (cos > 0.5) {
+      g.mode = "section"; g.t = clamp(A.d / ((A.d - B.d) || 1e-9), 0, 1);
+      g.P = [A.x + (B.x - A.x) * g.t, A.y + (B.y - A.y) * g.t];
+    } else {
+      g.mode = "body";
+      g.edge = (A.d > 0) === (B.d > 0) && Math.min(Math.abs(A.d), Math.abs(B.d)) > R * 0.6;
+    }
+    return g;
+  }
+  /* силуэт: цилиндр, к верхушке сужение и скругление; grow — запас вокруг */
+  function bodyPath(ctx, A, ux, uy, L, R, grow) {
+    const px = -uy, py = ux, g = grow || 0, r = R * 0.78, Rg = R + g, rg = r + g, c = Math.max(L - r, L * 0.5), ang = Math.atan2(uy, ux);
+    ctx.beginPath();
+    ctx.moveTo(A.x + px * Rg - ux * g, A.y + py * Rg - uy * g);
+    ctx.lineTo(A.x + ux * L * 0.62 + px * Rg, A.y + uy * L * 0.62 + py * Rg);
+    ctx.lineTo(A.x + ux * c + px * rg, A.y + uy * c + py * rg);
+    ctx.arc(A.x + ux * c, A.y + uy * c, rg, ang + Math.PI / 2, ang - Math.PI / 2, true);
+    ctx.lineTo(A.x + ux * L * 0.62 - px * Rg, A.y + uy * L * 0.62 - py * Rg);
+    ctx.lineTo(A.x - px * Rg - ux * g, A.y - py * Rg - uy * g);
+    ctx.closePath();
+  }
+  function drawImplant(ctx, view, imp, sel, g) {
+    g = g || implantScreen(view, imp); if (!g) return;
+    const { A, B } = g, R = g.R, m = imp.m || {}, safe = safeColor(m.canal), zone = 2 * g.k;
+    ctx.save(); ctx.lineJoin = "round"; ctx.lineCap = "round";
+    let lx, ly;
+    if (g.mode === "section") {
+      const t = g.t, rr = t < 0.62 ? R : R * (1 - 0.22 * (t - 0.62) / 0.38), c = Math.max(g.cos, 0.5);
+      const dx = B.x - A.x, dy = B.y - A.y, ang = Math.hypot(dx, dy) > 1 ? Math.atan2(dy, dx) : 0;
+      if (sel) {
+        ctx.setLineDash([5, 4]); ctx.strokeStyle = safe; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.ellipse(g.P[0], g.P[1], (rr + zone) / c, rr + zone, ang, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+      }
+      /* ось — пунктиром: видно, куда наклонён имплант */
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = "rgba(127,214,255,.55)"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.ellipse(g.P[0], g.P[1], rr / c, rr, ang, 0, 7);
+      ctx.fillStyle = "rgba(127,214,255,.3)"; ctx.fill();
+      if (sel) { ctx.shadowColor = "rgba(255,255,255,.9)"; ctx.shadowBlur = 8; }
+      ctx.strokeStyle = IMP_COLOR; ctx.lineWidth = sel ? 2.4 : 1.8; ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(g.P[0], g.P[1], 2, 0, 7); ctx.fillStyle = IMP_COLOR; ctx.fill();
+      lx = g.P[0] + rr / c + 10; ly = g.P[1] - rr * 0.4;
+    } else {
+      const dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, px = -uy, py = ux;
+      if (sel) { ctx.setLineDash([5, 4]); ctx.strokeStyle = safe; ctx.lineWidth = 1.5; bodyPath(ctx, A, ux, uy, L, R, zone); ctx.stroke(); ctx.setLineDash([]); }
+      ctx.globalAlpha = g.edge ? 0.55 : 1;
+      bodyPath(ctx, A, ux, uy, L, R);
+      ctx.fillStyle = "rgba(127,214,255,.26)"; ctx.fill();
+      if (sel) { ctx.shadowColor = "rgba(255,255,255,.9)"; ctx.shadowBlur = 8; }
+      ctx.strokeStyle = IMP_COLOR; ctx.lineWidth = sel ? 2.2 : 1.6; ctx.stroke(); ctx.shadowBlur = 0;
+      /* резьба */
+      if (g.k > 3) {
+        ctx.save(); bodyPath(ctx, A, ux, uy, L, R); ctx.clip();
+        ctx.strokeStyle = "rgba(127,214,255,.45)"; ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let s = g.k * 1.2; s < L - R * 0.5; s += g.k * 0.9) {
+          ctx.moveTo(A.x + ux * s + px * R, A.y + uy * s + py * R);
+          ctx.lineTo(A.x + ux * (s + g.k * 0.45) - px * R, A.y + uy * (s + g.k * 0.45) - py * R);
+        }
+        ctx.stroke(); ctx.restore();
+      }
+      /* платформа */
+      ctx.strokeStyle = IMP_COLOR; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(A.x + px * R * 1.04, A.y + py * R * 1.04); ctx.lineTo(A.x - px * R * 1.04, A.y - py * R * 1.04); ctx.stroke();
+      ctx.globalAlpha = 1;
+      if (sel) {
+        ctx.fillStyle = IMP_COLOR; ctx.beginPath(); ctx.arc(A.x, A.y, 4.5, 0, 7); ctx.fill();
+        ctx.fillStyle = "#07080b"; ctx.strokeStyle = IMP_COLOR; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(B.x, B.y, 5.5, 0, 7); ctx.fill(); ctx.stroke();
+      }
+      const sd = px >= 0 ? 1 : -1;
+      lx = A.x + px * sd * (R + 12); ly = A.y + py * sd * (R + 12) + 4;
+    }
+    /* подписи не вылезают за край окна; в узком окне — только расстояние до канала */
+    ctx.font = `600 12px ${FONT}`;
+    const fit = (t, x) => clamp(x, 10, view.cw - ctx.measureText(t).width - 12);
+    const canalTxt = m.canal == null ? null : m.canal <= 0 ? "задевает канал" : `${m.canalRef ? "" : "≈"}${fmt1(m.canal)} мм`;
+    if (view.cw < 240) {
+      if (sel || canalTxt) {
+        const t = canalTxt || `Ø${fmtN(imp.d)}×${fmtN(impLen(imp))}`, top = g.mode === "section" ? g.P : [A.x, A.y];
+        label(ctx, t, fit(t, top[0] - ctx.measureText(t).width / 2), Math.max(18, top[1] - R - 10), canalTxt ? safe : "#fff");
+      }
+    } else if (sel || view.cw >= 300) {
+      const t1 = `${imp.tooth ? imp.tooth + " · " : ""}Ø${fmtN(imp.d)}×${fmtN(impLen(imp))}`;
+      if (lx + ctx.measureText(t1).width + 12 > view.cw) lx = (g.mode === "section" ? g.P[0] : A.x) - R - 16 - ctx.measureText(t1).width;
+      label(ctx, t1, fit(t1, lx), ly, "#fff", "rgba(10,40,60,.85)");
+      if (canalTxt) { const t2 = m.canal <= 0 ? canalTxt : "канал " + canalTxt; label(ctx, t2, fit(t2, lx), ly + 22, safe); }
+    }
+    ctx.restore();
+  }
+  /* попадание по импланту: верхушка — наклон, тело — сдвиг */
+  function implantHit(view, imp, x, y) {
+    const g = implantScreen(view, imp); if (!g) return null;
+    if (g.mode === "section") {
+      const r = Math.max(g.R / Math.max(g.cos, 0.5), 7) + 5;
+      return Math.hypot(x - g.P[0], y - g.P[1]) <= r ? { part: "body", g } : null;
+    }
+    const { A, B } = g;
+    if (Math.hypot(x - B.x, y - B.y) < 10) return { part: "tip", g };
+    const dx = B.x - A.x, dy = B.y - A.y, t = clamp(((x - A.x) * dx + (y - A.y) * dy) / (dx * dx + dy * dy || 1), 0, 1);
+    return Math.hypot(x - A.x - dx * t, y - A.y - dy * t) <= g.R + 5 ? { part: "body", g } : null;
   }
 
   /* ═══════════════ Базовое окно ═══════════════ */
@@ -310,9 +627,71 @@
       this.drawContent();
       this.drawOverlay();
       for (const a of this.S.anns) if (this.accepts(a)) drawAnn(ctx, this, a, a.id === this.S.sel);
+      this.drawCanal3D();
+      if (this.iproj && this.S.implants) for (const imp of this.S.implants) drawImplant(ctx, this, imp, imp.id === this.S.selImp);
       if (this.draft) drawAnn(ctx, this, this.draft, false);
       this.drawHud();
       this.dirty = false;
+    }
+    /* канал нерва в объёме: на срезе — проекция пунктиром, рядом с плоскостью
+       сплошной линией, а где канал проходит сквозь плоскость — кружок */
+    drawCanal3D() {
+      if (!this.iproj || this.space === "pano" || !this.app.canalPaths) return;
+      const paths = this.app.canalPaths(); if (!paths.length) return;
+      const ctx = this.ctx, k = this.sc(), full = this.space === "mpr";
+      ctx.save(); ctx.lineCap = "round"; ctx.lineJoin = "round";
+      for (const path of paths) {
+        const P = path.pts.map(q => this.iproj(q)); if (!P.length || P.some(p => !p)) continue;
+        if (full && P.length > 1) {
+          ctx.setLineDash([3, 5]); ctx.strokeStyle = "rgba(255,138,61,.45)"; ctx.lineWidth = 1.2;
+          ctx.beginPath(); P.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y))); ctx.stroke(); ctx.setLineDash([]);
+          ctx.strokeStyle = "rgba(255,138,61,.9)"; ctx.lineWidth = 2.5; ctx.beginPath();
+          for (let i = 1; i < P.length; i++) if (Math.abs(P[i].d) < 1.5 && Math.abs(P[i - 1].d) < 1.5) { ctx.moveTo(P[i - 1].x, P[i - 1].y); ctx.lineTo(P[i].x, P[i].y); }
+          ctx.stroke();
+        }
+        const hits = [];
+        if (P.length === 1) { if (Math.abs(P[0].d) < CANAL_R) hits.push([P[0].x, P[0].y, path.ref[0]]); }
+        for (let i = 1; i < P.length; i++) {
+          const a = P[i - 1], b = P[i]; if ((a.d > 0) === (b.d > 0)) continue;
+          const t = a.d / ((a.d - b.d) || 1e-9); hits.push([a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, path.ref[i] || path.ref[i - 1]]);
+        }
+        for (const [x, y, ref] of hits) {
+          const r = Math.max(4, CANAL_R * k);
+          ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fillStyle = "rgba(255,138,61,.22)"; ctx.fill();
+          ctx.strokeStyle = "#ff8a3d"; ctx.lineWidth = 2; if (!ref) ctx.setLineDash([4, 3]); ctx.stroke(); ctx.setLineDash([]);
+          if (!full && this.cw > 150) label(ctx, ref ? "канал" : "канал ≈", x + r + 6, y + 4, "#ff8a3d");
+        }
+      }
+      ctx.restore();
+    }
+    /* имплант под курсором: перетаскивание тела — сдвиг, верхушки — наклон */
+    hitImplant(x, y, probe) {
+      const S = this.S; if (!this.iproj || !S.implants || !S.implants.length) return null;
+      for (let i = S.implants.length - 1; i >= 0; i--) {
+        const imp = S.implants[i], hit = implantHit(this, imp, x, y); if (!hit) continue;
+        if (probe) return { cursor: hit.part === "tip" ? "crosshair" : "move" };
+        this.app.selectImplant(imp.id);
+        const a0 = imp.a.slice(), b0 = imp.b.slice(), end = () => this.app.implantChanged(imp, false);
+        if (hit.part === "tip") {
+          /* наклон в плоскости окна; наклон поперёк окна сохраняется */
+          const nrm = this.inormal(a0), keep = V.dot(V.sub(b0, a0), nrm), len = impLen(imp);
+          return {
+            move: (mx, my) => {
+              const A = this.iproj(imp.a); if (!A) return;
+              const w = V.add(this.idelta(mx - A.x, my - A.y, imp.a), V.mul(nrm, keep));
+              if (V.len(w) < 0.5) return;
+              imp.b = V.add(imp.a, V.mul(V.norm(w), len)); this.app.implantChanged(imp, true);
+            }, end,
+          };
+        }
+        return {
+          move: (mx, my) => {
+            const dl = this.idelta(mx - x, my - y, a0);
+            imp.a = V.add(a0, dl); imp.b = V.add(b0, dl); this.app.implantChanged(imp, true);
+          }, end,
+        };
+      }
+      return null;
     }
     scaleBar(mmLen, unit) {
       const ctx = this.ctx, s = this.sc() * (this.unitScale || 1);
@@ -350,16 +729,24 @@
         }
         const [x, y] = pos(e), S = this.S;
         let tool = e.button === 2 || e.button === 1 ? "pan" : S.tool;
+        if (e.button === 0 && (tool === "cross" || tool === "implant")) {
+          const hi = this.hitImplant(x, y);
+          if (hi) { drag = hi; drag.x = x; drag.y = y; this.app.interact(); return; }
+        }
         if (e.button === 0 && tool === "cross") {
           const sp = this.hitSpecial(x, y, e);
           if (sp) { drag = sp; drag.x = x; drag.y = y; this.app.interact(); return; }
         }
+        if (tool === "implant") { if (this.worldAt) this.app.placeImplant(this, x, y); return; }
+        /* канал на сечении: щелчок по каналу уточняет, где он проходит */
+        if (tool === "canal" && this.space === "xs") { const p = this.fromScreen(x, y); if (p) this.app.canalFromXs(p[0], p[1], p[2]); return; }
         if (tool === "angle" || tool === "canal" || tool === "arch") {
           this.clickTool(tool, x, y); return;
         }
+        if (tool === "roi" && !this.roiStats) { this.app.status("Плотность меряется на срезах и сечениях"); return; }
         drag = { tool, x, y, pan: this.pan.slice(), level: S.level, width: S.width };
         if (tool === "cross") { this.onCenter(x, y, false); this.app.interact(); }
-        else if (tool === "ruler" || tool === "arrow" || tool === "calib") {
+        else if (tool === "ruler" || tool === "arrow" || tool === "calib" || tool === "roi") {
           const p = this.fromScreen(x, y); if (!p) { drag = null; return; }
           this.draft = { type: tool, space: this.space, pts: [p, p.slice()], draftNoLabel: tool === "arrow" };
         } else if (tool === "text") {
@@ -380,7 +767,13 @@
           const q = this.fromScreen(p[0], p[1]); if (q) { this.draft.pts[this.draft.pts.length - 1] = q; this.app.request(this.key); }
           return;
         }
-        if (!drag) { if (this.hoverCursor) this.hoverCursor(p[0], p[1]); return; }
+        if (!drag) {
+          const hi = (this.S.tool === "cross" || this.S.tool === "implant") && this.hitImplant(p[0], p[1], true);
+          if (hi) this.canvas.style.cursor = hi.cursor;
+          else if (this.hoverCursor) this.hoverCursor(p[0], p[1]);
+          else this.canvas.style.cursor = "";
+          return;
+        }
         const S = this.S, dx = p[0] - drag.x, dy = p[1] - drag.y;
         if (drag.move) { drag.move(p[0], p[1], dx, dy, e); this.app.interact(); return; }
         if (drag.tool === "cross") { this.onCenter(p[0], p[1], true); this.app.interact(); }
@@ -396,11 +789,12 @@
         pts.delete(e.pointerId);
         if (pts.size < 2) pinch = null;
         if (drag && drag.end) drag.end();
-        if (drag && this.draft && (drag.tool === "ruler" || drag.tool === "arrow" || drag.tool === "calib")) {
+        if (drag && this.draft && (drag.tool === "ruler" || drag.tool === "arrow" || drag.tool === "calib" || drag.tool === "roi")) {
           const d = this.draft, a = this.toScreen(d.pts[0]), b = this.toScreen(d.pts[1]);
           if (a && b && Math.hypot(a[0] - b[0], a[1] - b[1]) > 6) {
             delete d.draftNoLabel;
             if (d.type === "calib") this.app.calibrate(this, d);
+            else if (d.type === "roi") { const st = this.roiStats(d.pts[0], d.pts[1]); if (st) this.app.addAnn({ ...d, stats: st, ...this.annExtra() }); }
             else if (d.type === "arrow") this.app.editText(this, b[0], b[1], text => this.app.addAnn({ ...d, text: text || "", ...this.annExtra() }), "Подпись к стрелке (можно пусто)", true);
             else this.app.addAnn({ ...d, ...this.annExtra() });
           }
@@ -479,6 +873,20 @@
     accepts(a) { return a.space === "mpr" && a.pts.every(q => this.visible(q)); }
     mm(a, b) { return V.len(V.sub(a, b)); }
     angle(a, v, c) { const u = V.norm(V.sub(a, v)), w = V.norm(V.sub(c, v)); return Math.acos(clamp(V.dot(u, w), -1, 1)) * 180 / Math.PI; }
+    /* для имплантов и канала: проекция точки мира, сдвиг по экрану → мм */
+    iproj(q) { const s = this.toScreenAny(q); return { x: s[0], y: s[1], d: V.dot(V.sub(q, this.S.p), this.B.n) }; }
+    itol() { const S = this.S; return S.slabMode === "thin" ? S.vol.minSp : S.slabMm / 2; }
+    idelta(dx, dy) { const s = this.sc(), b = this.B; return V.add(V.mul(b.r, dx / s), V.mul(b.d, dy / s)); }
+    inormal() { return this.B.n; }
+    worldAt(x, y) { return this.fromScreen(x, y); }
+    roiStats(c, e) {
+      const b = this.B, vol = this.S.vol, r = V.len(V.sub(e, c)), st = Math.max(vol.minSp * 0.7, r / 40), vals = [];
+      for (let u = -r; u <= r; u += st) for (let v = -r; v <= r; v += st) {
+        if (u * u + v * v > r * r) continue;
+        const val = CT.valueAt(vol, V.add(c, V.add(V.mul(b.r, u), V.mul(b.d, v)))); if (val != null) vals.push(val);
+      }
+      return stats(vals);
+    }
     drawContent() {
       const S = this.S, vol = S.vol, b = this.B, fast = this.app.fast;
       const A = this.center();
@@ -675,6 +1083,16 @@
     accepts(a) { return a.space === "pano"; }
     mm(a, b) { return Math.hypot(a[0] - b[0], a[1] - b[1]); }
     angle(a, v, c) { const u = [a[0] - v[0], a[1] - v[1]], w = [c[0] - v[0], c[1] - v[1]]; return Math.acos(clamp((u[0] * w[0] + u[1] * w[1]) / (Math.hypot(...u) * Math.hypot(...w) || 1), -1, 1)) * 180 / Math.PI; }
+    /* имплант на панораме: s — ближайшая точка дуги, d — смещение от дуги */
+    iproj(q) {
+      const G = this.S.archG; if (!G) return null;
+      const s = archNearest(G, q[0], q[1]), a = G.at(s), p = this.toScreen([s, q[2]]);
+      return { x: p[0], y: p[1], d: (q[0] - a.x) * a.mx + (q[1] - a.y) * a.my };
+    }
+    itol() { return this.S.pano.thick / 2; }
+    idelta(dx, dy, q) { const G = this.S.archG, k = this.sc(), t = archTangent(G, archNearest(G, q[0], q[1])); return [t[0] * dx / k, t[1] * dx / k, -dy / k]; }
+    inormal(q) { const G = this.S.archG, a = G.at(archNearest(G, q[0], q[1])); return [a.mx, a.my, 0]; }
+    worldAt(x, y) { const G = this.S.archG; if (!G) return null; const p = this.fromScreen(x, y), a = G.at(clamp(p[0], 0, G.L)); return [a.x, a.y, clamp(p[1], 0, this.Z())]; }
     invalidate() { this.cache = null; this.dirty = true; }
     build() {
       const S = this.S, G = S.archG, vol = S.vol, fast = this.app.fast;
@@ -687,6 +1105,14 @@
         /* столбец панорамы = сечение толщиной thick по нормали к дуге: одна «плоскость» шириной 1 пиксель */
         samplePlane(vol, [a.x, a.y, this.Z() - pz / 2], [0, 0, 0], [0, 0, -pz], [a.mx * st, a.my * st, 0], 1, hh, half, S.pano.mode, false, col);
         for (let r = 0; r < hh; r++) buf[r * w + c] = col[r];
+      }
+      /* соседние столбцы берутся по разным нормалям — сглаживаем [1 2 1] вдоль дуги */
+      if (S.pano.mode === "avg" && !fast) {
+        const row = new Float32Array(w);
+        for (let r = 0; r < hh; r++) {
+          const o = r * w; row.set(buf.subarray(o, o + w));
+          for (let c = 1; c < w - 1; c++) if (row[c - 1] !== SENT && row[c] !== SENT && row[c + 1] !== SENT) buf[o + c] = (row[c - 1] + 2 * row[c] + row[c + 1]) * 0.25;
+        }
       }
       this.cache = { buf, w, h: hh, ps, pz, fast, key: this.cacheKey() };
     }
@@ -746,7 +1172,22 @@
     mm(a, b) { return Math.hypot(a[1] - b[1], a[2] - b[2]); }
     pxLen(a, b) { return this.mm(a, b); }
     angle(a, v, c) { const u = [a[1] - v[1], a[2] - v[2]], w = [c[1] - v[1], c[2] - v[2]]; return Math.acos(clamp((u[0] * w[0] + u[1] * w[1]) / (Math.hypot(...u) * Math.hypot(...w) || 1), -1, 1)) * 180 / Math.PI; }
-    world(off, z) { const a = this.S.archG.at(this.info().s); return [a.x + a.mx * off, a.y + a.my * off, z]; }
+    world(off, z, s) { const a = this.S.archG.at(s == null ? this.info().s : s); return [a.x + a.mx * off, a.y + a.my * off, z]; }
+    /* плоскость сечения: центр на дуге, m — к щеке, t — вдоль дуги (нормаль окна) */
+    frame() { const i = this.info(), G = this.S.archG; if (!i || !G) return null; const a = G.at(i.s); return { c: [a.x, a.y, 0], m: [a.mx, a.my, 0], t: archTangent(G, i.s) }; }
+    iproj(q) { const f = this.frame(); if (!f) return null; const w = V.sub(q, f.c), p = this.uv2s(V.dot(w, f.m), this.Z() / 2 - q[2]); return { x: p[0], y: p[1], d: V.dot(w, f.t) }; }
+    itol() { return this.S.vol.minSp; }
+    idelta(dx, dy) { const f = this.frame(), k = this.sc(); return [f.m[0] * dx / k, f.m[1] * dx / k, -dy / k]; }
+    inormal() { return this.frame().t; }
+    worldAt(x, y) { const p = this.fromScreen(x, y); return p && this.S.archG ? this.world(p[1], p[2]) : null; }
+    roiStats(c, e) {
+      const vol = this.S.vol, r = Math.hypot(e[1] - c[1], e[2] - c[2]), st = Math.max(vol.minSp * 0.7, r / 40), vals = [];
+      for (let u = -r; u <= r; u += st) for (let v = -r; v <= r; v += st) {
+        if (u * u + v * v > r * r) continue;
+        const val = CT.valueAt(vol, this.world(c[1] + u, c[2] + v, c[0])); if (val != null) vals.push(val);
+      }
+      return stats(vals);
+    }
     drawContent() {
       const S = this.S, i = this.info(); if (!S.archG || !i) return;
       const vol = S.vol, a = S.archG.at(i.s), fast = this.app.fast;
@@ -768,14 +1209,7 @@
       ctx.beginPath(); ctx.moveTo(c[0], 0); ctx.lineTo(c[0], this.ch); ctx.stroke();
       const yz = this.uv2s(0, this.Z() / 2 - S.p[2])[1];
       ctx.strokeStyle = "rgba(139,124,246,.7)"; ctx.beginPath(); ctx.moveTo(0, yz); ctx.lineTo(this.cw, yz); ctx.stroke(); ctx.setLineDash([]);
-      /* канал нерва, отмеченный на панораме: полоса на его высоте */
-      for (const an of S.anns) {
-        if (an.type !== "canal" || an.space !== "pano") continue;
-        const z = canalZ(an.pts, i.s); if (z == null) continue;
-        const y = this.uv2s(0, this.Z() / 2 - z)[1];
-        ctx.fillStyle = "rgba(255,138,61,.16)"; ctx.fillRect(0, y - 4, this.cw, 8);
-        ctx.strokeStyle = "rgba(255,138,61,.85)"; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(this.cw, y); ctx.stroke(); ctx.setLineDash([]);
-      }
+      /* канал нерва рисует drawCanal3D: кружок там, где он проходит сквозь сечение */
       ctx.fillStyle = i.center ? "#ffd166" : "rgba(230,230,240,.85)"; ctx.font = `700 12px ${FONT}`;
       const rel = i.rel === 0 ? "0" : (i.rel > 0 ? "+" : "−") + fmt1(Math.abs(i.rel));
       ctx.fillText(rel + " мм", 8, 18);
@@ -801,6 +1235,7 @@
   /* высота канала в точке s: линейно по отмеченным точкам */
   function canalZ(pts, s) {
     const P = pts.slice().sort((a, b) => a[0] - b[0]);
+    if (P.length === 1) return Math.abs(s - P[0][0]) < 0.6 ? P[0][1] : null;
     if (!P.length || s < P[0][0] || s > P[P.length - 1][0]) return null;
     for (let k = 0; k < P.length - 1; k++) if (s >= P[k][0] && s <= P[k + 1][0]) {
       const t = (s - P[k][0]) / ((P[k + 1][0] - P[k][0]) || 1); return P[k][1] + (P[k + 1][1] - P[k][1]) * t;
@@ -835,6 +1270,16 @@
     mm(a, b) { const k = this.ph.pxMm; return k ? Math.hypot(a[0] - b[0], a[1] - b[1]) * k : null; }
     angle(a, v, c) { const u = [a[0] - v[0], a[1] - v[1]], w = [c[0] - v[0], c[1] - v[1]]; return Math.acos(clamp((u[0] * w[0] + u[1] * w[1]) / (Math.hypot(...u) * Math.hypot(...w) || 1), -1, 1)) * 180 / Math.PI; }
     wlStep() { const p = this.ph; return p.gray ? (p.hi - p.lo) / 400 : 0.6; }
+    /* плотность на 2D-снимке — значения пикселей (у цветных — яркость) */
+    roiStats(c, e) {
+      const p = this.ph, r = Math.hypot(e[0] - c[0], e[1] - c[1]), st = Math.max(1, r / 100), vals = [];
+      for (let y = c[1] - r; y <= c[1] + r; y += st) for (let x = c[0] - r; x <= c[0] + r; x += st) {
+        if ((x - c[0]) ** 2 + (y - c[1]) ** 2 > r * r || x < 0 || y < 0 || x >= p.w || y >= p.h) continue;
+        const i = (x | 0) + (y | 0) * p.w;
+        vals.push(p.gray ? p.gray[i] : 0.299 * p.rgba[i * 4] + 0.587 * p.rgba[i * 4 + 1] + 0.114 * p.rgba[i * 4 + 2]);
+      }
+      return stats(vals);
+    }
     /* картинка с яркостью/контрастом — пересобираем только при смене настроек */
     adjusted() {
       const p = this.ph, A = this.S.photo, key = [A.idx, A.bright, A.contrast, A.gamma, A.invert, this.S.level, this.S.width].join("|");
@@ -892,5 +1337,9 @@
     }
   }
 
-  Object.assign(CT, { MprView, PanoView, XsView, PhotoView, CANON, MPR, copyBases, isAligned, archGeom, autoArch, drawAnn, annValue, ANN_COLOR, canalZ, letters });
+  Object.assign(CT, {
+    MprView, PanoView, XsView, PhotoView, CANON, MPR, copyBases, isAligned, archGeom, autoArch, drawAnn, annValue, ANN_COLOR, canalZ, letters,
+    canalOff, canalPath, refineCanal, archNearest, archTangent, CANAL_R,
+    drawImplant, implantToCanal, implantDensity, boneWalls, misch, safeColor, IMP_COLOR, fmtN,
+  });
 })();

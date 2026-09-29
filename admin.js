@@ -104,11 +104,11 @@
   const openCT = () => {
     if (!ctLoading) {
       const css = document.createElement("link");
-      css.rel = "stylesheet"; css.href = "admin-ct.css?v=20260929d"; document.head.appendChild(css);
+      css.rel = "stylesheet"; css.href = "admin-ct.css?v=20260929h"; document.head.appendChild(css);
       const load = src => new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.body.appendChild(s); });
       /* ядро → срезы и 2D → 3D → интерфейс */
       ctLoading = ["admin-ct.js", "admin-ct-mpr.js", "admin-ct-3d.js", "admin-ct-app.js"]
-        .reduce((p, f) => p.then(() => load(f + "?v=20260929d")), Promise.resolve());
+        .reduce((p, f) => p.then(() => load(f + "?v=20260929h")), Promise.resolve());
     }
     ctLoading.then(() => window.ChestomCT.mount($("#ctHost"))).catch((e) => console.error("ct", e));
   };
