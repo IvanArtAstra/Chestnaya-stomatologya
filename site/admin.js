@@ -96,7 +96,19 @@
     services: { title: "Услуги", sub: "Раздел «Услуги и цены» на главной: заголовок, фото, карточки и цены" },
     promos:   { title: "Акции", sub: "Раздел «Честные скидки» на главной: карточки, сроки, цены и фото" },
     banners:  { title: "Баннеры", sub: "Боковые рекламные блоки на широких экранах" },
-    accounts: { title: "Аккаунты", sub: "Доступы сотрудников: администратор — всё, врач — своя страница и блог" }
+    accounts: { title: "Аккаунты", sub: "Доступы сотрудников: администратор — всё, врач — своя страница и блог" },
+    ct:       { title: "3D-снимки", sub: "Просмотр КЛКТ и КТ в формате DICOM — снимок открывается только на этом компьютере" }
+  };
+  /* просмотр снимков тяжёлый — грузим его при первом открытии вкладки */
+  let ctLoading = null;
+  const openCT = () => {
+    if (!ctLoading) {
+      const css = document.createElement("link");
+      css.rel = "stylesheet"; css.href = "admin-ct.css?v=20260929a"; document.head.appendChild(css);
+      const load = src => new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.body.appendChild(s); });
+      ctLoading = load("admin-ct.js?v=20260929a").then(() => load("admin-ct-view.js?v=20260929a"));
+    }
+    ctLoading.then(() => window.ChestomCT.mount($("#ctHost"))).catch((e) => console.error("ct", e));
   };
   $$(".adm__tab").forEach((tab) =>
     tab.addEventListener("click", () => {
@@ -106,6 +118,8 @@
       tab.scrollIntoView({ block: "nearest", inline: "nearest" });
       const meta = PAGE_META[tab.dataset.tab];
       if (meta) { $("#pageTitle").textContent = meta.title; $("#pageSub").textContent = meta.sub; }
+      $(".adm-main").classList.toggle("is-ct", tab.dataset.tab === "ct");
+      if (tab.dataset.tab === "ct") openCT();
     })
   );
 

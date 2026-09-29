@@ -44,6 +44,9 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
     <path d="M32 23.5c-5.2 0-8.6 3-8.6 6.8 0 2.8 1.7 4.3 2.5 6.9 .7 2.2 1 5.6 2.6 5.6 1.7 0 1.4-4 3-4h1c1.6 0 1.3 4 3 4 1.6 0 1.9-3.4 2.6-5.6 .8-2.6 2.5-4.1 2.5-6.9 0-3.8-3.4-6.8-8.6-6.8z"/>
   </symbol>
 
+  <symbol id="i-ct" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M12 12 20 7.5M12 12v9M12 12 4 7.5"/>
+  </symbol>
   <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <path d="m16.8 4.3 2.9 2.9L8.5 18.4l-4 1.1 1.1-4z"/><path d="m14.5 6.6 2.9 2.9"/>
   </symbol>
@@ -114,6 +117,9 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
       <button class="adm-side__item adm__tab" data-tab="blog">
         <svg class="icon"><use href="#i-pen"/></svg><span>Блог и новости</span>
         <em class="adm-side__badge" id="navPostCount"></em>
+      </button>
+      <button class="adm-side__item adm__tab" data-tab="ct">
+        <svg class="icon"><use href="#i-ct"/></svg><span>3D-снимки</span>
       </button>
       <button class="adm-side__item adm__tab" data-tab="services" data-admin-only>
         <svg class="icon"><use href="#i-tooth"/></svg><span>Услуги</span>
@@ -397,12 +403,18 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
       </div>
     </section>
 
+    <!-- ═══ 3D-СНИМКИ (КЛКТ / КТ) ═══ -->
+    <!-- Скрипты просмотра подгружаются при первом открытии вкладки -->
+    <section class="adm__panel" id="panel-ct">
+      <div class="ct-host" id="ctHost"></div>
+    </section>
+
   </div>
 </div>
 
 <script src="db.js?v=20260924d"></script>
 <script src="auth.js?v=20260923k"></script>
 <script src="md.js?v=20260923k"></script>
-<script src="admin.js?v=20260923zj"></script>
+<script src="admin.js?v=20260929a"></script>
 </body>
 </html>
