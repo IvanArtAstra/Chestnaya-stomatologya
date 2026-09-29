@@ -227,6 +227,22 @@
         for (let k = 0; k < G.n; k += 3) { const p = this.project(this.toN([G.x[k], G.y[k], S.p[2]])); k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }
         ctx.stroke();
       }
+      /* канал нерва и импланты — поверх модели */
+      for (const path of this.app.canalPaths()) {
+        const P = path.pts.map(q => this.project(this.toN(q)));
+        ctx.strokeStyle = "rgba(255,138,61,.35)"; ctx.lineWidth = 7; ctx.lineCap = "round"; ctx.lineJoin = "round";
+        ctx.beginPath(); P.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke();
+        ctx.strokeStyle = "#ff8a3d"; ctx.lineWidth = 2.5; ctx.stroke();
+      }
+      for (const imp of S.implants || []) {
+        const A = this.project(this.toN(imp.a)), B = this.project(this.toN(imp.b)), mid = V.mul(V.add(imp.a, imp.b), 0.5);
+        const u = V.norm(V.sub(imp.b, imp.a)), view = V.norm(V.sub(this.toN(mid), this.cam.c));
+        let e = V.cross(u, view); if (V.len(e) < 1e-4) e = V.cross(u, [1, 0, 0]); e = V.norm(e);
+        const E = this.project(this.toN(V.add(imp.a, V.mul(e, imp.d / 2)))), R = Math.hypot(E[0] - A[0], E[1] - A[1]);
+        const g = { A: { x: A[0], y: A[1] }, B: { x: B[0], y: B[1] }, R, k: R / (imp.d / 2), cos: 0, mode: "body" };
+        if (Math.hypot(B[0] - A[0], B[1] - A[1]) < R * 1.2) Object.assign(g, { mode: "section", cos: 1, t: 0, P: A });
+        CT.drawImplant(ctx, this, imp, imp.id === S.selImp, g);
+      }
       const c = this.project(cq);
       ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(c[0], c[1], 4, 0, 7); ctx.stroke();
       ctx.fillStyle = "rgba(210,210,225,.6)"; ctx.font = "500 11px 'Open Sans', system-ui, sans-serif";

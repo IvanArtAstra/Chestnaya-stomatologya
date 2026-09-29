@@ -185,6 +185,7 @@
   font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease;
 }
 .ct-btn:hover { background: rgba(255, 255, 255, 0.08); }
+.ct-btn[hidden] { display: none; }
 .ct-btn svg { width: 16px; height: 16px; }
 .ct-btn--acc { color: #fff; border-color: rgba(139, 124, 246, 0.6); background: linear-gradient(120deg, rgba(104, 88, 232, 0.9), rgba(58, 46, 186, 0.86)); }
 .ct-btn--acc:hover { background: linear-gradient(120deg, rgba(116, 100, 242, 0.95), rgba(66, 54, 200, 0.9)); }
@@ -207,6 +208,33 @@
 .ct-ann__del { flex: none; width: 30px; border: 0; background: transparent; color: var(--ct-dim); cursor: pointer; border-radius: 0 10px 10px 0; }
 .ct-ann__del:hover { color: var(--ct-warn); background: rgba(255, 180, 168, 0.08); }
 .ct-ann__del svg { width: 14px; height: 14px; }
+/* карточки имплантов */
+.ct-imps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.ct-imp { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 8px; padding: 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid transparent; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
+.ct-imp.is-sel { border-color: rgba(127, 214, 255, 0.55); background: rgba(127, 214, 255, 0.07); }
+.ct-imp__head { display: flex; align-items: center; gap: 8px; }
+.ct-imp__head i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--ct-dim); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05); }
+.ct-imp__head b { font-size: 0.8rem; color: #7fd6ff; }
+.ct-imp__head input { flex: 1 1 0; width: 0; min-width: 0; height: 30px; padding: 0 9px; border-radius: 8px; border: 1px solid var(--ct-line); background: #0f1017; color: #fff; font: 600 0.82rem var(--font); }
+.ct-imp__head input:focus { outline: 2px solid var(--ct-acc); outline-offset: 0; }
+.ct-imp__ic { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border: 0; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--ct-ink); cursor: pointer; }
+.ct-imp__ic:hover { background: rgba(255, 255, 255, 0.1); }
+.ct-imp__ic svg { width: 15px; height: 15px; }
+.ct-imp__del:hover { color: var(--ct-warn); }
+.ct-imp__sz { display: grid; grid-template-columns: 16px repeat(var(--n), minmax(0, 1fr)); align-items: center; gap: 3px; }
+.ct-imp__sz span { width: 16px; font-size: 0.74rem; font-weight: 700; color: var(--ct-dim); }
+.ct-imp__sz button { min-width: 0; height: 26px; padding: 0 2px; border: 0; border-radius: 7px; background: rgba(255, 255, 255, 0.04); color: var(--ct-dim); font-size: 0.74rem; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; }
+.ct-imp__sz button:hover { color: var(--ct-ink); }
+.ct-imp__sz button.is-on { color: #06222e; background: #7fd6ff; }
+.ct-imp__m { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; margin: 0; font-size: 0.78rem; }
+.ct-imp__m dt { color: var(--ct-dim); }
+.ct-imp__m dd { margin: 0; font-variant-numeric: tabular-nums; }
+.ct-imp__warn, .ct-imp__note { margin: 0; padding: 6px 9px; border-radius: 8px; font-size: 0.75rem; line-height: 1.4; }
+.ct-imp__warn { color: #ffd0cb; background: rgba(255, 90, 95, 0.14); }
+.ct-imp__note { color: var(--ct-dim); background: rgba(255, 255, 255, 0.04); }
+[data-imp-warn] { display: grid; gap: 4px; }
+[data-imp-warn]:empty { display: none; }
+
 /* миниатюры 2D-снимков */
 .ct-thumbs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .ct-thumb { display: grid; gap: 4px; padding: 6px; border-radius: 10px; border: 1px solid var(--ct-line); background: rgba(255, 255, 255, 0.03); color: var(--ct-dim); cursor: pointer; font-size: 0.7rem; }

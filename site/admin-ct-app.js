@@ -47,6 +47,8 @@
     rotR: sv('<path d="M20 9a8 8 0 1 0-1 7"/><path d="M20 4v5h-5"/>'),
     flip: sv('<path d="M12 3v18M8 7 4 12l4 5V7zM16 7l4 5-4 5z"/>'),
     eye: sv('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
+    implant: sv('<path d="M8.5 3h7v3.2h-7z"/><path d="M9.6 6.2v9.3L12 21l2.4-5.5V6.2"/><path d="M9.6 9.4l4.8-1.2M9.6 12.4l4.8-1.2M9.6 15.4l4.8-1.2"/>'),
+    roi: sv('<circle cx="12" cy="12" r="8" stroke-dasharray="3.2 2.4"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/>'),
     eyeOff: sv('<path d="M3 3l18 18M10.6 5.1A10.9 10.9 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7c1.9 0 3.5-.6 4.9-1.4"/>'),
   };
   const TOOL_INFO = {
@@ -57,10 +59,13 @@
     angle: ["Угол", "A", "Три щелчка: начало, вершина угла, конец"],
     arrow: ["Стрелка", "S", "Тяните от хвоста к острию, затем подпишите (можно пусто)"],
     text: ["Текст", "T", "Щелчок — место подписи, затем введите текст"],
-    canal: ["Канал нерва", "K", "На панораме: щелчки вдоль канала · двойной щелчок или Enter — готово"],
+    canal: ["Канал нерва", "K", "На панораме: щелчки вдоль канала, двойной щелчок или Enter — готово · на сечении: щелчок по каналу уточняет его положение"],
     arch: ["Дуга челюсти", "D", "На аксиальном срезе: щелчки по дуге от правой стороны пациента к левой · двойной щелчок — готово"],
     calib: ["Калибровка", "L", "Проведите вдоль предмета известной длины и введите её в мм"],
+    roi: ["Плотность", "O", "Тяните круг от центра — средняя плотность и разброс в области"],
+    implant: ["Имплант", "I", "Щелчок по гребню на срезе, панораме или сечении — имплант встанет на кость · тяните тело — сдвинуть, верхушку — наклонить"],
   };
+  const DIAMS = [3.3, 3.5, 3.75, 4, 4.3, 4.5, 5], LENS = [6, 8, 10, 11.5, 13, 15];
   const LAYOUTS = { grid: ["2×2", "G"], main: ["1 + 3", "3"], one: ["Одно окно", "1"], pano: ["Панорама", "P"] };
   const VR_MODES = [["bone", "Кость"], ["teeth", "Зубы"], ["soft", "Ткани"], ["xray", "Рентген"], ["mip", "MIP"]];
 
@@ -173,7 +178,9 @@
         vrMode: "bone", thrHu: Math.round(vol.otsu), opacity: 0.85, cut: "none", outlines: true, turntable: false,
         showName: false, anns: [], sel: null, nextId: 1,
         arch: null, archG: null, pano: { thick: 12, mode: "avg", s0: null, spacing: 1, count: 5, width: 30 },
+        implants: [], selImp: null, nextImp: 1,
       };
+      this.canalBackup = null;
       this.P = presets(vol);
       this.build();
     }
@@ -229,6 +236,7 @@
       this.fitHeight();
       this.applyLayout();
       this.syncUI();
+      if (isVol) this.renderImplants();
       this.keys = e => this.onKey(e);
       document.addEventListener("keydown", this.keys);
       this.fsHandler = () => { root.classList.toggle("is-full", document.fullscreenElement === root); requestAnimationFrame(() => this.resizeAll()); };
@@ -282,8 +290,8 @@
       tb.setAttribute("role", "toolbar"); tb.setAttribute("aria-label", "Инструменты");
       const tool = k => `<button type="button" data-tool="${k}" data-tip="${TOOL_INFO[k][0]} · ${TOOL_INFO[k][1]}" aria-label="${TOOL_INFO[k][0]}">${ICON[k]}<span>${TOOL_INFO[k][0]}</span></button>`;
       const groups = isVol
-        ? [["cross", "pan", "wl"], ["ruler", "angle", "arrow", "text"], ["canal", "arch"]]
-        : [["pan", "wl"], ["ruler", "angle", "arrow", "text"], ["calib"]];
+        ? [["cross", "pan", "wl"], ["ruler", "angle", "arrow", "text", "roi"], ["arch", "canal", "implant"]]
+        : [["pan", "wl"], ["ruler", "angle", "arrow", "text", "roi"], ["calib"]];
       let html = groups.map(g => `<div class="ct-grp">${g.map(tool).join("")}</div>`).join('<span class="ct-sep"></span>');
       if (isVol) {
         html += '<span class="ct-sep"></span><div class="ct-grp ct-layouts">' +
@@ -332,6 +340,13 @@
           <label class="ct-range"><span>Шаг сечений <output data-out="pano.spacing"></output></span><input type="range" data-k="pano.spacing" min="0.5" max="5" step="0.5"></label>
           <label class="ct-range"><span>Ширина сечения <output data-out="pano.width"></output></span><input type="range" data-k="pano.width" min="14" max="50" step="1"></label>
           <div class="ct-seg" data-group="pano.count"><button type="button" data-v="3">3 сечения</button><button type="button" data-v="5">5</button><button type="button" data-v="7">7</button></div>
+          <span class="ct-lbl">Канал нерва</span>
+          <div class="ct-row"><button type="button" class="ct-btn" data-act="drawCanal">${ICON.canal}Отметить</button><button type="button" class="ct-btn" data-act="refineCanal">Уточнить по сечениям</button><button type="button" class="ct-btn" data-act="restoreCanal" hidden>Вернуть как было</button></div>
+        </details>
+        <details open data-sec="imp"><summary>Импланты <em data-imp-count></em></summary>
+          <div class="ct-imps" data-imps></div>
+          <div class="ct-row"><button type="button" class="ct-btn ct-btn--acc" data-act="addImp">${ICON.implant}Поставить имплант</button></div>
+          <p class="ct-hint">Расстояние до канала — от поверхности импланта до стенки канала. Зелёный — 2 мм и больше, жёлтый — 1–2 мм, красный — меньше 1 мм. Плотность и класс по Мишу на КЛКТ ориентировочные. Решение — за врачом.</p>
         </details>
         <details open data-sec="vr"><summary>3D</summary>
           <div class="ct-seg" data-group="vrMode">${VR_MODES.map(([k, t]) => `<button type="button" data-v="${k}">${t}</button>`).join("")}</div>
@@ -451,6 +466,25 @@
         else if (a === "undo") this.undo();
         else if (a === "clearAnns") { S.anns = S.anns.filter(x => !this.annVisibleHere(x)); S.sel = null; this.annsChanged(); }
         else if (a === "calib") this.setTool("calib");
+        else if (a === "drawCanal") { if (S.layout !== "pano") this.setLayout("pano"); this.setTool("canal"); }
+        else if (a === "refineCanal") this.refineCanal();
+        else if (a === "restoreCanal") this.restoreCanal();
+        else if (a === "addImp") this.setTool("implant");
+      });
+      /* карточки имплантов */
+      p.addEventListener("click", e => {
+        const card = e.target.closest("[data-imp]"); if (!card) return;
+        const imp = S.implants && S.implants.find(x => x.id === +card.dataset.imp); if (!imp) return;
+        const b = e.target.closest("button");
+        if (b && b.dataset.impD) this.setImplantSize(imp, +b.dataset.impD, null);
+        else if (b && b.dataset.impL) this.setImplantSize(imp, null, +b.dataset.impL);
+        else if (b && b.hasAttribute("data-imp-go")) this.goToImplant(imp);
+        else if (b && b.hasAttribute("data-imp-del")) this.removeImplant(imp.id);
+        else if (!e.target.closest("input")) this.selectImplant(imp.id);
+      });
+      p.addEventListener("input", e => {
+        const inp = e.target.closest("[data-imp-tooth]"); if (!inp) return;
+        const imp = S.implants.find(x => x.id === +inp.closest("[data-imp]").dataset.imp); if (imp) { imp.tooth = inp.value.trim(); this.requestAll(); }
       });
     }
 
@@ -477,6 +511,7 @@
         const thr = r.querySelector("[data-thr]"); if (thr) thr.hidden = S.vrMode === "xray" || S.vrMode === "mip";
         const cine = r.querySelector('[data-act="cine"]'); if (cine) { cine.classList.toggle("is-on", !!this.cineOn); cine.innerHTML = (this.cineOn ? ICON.pause : ICON.play) + "<span>Прокрутка</span>"; }
         r.querySelectorAll('[data-tool="canal"], [data-tool="arch"]').forEach(b => b.classList.toggle("is-dim", S.layout !== "pano"));
+        const rc = r.querySelector('[data-act="restoreCanal"]'); if (rc) rc.hidden = !this.canalBackup;
       } else {
         const ph = this.photoCur(), m = r.querySelector("[data-calib-msg]");
         if (m) m.textContent = ph.pxMm ? `1 пиксель = ${ph.pxMm.toFixed(4).replace(".", ",")} мм${ph.calibrated ? " (по эталону)" : " (из файла)"} — линейка в миллиметрах.` : "Размер пикселя неизвестен — линейка показывает пиксели. Проведите линию по предмету известной длины (эталон, коронка, имплант) и введите её в мм.";
@@ -519,7 +554,7 @@
       const S = this.s, list = S.anns.filter(a => this.annVisibleHere(a));
       this.root.querySelector("[data-ann-count]").textContent = list.length ? list.length : "";
       if (!list.length) { ul.innerHTML = `<li class="ct-anns__empty">Пока пусто. Линейка, угол, стрелка и текст — на панели инструментов.</li>`; return; }
-      const names = { ruler: "Расстояние", angle: "Угол", arrow: "Стрелка", text: "Текст", canal: "Канал нерва", calib: "Эталон" };
+      const names = { ruler: "Расстояние", angle: "Угол", arrow: "Стрелка", text: "Текст", canal: "Канал нерва", calib: "Эталон", roi: "Плотность" };
       ul.innerHTML = list.map(a => {
         const view = this.viewFor(a), val = view ? CT.annValue(view, a) : "";
         return `<li class="${a.id === S.sel ? "is-sel" : ""}" data-id="${a.id}"><button type="button" class="ct-ann" data-go="${a.id}"><i style="--c:${CT.ANN_COLOR[a.type]}"></i><b>${names[a.type]}</b><span>${esc(a.type === "text" || a.type === "arrow" ? (a.text || "") : val)}</span><em>${this.annPlace(a)}</em></button><button type="button" class="ct-ann__del" data-del="${a.id}" aria-label="Удалить">${ICON.close}</button></li>`;
@@ -550,7 +585,7 @@
       S.anns.push(a); S.sel = null; this.annsChanged();
     }
     undo() { const S = this.s, list = S.anns.filter(a => this.annVisibleHere(a)); if (!list.length) return; const last = list[list.length - 1]; S.anns = S.anns.filter(a => a !== last); this.annsChanged(); }
-    annsChanged() { this.renderAnnList(); this.requestAll(); }
+    annsChanged() { this.renderAnnList(); this.refreshImplants(); this.requestAll(); }
     /* поле ввода прямо поверх окна (подпись, длина эталона) */
     editText(view, x, y, cb, placeholder, allowEmpty) {
       const old = this.root.querySelector(".ct-input"); if (old) old.remove();
@@ -585,6 +620,175 @@
         this.addAnn({ type: "calib", space: "photo", pts: d.pts, photo: this.s.photo.idx });
         this.setTool("ruler"); this.syncUI();
       }, "Длина эталона, мм (например 10)");
+    }
+
+    /* ── канал нерва в объёме ── */
+    /* ломаные канала в мире: с панорамы (по дуге) и отмеченные прямо на срезе */
+    canalPaths() {
+      const S = this.s; if (!S || S.mode !== "volume") return [];
+      const list = S.anns.filter(a => a.type === "canal" && (a.space === "mpr" || (a.space === "pano" && S.archG)));
+      const key = JSON.stringify([S.arch, list.map(a => [a.id, a.pts, a.offs])]);
+      if (this.cpKey === key) return this.cp;
+      this.cpKey = key;
+      this.cp = list.map(a => (a.space === "mpr" ? { pts: a.pts, ref: a.pts.map(() => true) } : CT.canalPath(S.archG, a))).filter(p => p.pts.length);
+      return this.cp;
+    }
+    /* щелчок по каналу на сечении: уточняем высоту и смещение в этом месте */
+    canalFromXs(s, off, z) {
+      const S = this.s, reach = Math.max(4, S.pano.spacing * 1.5);
+      let an = null, best = Infinity;
+      for (const c of S.anns) {
+        if (c.type !== "canal" || c.space !== "pano") continue;
+        const ss = c.pts.map(p => p[0]), lo = Math.min(...ss), hi = Math.max(...ss), d = Math.max(0, lo - s, s - hi);
+        if (d <= reach && d < best) { best = d; an = c; }
+      }
+      const put = (arr, v) => { const i = arr.findIndex(p => Math.abs(p[0] - s) < 0.3); if (i >= 0) arr[i] = [s, v]; else arr.push([s, v]); arr.sort((a, b) => a[0] - b[0]); };
+      if (!an) this.addAnn({ type: "canal", space: "pano", pts: [[s, z]], offs: [[s, off]] });
+      else { put(an.pts, z); an.offs = an.offs || []; put(an.offs, off); this.annsChanged(); }
+      this.status(`Канал на сечении ${fmt1(s)} мм отмечен. Листайте сечения колесом и отмечайте дальше.`);
+    }
+    refineCanal() {
+      const S = this.s, list = S.anns.filter(a => a.type === "canal" && a.space === "pano");
+      if (!S.archG || !list.length) { this.panoMsg("Сначала отметьте канал на панораме: инструмент «Канал нерва» (K), щелчки вдоль канала.", true); return; }
+      const backup = list.map(a => ({ a, pts: a.pts.map(p => p.slice()), offs: a.offs ? a.offs.map(p => p.slice()) : null }));
+      let ok = 0, found = 0, total = 0;
+      for (const an of list) {
+        const r = CT.refineCanal(S.vol, S.archG, an); if (!r) continue;
+        found += r.found; total += r.total;
+        if (!r.ok) continue;
+        ok++;
+        const keep = r.pts.filter((p, i) => i % 2 === 0 || i === r.pts.length - 1);
+        an.pts = keep.map(p => [p[0], p[2]]); an.offs = keep.map(p => [p[0], p[1]]);
+      }
+      if (ok) { this.canalBackup = backup; this.annsChanged(); this.panoMsg(`Канал уточнён: найден на ${found} из ${total} сечений. Проверьте на сечениях — точку можно поправить щелчком инструментом «Канал».`); }
+      else this.panoMsg("Не удалось уверенно найти канал на сечениях. Отметьте его вручную: инструмент «Канал нерва», щелчок по каналу на сечении.", true);
+      this.syncUI(true);
+    }
+    restoreCanal() {
+      if (!this.canalBackup) return;
+      for (const b of this.canalBackup) { b.a.pts = b.pts; if (b.offs) b.a.offs = b.offs; else delete b.a.offs; }
+      this.canalBackup = null; this.annsChanged(); this.syncUI(true);
+      this.panoMsg("Канал возвращён к отмеченному вручную.");
+    }
+
+    /* ── импланты ── */
+    boneThr() { const v = this.s.vol; return v.huLike ? 200 : v.otsu + (v.hi - v.otsu) * 0.15; }
+    impLen(imp) { return V.len(V.sub(imp.b, imp.a)); }
+    /* щелчок инструментом «Имплант»: платформа — на гребне кости под курсором,
+       ось вертикальная, верхушка — в сторону кости */
+    placeImplant(view, x, y) {
+      const S = this.s, q0 = view.worldAt(x, y); if (!q0) return;
+      const vol = S.vol, thr = this.boneThr();
+      const bone = q => { const v = CT.valueAt(vol, q); return v != null && v >= thr; };
+      const count = sg => { let n = 0; for (let t = 1; t <= 12; t++) if (bone([q0[0], q0[1], q0[2] + sg * t])) n++; return n; };
+      const up = count(1), dn = count(-1);
+      const sg = dn > up ? -1 : up > dn ? 1 : q0[2] < vol.ext[2] / 2 ? -1 : 1;
+      let a = q0.slice();
+      if (!bone(a)) { for (let t = 0.2; t <= 8; t += 0.2) { const q = [q0[0], q0[1], q0[2] + sg * t]; if (bone(q)) { a = q; break; } } }
+      else for (let t = 0.2; t <= 3; t += 0.2) { const q = [q0[0], q0[1], q0[2] - sg * t]; if (!bone(q)) break; a = q; }
+      const imp = { id: S.nextImp++, a, b: [a[0], a[1], a[2] + sg * 10], d: 4, tooth: "" };
+      S.implants.push(imp); S.selImp = imp.id;
+      this.implantMetrics(imp);
+      /* остальные окна — через имплант */
+      if (view.space === "mpr") { const n = S.views[view.key].n; S.p = V.add(a, V.mul(n, V.dot(V.sub(S.p, a), n))); }
+      else S.p = V.mul(V.add(imp.a, imp.b), 0.5);
+      if (view.space !== "xs" && S.archG) S.pano.s0 = CT.archNearest(S.archG, a[0], a[1]);
+      const det = this.root.querySelector('details[data-sec="imp"]'); if (det) det.open = true;
+      this.renderImplants();
+      this.setTool("cross");
+      this.status("Имплант Ø4 × 10 мм поставлен. Тяните его — сдвиг, за верхушку — наклон. Размер — в панели «Импланты».");
+    }
+    implantMetrics(imp) {
+      const S = this.s, vol = S.vol, u = V.norm(V.sub(imp.b, imp.a)), m = (imp.m = {});
+      const c = CT.implantToCanal(imp, this.canalPaths());
+      m.canal = c ? c.d : null; m.canalRef = c ? c.ref : false;
+      m.hu = CT.implantDensity(vol, imp); m.cls = vol.huLike && m.hu != null ? CT.misch(m.hu) : null;
+      m.tilt = Math.acos(Math.min(1, Math.abs(u[2]))) * 180 / Math.PI;
+      m.upper = imp.b[2] > imp.a[2];
+      let out = null;
+      if (S.archG) { const a = S.archG.at(CT.archNearest(S.archG, imp.a[0], imp.a[1])); out = [a.mx, a.my, 0]; }
+      m.walls = out ? CT.boneWalls(vol, imp, out, this.boneThr()) : null;
+    }
+    impSummary(imp) {
+      const m = imp.m || {}, out = [];
+      out.push(m.canal == null ? "канал не отмечен" : m.canal <= 0 ? "задевает канал нерва" : `до канала ${m.canalRef ? "" : "≈"}${fmt1(m.canal)} мм`);
+      if (m.hu != null) out.push(`плотность ${Math.round(m.hu)}${this.s.vol.huLike ? " HU" : ""}${m.cls ? " (" + m.cls + ")" : ""}`);
+      if (m.walls) out.push(`кость: щека ${fmt1(m.walls.buc)} · ${m.upper ? "нёбо" : "язык"} ${fmt1(m.walls.lin)} мм`);
+      out.push(`наклон ${Math.round(m.tilt)}°`);
+      return out;
+    }
+    refreshImplants() {
+      const S = this.s; if (!S || S.mode !== "volume" || !S.implants.length) return;
+      for (const imp of S.implants) { this.implantMetrics(imp); this.fillImpMetrics(imp); }
+    }
+    renderImplants() {
+      const S = this.s, box = this.root && this.root.querySelector("[data-imps]"); if (!box) return;
+      this.root.querySelector("[data-imp-count]").textContent = S.implants.length || "";
+      if (!S.implants.length) { box.innerHTML = `<p class="ct-hint">Инструмент «Имплант» (I): щелчок по гребню кости на срезе, панораме или сечении.</p>`; return; }
+      const chip = (attr, v, cur) => `<button type="button" data-imp-${attr}="${v}" class="${Math.abs(v - cur) < 0.01 ? "is-on" : ""}">${CT.fmtN(v)}</button>`;
+      box.innerHTML = S.implants.map((imp, i) => `
+        <div class="ct-imp${imp.id === S.selImp ? " is-sel" : ""}" data-imp="${imp.id}">
+          <div class="ct-imp__head"><i></i><b>${i + 1}</b>
+            <input type="text" value="${esc(imp.tooth)}" placeholder="Зуб, напр. 3.6" maxlength="10" aria-label="Номер зуба" data-imp-tooth>
+            <button type="button" class="ct-imp__ic" data-imp-go data-tip="Срезы по оси импланта" aria-label="Показать на срезах">${ICON.eye}</button>
+            <button type="button" class="ct-imp__ic ct-imp__del" data-imp-del aria-label="Удалить имплант">${ICON.trash}</button></div>
+          <div class="ct-imp__sz" style="--n:${DIAMS.length}"><span>Ø</span>${DIAMS.map(v => chip("d", v, imp.d)).join("")}</div>
+          <div class="ct-imp__sz" style="--n:${LENS.length}"><span>L</span>${LENS.map(v => chip("l", v, this.impLen(imp))).join("")}</div>
+          <dl class="ct-imp__m" data-imp-m></dl>
+          <div data-imp-warn></div>
+        </div>`).join("");
+      S.implants.forEach(imp => this.fillImpMetrics(imp));
+    }
+    fillImpMetrics(imp) {
+      const card = this.root && this.root.querySelector(`[data-imp="${imp.id}"]`); if (!card) return;
+      const S = this.s, m = imp.m || {}, col = CT.safeColor(m.canal);
+      card.querySelector(".ct-imp__head i").style.background = col;
+      const rows = [
+        ["До канала", m.canal == null ? "канал не отмечен" : `<b style="color:${col}">${m.canal <= 0 ? "задевает канал" : (m.canalRef ? "" : "≈ ") + fmt1(m.canal) + " мм"}</b>`],
+        ["Плотность", m.hu == null ? "—" : `${Math.round(m.hu)}${S.vol.huLike ? " HU" : ""}${m.cls ? ` · <b>${m.cls}</b>` : ""}`],
+        ["Кость", m.walls ? `щека ${fmt1(m.walls.buc)} · ${m.upper ? "нёбо" : "язык"} ${fmt1(m.walls.lin)} мм` : "постройте панораму"],
+        ["Наклон", `${Math.round(m.tilt)}° от вертикали`],
+      ];
+      card.querySelector("[data-imp-m]").innerHTML = rows.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("");
+      const w = [];
+      if (m.canal != null && m.canal < 2) w.push(["warn", m.canal <= 0 ? "Имплант задевает канал нерва" : `До канала меньше 2 мм — риск для нерва`]);
+      if (m.walls && Math.min(m.walls.buc, m.walls.lin) < 1.5) w.push(["warn", `Стенка кости тоньше 1,5 мм (${m.walls.buc < m.walls.lin ? "щека" : m.upper ? "нёбо" : "язык"})`]);
+      if (m.canal != null && !m.canalRef) w.push(["note", "Канал здесь не уточнён на сечениях — расстояние приблизительное"]);
+      card.querySelector("[data-imp-warn]").innerHTML = w.map(([c, t]) => `<p class="ct-imp__${c}">${t}</p>`).join("");
+    }
+    implantChanged(imp, dragging) {
+      this.implantMetrics(imp); this.fillImpMetrics(imp);
+      if (dragging) this.interact();
+      this.requestAll();
+    }
+    selectImplant(id) {
+      const S = this.s; if (S.selImp === id) return;
+      S.selImp = id;
+      this.root.querySelectorAll("[data-imp]").forEach(c => c.classList.toggle("is-sel", +c.dataset.imp === id));
+      this.requestAll();
+    }
+    removeImplant(id) {
+      const S = this.s; S.implants = S.implants.filter(x => x.id !== id);
+      if (S.selImp === id) S.selImp = null;
+      this.renderImplants(); this.requestAll();
+    }
+    setImplantSize(imp, d, L) {
+      if (d) imp.d = d;
+      if (L) imp.b = V.add(imp.a, V.mul(V.norm(V.sub(imp.b, imp.a)), L));
+      this.s.selImp = imp.id;
+      this.implantMetrics(imp); this.renderImplants(); this.requestAll();
+    }
+    /* срезы по оси импланта: аксиальный — поперёк, корональный и сагиттальный — вдоль */
+    goToImplant(imp) {
+      const S = this.s, u = V.norm(V.sub(imp.b, imp.a)), w = u[2] < 0 ? V.mul(u, -1) : u;
+      const k = V.cross([0, 0, 1], w), ang = Math.acos(clamp(w[2], -1, 1));
+      S.views = CT.copyBases(CT.CANON);
+      if (V.len(k) > 1e-6) { const kn = V.norm(k); for (const o of MPR) for (const c of ["n", "r", "d"]) S.views[o][c] = V.norm(V.rot(S.views[o][c], kn, ang)); }
+      S.p = V.mul(V.add(imp.a, imp.b), 0.5);
+      if (S.archG) S.pano.s0 = CT.archNearest(S.archG, S.p[0], S.p[1]);
+      this.selectImplant(imp.id);
+      this.requestAll();
+      this.status("Срезы выровнены по оси импланта · 0 — сбросить наклон");
     }
 
     /* ── состояние срезов ── */
@@ -627,7 +831,7 @@
       const S = this.s;
       S.archG = S.arch && S.arch.length >= 2 ? CT.archGeom(S.arch, 0.25) : null;
       if (S.archG && S.pano.s0 != null) S.pano.s0 = clamp(S.pano.s0, 0, S.archG.L);
-      if (dragging) this.interact(); else this.interact(true);
+      if (dragging) this.interact(); else { this.interact(true); this.refreshImplants(); }
       this.requestAll();
     }
     panoChanged() { this.requestAll(); }
@@ -801,16 +1005,25 @@
       if (!this.s || !this.root || !this.root.isConnected || (this.root.offsetParent === null && document.fullscreenElement !== this.root)) return;
       if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
       const S = this.s, k = e.key, low = k.toLowerCase(), isVol = S.mode === "volume";
-      const tools = { c: "cross", h: "pan", w: "wl", m: "ruler", a: "angle", s: "arrow", t: "text", k: "canal", d: "arch", l: "calib" };
-      const ru = { с: "c", р: "h", ц: "w", ь: "m", ф: "a", ы: "s", е: "t", л: "k", в: "d", д: "l", а: "f", п: "g", з: "p", я: "z" };
+      const tools = { c: "cross", h: "pan", w: "wl", m: "ruler", a: "angle", s: "arrow", t: "text", k: "canal", d: "arch", l: "calib", o: "roi", i: "implant" };
+      const ru = { с: "c", р: "h", ц: "w", ь: "m", ф: "a", ы: "s", е: "t", л: "k", в: "d", д: "l", а: "f", п: "g", з: "p", я: "z", щ: "o", ш: "i" };
       const key = ru[low] || low;
       if ((e.ctrlKey || e.metaKey) && key === "z") { e.preventDefault(); this.undo(); return; }
       if (e.ctrlKey || e.metaKey || e.altKey) return;
-      if (k === "Escape") { const hlp = this.root.querySelector(".ct-help"); if (hlp) { hlp.remove(); return; } for (const v in this.views) if (this.views[v].cancelDraft) this.views[v].cancelDraft(); return; }
+      if (k === "Escape") {
+        const hlp = this.root.querySelector(".ct-help"); if (hlp) { hlp.remove(); return; }
+        for (const v in this.views) if (this.views[v].cancelDraft) this.views[v].cancelDraft();
+        if (S.selImp) { S.selImp = null; this.root.querySelectorAll("[data-imp]").forEach(c => c.classList.remove("is-sel")); this.requestAll(); }
+        return;
+      }
       if (k === "Enter") { for (const v in this.views) if (this.views[v].draft && this.views[v].finishClickTool) this.views[v].finishClickTool(); return; }
       if (k === "?" || k === "F1") { e.preventDefault(); this.help(); return; }
-      if (k === "Delete" || k === "Backspace") { if (S.sel) { S.anns = S.anns.filter(a => a.id !== S.sel); S.sel = null; this.annsChanged(); } return; }
-      if (tools[key] && (isVol || ["pan", "wl", "ruler", "angle", "arrow", "text", "calib"].includes(tools[key])) && !(isVol && key === "l")) { this.setTool(tools[key]); return; }
+      if (k === "Delete" || k === "Backspace") {
+        if (S.sel) { S.anns = S.anns.filter(a => a.id !== S.sel); S.sel = null; this.annsChanged(); }
+        else if (S.selImp) this.removeImplant(S.selImp);
+        return;
+      }
+      if (tools[key] && (isVol || ["pan", "wl", "ruler", "angle", "arrow", "text", "calib", "roi"].includes(tools[key])) && !(isVol && key === "l")) { this.setTool(tools[key]); return; }
       if (key === "f") { this.fullscreen(); return; }
       if (key === "0") { this.resetView(); return; }
       if (isVol) {
@@ -830,7 +1043,7 @@
     help() {
       const old = this.root.querySelector(".ct-help"); if (old) { old.remove(); return; }
       const isVol = this.s.mode === "volume", box = h("div", "ct-help");
-      const rows = Object.entries(TOOL_INFO).filter(([k]) => isVol ? k !== "calib" : !["cross", "canal", "arch"].includes(k))
+      const rows = Object.entries(TOOL_INFO).filter(([k]) => isVol ? k !== "calib" : !["cross", "canal", "arch", "implant"].includes(k))
         .map(([, [n, key, hint]]) => `<tr><td><kbd>${key}</kbd></td><td><b>${n}</b><span>${hint}</span></td></tr>`).join("");
       box.innerHTML = `<div class="ct-help__card" role="dialog" aria-modal="true" aria-label="Подсказки">
         <button type="button" class="ct-help__x" aria-label="Закрыть">${ICON.close}</button>
@@ -850,7 +1063,8 @@
             <tr><td><kbd>0</kbd></td><td><b>Сбросить вид</b><span>${isVol ? "и наклон срезов" : "поворот и масштаб"}</span></td></tr>
           </table>
         </div>
-        ${isVol ? `<p class="ct-help__tip"><b>Панорама:</b> кнопка «Панорама» строит ОПТГ по дуге челюсти и поперечные сечения — для оценки кости и каналов. Точки дуги можно тянуть на аксиальном срезе, сечения листаются колесом.</p>` : ""}
+        ${isVol ? `<p class="ct-help__tip"><b>Панорама:</b> кнопка «Панорама» строит ОПТГ по дуге челюсти и поперечные сечения — для оценки кости и каналов. Точки дуги можно тянуть на аксиальном срезе, сечения листаются колесом.</p>
+        <p class="ct-help__tip"><b>Имплант:</b> отметьте канал нерва на панораме и уточните его на сечениях (щелчок по каналу или «Уточнить по сечениям»). Поставьте имплант щелчком по гребню — рядом с ним видно расстояние до канала, плотность кости и толщину стенок. Тяните тело — сдвиг, верхушку — наклон; «глаз» в карточке выравнивает срезы по оси импланта.</p>` : ""}
       </div>`;
       box.addEventListener("click", e => { if (e.target === box || e.target.closest(".ct-help__x")) box.remove(); });
       this.root.appendChild(box);
@@ -914,8 +1128,9 @@
       if (!body) return;
       const W = 1800, scale = W / body.width, bodyH = Math.round(body.height * scale);
       const anns = S.anns.filter(a => this.annVisibleHere(a) && a.type !== "calib");
-      const names = { ruler: "Расстояние", angle: "Угол", arrow: "Стрелка", text: "Пометка", canal: "Канал нерва" };
-      const lineH = 38, listH = anns.length ? 70 + anns.length * lineH : 0;
+      const names = { ruler: "Расстояние", angle: "Угол", arrow: "Стрелка", text: "Пометка", canal: "Канал нерва", roi: "Плотность" };
+      const imps = S.mode === "volume" ? S.implants : [];
+      const lineH = 38, listH = (anns.length ? 102 + anns.length * lineH : 0) + (imps.length ? 70 + imps.length * lineH * 2 : 0);
       const c = document.createElement("canvas"); c.width = W; c.height = 150 + bodyH + listH + 110;
       const x = c.getContext("2d");
       x.fillStyle = "#ffffff"; x.fillRect(0, 0, W, c.height);
@@ -941,6 +1156,20 @@
           x.fillStyle = "#3a3d4a"; x.font = "500 22px 'Open Sans', sans-serif"; x.fillText(val + " · " + this.annPlace(a), 300, y);
           y += lineH;
         }
+        y += 32;
+      }
+      if (imps.length) {
+        x.fillStyle = "#1f2027"; x.font = "800 26px 'Open Sans', sans-serif"; x.fillText("План имплантации", 60, y); y += 44;
+        imps.forEach((imp, i) => {
+          const m = imp.m || {}, col = CT.safeColor(m.canal);
+          x.fillStyle = CT.IMP_COLOR; x.beginPath(); x.arc(70, y - 8, 8, 0, 7); x.fill();
+          x.fillStyle = "#1f2027"; x.font = "700 22px 'Open Sans', sans-serif";
+          x.fillText(`${imp.tooth ? "Зуб " + imp.tooth : "Имплант " + (i + 1)} · Ø${CT.fmtN(imp.d)} × ${CT.fmtN(this.impLen(imp))} мм`, 92, y);
+          x.font = "500 20px 'Open Sans', sans-serif";
+          const parts = this.impSummary(imp);
+          x.fillStyle = m.canal != null && m.canal < 2 ? col : "#3a3d4a"; x.fillText(parts.join(" · "), 92, y + 30);
+          y += lineH * 2;
+        });
       }
       x.fillStyle = "#8a8f9c"; x.font = "500 17px 'Open Sans', sans-serif";
       x.fillText("Изображение для консультации, не является заключением врача. Снимок обработан в браузере и на сервер не передавался.", 60, c.height - 48);
