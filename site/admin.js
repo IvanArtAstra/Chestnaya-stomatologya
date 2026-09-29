@@ -97,16 +97,18 @@
     promos:   { title: "Акции", sub: "Раздел «Честные скидки» на главной: карточки, сроки, цены и фото" },
     banners:  { title: "Баннеры", sub: "Боковые рекламные блоки на широких экранах" },
     accounts: { title: "Аккаунты", sub: "Доступы сотрудников: администратор — всё, врач — своя страница и блог" },
-    ct:       { title: "3D-снимки", sub: "Просмотр КЛКТ и КТ в формате DICOM — снимок открывается только на этом компьютере" }
+    ct:       { title: "Снимки", sub: "КЛКТ и КТ, панорама из КЛКТ, сечения, прицельные и панорамные снимки — открываются только на этом компьютере" }
   };
   /* просмотр снимков тяжёлый — грузим его при первом открытии вкладки */
   let ctLoading = null;
   const openCT = () => {
     if (!ctLoading) {
       const css = document.createElement("link");
-      css.rel = "stylesheet"; css.href = "admin-ct.css?v=20260929a"; document.head.appendChild(css);
+      css.rel = "stylesheet"; css.href = "admin-ct.css?v=20260929d"; document.head.appendChild(css);
       const load = src => new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.body.appendChild(s); });
-      ctLoading = load("admin-ct.js?v=20260929a").then(() => load("admin-ct-view.js?v=20260929a"));
+      /* ядро → срезы и 2D → 3D → интерфейс */
+      ctLoading = ["admin-ct.js", "admin-ct-mpr.js", "admin-ct-3d.js", "admin-ct-app.js"]
+        .reduce((p, f) => p.then(() => load(f + "?v=20260929d")), Promise.resolve());
     }
     ctLoading.then(() => window.ChestomCT.mount($("#ctHost"))).catch((e) => console.error("ct", e));
   };
