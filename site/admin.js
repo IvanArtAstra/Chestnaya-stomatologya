@@ -3,6 +3,11 @@
   "use strict";
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  /* Позиции прайса (ключ → подпись) — из формы «Цены», второй список не нужен */
+  const priceOptions = () => $$("#pricesForm label").map((l) => {
+    const inp = l.querySelector("input"); return inp ? [inp.name, l.textContent.trim()] : null;
+  }).filter(Boolean);
+
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   let db = ChestomDB.load();
@@ -566,7 +571,14 @@
         <label>Иконка<select data-pf="icon">${PROMO_ICONS.map(([v, l]) => `<option value="${v}" ${v === (p.icon || "") ? "selected" : ""}>${l}</option>`).join("")}</select></label>
         <label>Описание<textarea data-pf="text" rows="2" placeholder="Коротко: что входит и для кого">${esc(p.text || "")}</textarea></label>
         <label>Старая цена (зачёркнутая)<input data-pf="oldPrice" value="${esc(p.oldPrice || "")}" placeholder="9 800 ₽ — можно пусто"></label>
-        <label>Цена или скидка<input data-pf="price" value="${esc(p.price || "")}" placeholder="6 990 ₽ или −15%"></label>
+        <label>Цена из прайса
+          <select data-pf="priceKey">
+            <option value="">— своя цена или скидка —</option>
+            ${priceOptions().map(([k, l]) => `<option value="${k}" ${k === (p.priceKey || "") ? "selected" : ""}>${esc(l)} — ${esc(db.prices[k] || "")}</option>`).join("")}
+          </select>
+        </label>
+        <label>Цена или скидка<input data-pf="price" value="${esc(ChestomDB.promoPrice(db, p))}" placeholder="6 990 ₽ или −15%"${p.priceKey ? " readonly" : ""}></label>
+        <p class="adm-banner__note" ${p.priceKey ? "" : "hidden"}>Цена привязана к прайсу: поменяется вместе с ним во вкладке «Цены».</p>
         <label class="adm-promo__check"><input type="checkbox" data-pf="accent" ${p.accent ? "checked" : ""}> Выделить — сиреневая стеклянная карточка</label>
         <details class="adm-promo__tr"${(p.en && (p.en.title || p.en.text)) || (p.ar && (p.ar.title || p.ar.text)) ? " open" : ""}>
           <summary>Переводы для английской и арабской версии (необязательно)</summary>
@@ -598,10 +610,19 @@
           if (!p[lng].title && !p[lng].text) delete p[lng];
         } else p[key] = val;
       });
+      if (p.priceKey && db.prices[p.priceKey]) p.price = db.prices[p.priceKey]; else if (!p.priceKey) delete p.priceKey;
     });
   };
   if (promosForm) {
     renderPromoEditor();
+    promosForm.addEventListener("change", (e) => {
+      if (!e.target.matches('[data-pf="priceKey"]')) return;
+      const fs = e.target.closest(".adm-promo");
+      const inp = $('[data-pf="price"]', fs), note = fs.querySelector(".adm-banner__note");
+      const k = e.target.value;
+      if (k && db.prices[k]) { inp.value = db.prices[k]; inp.readOnly = true; if (note) note.hidden = false; }
+      else { inp.readOnly = false; if (note) note.hidden = true; }
+    });
     promosForm.addEventListener("submit", (e) => {
       e.preventDefault();
       syncPromos();
@@ -707,35 +728,69 @@
   const renderBannersEditor = () => {
     const list = $("#bannersList");
     if (!list) return;
+    const promos = (db.promos && db.promos.items) || [];
     const side = (key, label) => {
       const b = db.banners[key];
-      return `<fieldset class="adm-doc adm-banner" data-side="${key}">
+      const linked = promos.find((x) => x.id === b.promoId);
+      const opts = [`<option value="">Свой текст</option>`].concat(promos.map((pr) => {
+        const [st, stText] = promoStatus(pr);
+        return `<option value="${esc(pr.id)}" ${pr.id === b.promoId ? "selected" : ""}>Акция: ${esc(pr.title)} — ${esc(stText)}</option>`;
+      })).join("");
+      const ro = linked ? " readonly" : "";
+      const v = (f) => esc(linked ? (f === "badge" ? (linked.till ? "Акция до " + ruDate(linked.till) : "Акция") : f === "url" ? "#promo" : (linked[f] || "")) : (b[f] || ""));
+      return `<fieldset class="adm-doc adm-banner${b.on ? "" : " is-off"}${linked ? " is-linked" : ""}" data-side="${key}">
         <div class="adm-doc__head">
-          <label class="adm-banner__toggle">
+          <b>${label}</b>
+          <label class="adm-switch" title="Показывать на сайте">
             <input type="checkbox" data-bf="on" ${b.on ? "checked" : ""}>
-            <span><b>${label}</b> — ${b.on ? "включён" : "выключен"}</span>
+            <span class="adm-switch__track" aria-hidden="true"></span>
+            <span class="adm-switch__text">${b.on ? "Показывается на сайте" : "Скрыт"}</span>
           </label>
         </div>
-        <label>Бейдж<input data-bf="badge" value="${esc(b.badge || "")}" placeholder="Акция"></label>
-        <label>Заголовок<input data-bf="title" value="${esc(b.title || "")}" required></label>
-        <label>Текст<textarea data-bf="text" rows="2">${esc(b.text || "")}</textarea></label>
-        <label>Ссылка (URL, #секция или tel:)<input data-bf="url" value="${esc(b.url || "")}"></label>
-        <label>Текст кнопки<input data-bf="cta" value="${esc(b.cta || "")}" placeholder="Подробнее"></label>
+        <label>Что показывать
+          <select data-bf="promoId">${opts}</select>
+        </label>
+        <p class="adm-banner__note" ${linked ? "" : "hidden"}>Текст, дата и цена берутся из акции и обновляются вместе с ней. Когда акция выключится или истечёт, баннер пропадёт сам. Править — во вкладке «Акции».</p>
+        <label>Бейдж<input data-bf="badge" value="${v("badge")}" placeholder="Акция"${ro}></label>
+        <label>Заголовок<input data-bf="title" value="${v("title")}" ${linked ? "" : "required"}${ro}></label>
+        <label>Текст<textarea data-bf="text" rows="2"${ro}>${v("text")}</textarea></label>
+        ${linked ? `<label>Цена<input value="${esc(ChestomDB.promoPrice(db, linked))}" readonly></label>` : ""}
+        <label>Ссылка (URL, #секция или tel:)<input data-bf="url" value="${v("url")}"${ro}></label>
+        <label>Текст кнопки<input data-bf="cta" value="${esc(b.cta || "")}" placeholder="${linked ? "Смотреть акцию" : "Подробнее"}"></label>
       </fieldset>`;
     };
     list.innerHTML = side("left", "Левый баннер") + side("right", "Правый баннер");
+    const sum = $("#bannersSummary");
+    if (sum) {
+      const st = (k) => db.banners[k].on ? "показывается" : "скрыт";
+      sum.textContent = `Сейчас: левый — ${st("left")}, правый — ${st("right")}. Баннеры видны на мониторах шире 1460 px.`;
+    }
   };
   if (bannersForm) {
     renderBannersEditor();
+    /* переключатель и выбор акции перерисовывают карточку сразу —
+       видно, что именно уйдёт на сайт */
     bannersForm.addEventListener("change", (e) => {
-      /* живое обновление подписи вкл/выкл */
-      if (e.target.matches('[data-bf="on"]')) renderBannersLabel(e.target);
+      const fs = e.target.closest("[data-side]"); if (!fs) return;
+      const b = db.banners[fs.dataset.side];
+      if (e.target.matches('[data-bf="on"]')) { b.on = e.target.checked; renderBannersEditor(); }
+      if (e.target.matches('[data-bf="promoId"]')) {
+        /* свой текст сохраняем, чтобы при отвязке он вернулся */
+        $$("[data-bf]", fs).forEach((inp) => { if (!inp.readOnly && inp.dataset.bf !== "on" && inp.dataset.bf !== "promoId") b[inp.dataset.bf] = inp.value.trim(); });
+        b.promoId = e.target.value;
+        renderBannersEditor();
+      }
     });
-    const renderBannersLabel = (cb) => {
-      const span = cb.parentElement.querySelector("span");
-      const label = cb.closest("[data-side]").dataset.side === "left" ? "Левый баннер" : "Правый баннер";
-      span.innerHTML = `<b>${label}</b> — ${cb.checked ? "включён" : "выключен"}`;
-    };
+    $$("[data-banners-all]").forEach((btn) => btn.addEventListener("click", () => {
+      const on = btn.dataset.bannersAll === "on";
+      db.banners.left.on = on; db.banners.right.on = on;
+      ChestomDB.save(db);
+      renderBannersEditor();
+      flash("#bannersSaved");
+    }));
+    $$("[data-goto-tab]").forEach((btn) => btn.addEventListener("click", () => {
+      const t = $(`.adm__tab[data-tab="${btn.dataset.gotoTab}"]`); if (t) t.click();
+    }));
     bannersForm.addEventListener("submit", (e) => {
       e.preventDefault();
       $$(".adm-banner", bannersForm).forEach((fs) => {
@@ -743,10 +798,13 @@
         if (!b) return;
         $$("[data-bf]", fs).forEach((inp) => {
           const k = inp.dataset.bf;
+          if (inp.readOnly) return;                    /* поля из акции не перезаписываем */
           b[k] = k === "on" ? inp.checked : inp.value.trim();
         });
+        if (!b.promoId) delete b.promoId;
       });
       ChestomDB.save(db);
+      renderBannersEditor();
       flash("#bannersSaved");
     });
   }
@@ -848,8 +906,12 @@
       [...pricesForm.elements].forEach((el) => {
         if (el.name && el.value.trim()) db.prices[el.name] = el.value.trim();
       });
+      /* акции, привязанные к прайсу, получают новую цену сразу */
+      (db.promos && db.promos.items || []).forEach((p) => { if (p.priceKey && db.prices[p.priceKey]) p.price = db.prices[p.priceKey]; });
       ChestomDB.save(db);
       renderSvcEditor();                 /* цены в карточках услуг — те же */
+      if (typeof renderPromoEditor === "function") renderPromoEditor();
+      if (typeof renderBannersEditor === "function") renderBannersEditor();
       flash("#pricesSaved");
     });
 

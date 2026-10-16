@@ -415,3 +415,22 @@
   .adm-publish #pubExport { flex-basis: 100%; order: -1; }
   .adm-toasts { inset-inline: 12px; inset-block-end: 12px; max-width: none; }
 }
+
+/* ── Баннеры: переключатель и привязка к акции ── */
+.adm-banner .adm-doc__head { justify-content: space-between; }
+.adm-switch { display: inline-flex !important; flex-direction: row !important; align-items: center; gap: 10px !important; cursor: pointer; }
+.adm-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.adm-switch__track { position: relative; width: 44px; height: 26px; border-radius: 999px; background: rgba(var(--silver-rgb), 0.35); transition: background 0.25s; flex: none; }
+.adm-switch__track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); transition: transform 0.25s cubic-bezier(0.22, 0.9, 0.24, 1); }
+.adm-switch input:checked + .adm-switch__track { background: #3fb57a; }
+.adm-switch input:checked + .adm-switch__track::after { transform: translateX(18px); }
+.adm-switch input:focus-visible + .adm-switch__track { outline: 2px solid var(--aqua); outline-offset: 2px; }
+.adm-switch__text { font-size: 0.9rem; color: var(--ink-dim); }
+.adm-switch input:checked ~ .adm-switch__text { color: var(--ink); }
+.adm-banner.is-off { opacity: 0.6; }
+.adm-banner.is-off .adm-doc__head { opacity: 1; }
+.adm-banner input[readonly], .adm-banner textarea[readonly], .adm-promo input[readonly] { background: rgba(var(--acc-rgb), 0.05); color: var(--ink-dim); cursor: default; }
+.adm-banner__note { margin: -4px 0 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.84rem; line-height: 1.45; color: var(--ink-dim); background: rgba(var(--acc-rgb), 0.06); border: 1px dashed var(--card-line); }
+.adm-banner__note[hidden] { display: none; }
+.adm-banner__sum { margin-top: 8px; font-size: 0.9rem; color: var(--ink); }
+.adm-banner__all { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }

@@ -312,10 +312,15 @@ const ChestomDB = (() => {
     return p.till >= iso;
   };
 
+  /* Цена акции: если привязана к позиции прайса — берём оттуда, иначе
+     свободный текст. Так цена правится в одном месте, а акция, карточка
+     услуги и калькулятор показывают одно и то же. */
+  const promoPrice = (db, p) => (p && p.priceKey && db.prices[p.priceKey]) || (p && p.price) || "";
+
   const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   const doctorById = (db, id) => db.doctors.find((d) => d.id === id) || null;
   const reviewsFor = (db, id) => db.reviews.filter((r) => r.doctorId === id);
   const postsFor = (db, id) => db.news.filter((n) => n.authorId === id);
 
-  return { load, save, reset, hasLocal, mergeRemote, deepCopy, initials, doctorById, reviewsFor, postsFor, promoActive, SEED };
+  return { load, save, reset, hasLocal, mergeRemote, deepCopy, initials, doctorById, reviewsFor, postsFor, promoActive, promoPrice, SEED };
 })();

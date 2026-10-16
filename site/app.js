@@ -185,7 +185,7 @@
           ${p.icon ? `<span class="promo-card__icon"><svg class="icon icon--xl" aria-hidden="true"><use href="#${esc(p.icon)}"/></svg></span>` : ""}
           <h3>${esc(title)}</h3>
           ${text ? `<p>${esc(text)}</p>` : ""}
-          ${p.price || p.oldPrice ? `<div class="promo-card__price">${p.oldPrice ? `<s>${esc(p.oldPrice)}</s>` : ""}${p.price ? `<b>${esc(p.price)}</b>` : ""}</div>` : ""}
+          ${(() => { const pr = ChestomDB.promoPrice(db, p); return pr || p.oldPrice ? `<div class="promo-card__price">${p.oldPrice ? `<s>${esc(p.oldPrice)}</s>` : ""}${pr ? `<b>${esc(pr)}</b>` : ""}</div>` : ""; })()}
           <button class="btn btn--light btn--sm" data-open-booking data-service="${esc("Акция: " + p.title)}">${esc(t("promo.book"))}</button>
         </article>`;
       }).join("");
@@ -201,9 +201,20 @@
     ["left", "right"].forEach((side) => {
       const host = $("#rail" + (side === "left" ? "Left" : "Right"));
       if (!host) return;
-      const b = db.banners && db.banners[side];
+      let b = db.banners && db.banners[side];
       let dismissed = false;
       try { dismissed = sessionStorage.getItem("chestom_rail_" + side) === "1"; } catch (e) {}
+      /* Баннер, привязанный к акции, берёт текст и цену из неё и сам
+         пропадает, когда акция выключена или истекла — ничего не надо
+         помнить и править в двух местах. */
+      let price = "";
+      if (b && b.on && b.promoId) {
+        const pr = (db.promos && db.promos.items || []).find((x) => x.id === b.promoId);
+        if (!pr || !ChestomDB.promoActive(pr)) { host.hidden = true; return; }
+        price = ChestomDB.promoPrice(db, pr);
+        b = { on: true, badge: pr.till ? "Акция до " + promoDate(pr.till) : "Акция",
+              title: pr.title, text: pr.text || "", url: "#promo", cta: b.cta || "Смотреть акцию" };
+      }
       if (!b || !b.on || dismissed) { host.hidden = true; return; }
       host.hidden = false;
       host.innerHTML = `
@@ -212,6 +223,7 @@
           ${b.badge ? `<span class="rail__badge">${esc(b.badge)}</span>` : ""}
           <b class="rail__title">${esc(b.title || "")}</b>
           <p class="rail__text">${esc(b.text || "")}</p>
+          ${price ? `<b class="rail__price">${esc(price)}</b>` : ""}
           ${b.url ? `<a class="btn btn--primary btn--sm" href="${esc(b.url)}">${esc(b.cta || "Подробнее")}</a>` : ""}
         </div>`;
       $(".rail__close", host).addEventListener("click", () => {

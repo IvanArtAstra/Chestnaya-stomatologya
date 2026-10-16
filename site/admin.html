@@ -22,8 +22,8 @@ addEventListener("pagereveal",function(e){q(e.viewTransition);});addEventListene
 <title>Админ-панель — Честная стоматология</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="fonts.css?v=20260926a">
-<link rel="stylesheet" href="styles.css?v=20261016d">
-<link rel="stylesheet" href="admin.css?v=20261016d">
+<link rel="stylesheet" href="styles.css?v=20261016e">
+<link rel="stylesheet" href="admin.css?v=20261016e">
 <link rel="stylesheet" href="glass.css?v=20260923zd">
 <link rel="stylesheet" href="mobile-perf.css?v=20260926a">
 </head>
@@ -303,7 +303,14 @@ addEventListener("pagereveal",function(e){q(e.viewTransition);});addEventListene
       <form class="adm-card" id="bannersForm">
         <div class="adm-card__head">
           <h2>Боковые баннеры</h2>
-          <p>Показываются по краям экрана на широких мониторах (от 1460px). Каждый можно включить, выключить и отредактировать — изменения видны на сайте сразу.</p>
+          <p>Два баннера по краям экрана на широких мониторах. Каждый можно скрыть переключателем или привязать к акции — тогда текст, дата и цена берутся из неё, а когда акция закончится, баннер пропадёт сам.</p>
+          <p class="adm-banner__sum" id="bannersSummary"></p>
+          <div class="adm-banner__all">
+            <button type="button" class="btn btn--ghost btn--sm" data-banners-all="off">Скрыть оба</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-banners-all="on">Показать оба</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-goto-tab="promos">Перейти к акциям →</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-goto-tab="prices">Перейти к ценам →</button>
+          </div>
         </div>
         <div class="adm-banners" id="bannersList"><!-- рендерится из admin.js --></div>
         <div class="adm__actions">
@@ -419,10 +426,10 @@ addEventListener("pagereveal",function(e){q(e.viewTransition);});addEventListene
   </div>
 </div>
 
-<script src="db.js?v=20260924d"></script>
+<script src="db.js?v=20261016e"></script>
 <script src="auth.js?v=20260923k"></script>
 <script src="md.js?v=20260923k"></script>
 <script src="admin-ux.js?v=20261016d"></script>
-<script src="admin.js?v=20261016d"></script>
+<script src="admin.js?v=20261016f"></script>
 </body>
 </html>
