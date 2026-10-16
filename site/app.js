@@ -274,6 +274,57 @@
     { threshold: 0.12 }
   );
   $$(".reveal").forEach((el) => io.observe(el));
+  /* Карточки в сетках появляются не разом, а по очереди: каждому ребёнку
+     отдаём его номер в --i, задержка считается в CSS. Сама сетка тоже
+     .reveal — наблюдатель ставит .is-in ей, дети стартуют от неё. */
+  $$(".services__grid, .promo__row, .reviews__row, .route__grid, .route__steps, .sterile__grid, .about__stats, .cases__grid")
+    .forEach((grid) => {
+      grid.classList.add("stagger");
+      const index = () => Array.from(grid.children).forEach((c, i) => c.style.setProperty("--i", i));
+      index();
+      /* услуги, акции и отзывы рендерятся из базы уже после этого места —
+         перенумеровываем детей, когда они появляются */
+      new MutationObserver(index).observe(grid, { childList: true });
+      /* сетка сама не .reveal — ставим её под тот же наблюдатель, иначе
+         дети, спрятанные правилом .stagger, никогда не показались бы */
+      io.observe(grid);
+    });
+
+  /* ══════════ Параллакс картинок ══════════
+     Снимки в полосах и зуб в силуэте едут чуть медленнее страницы:
+     смещение считается от положения элемента относительно центра экрана
+     и пишется в --py, двигает картинку CSS. Считаем только для того, что
+     на экране, и только в кадре анимации — прокрутка не тормозит. */
+  const px = $$(".band img, .tooth-shot img, .tour__slide img");
+  if (px.length && !reduceMotion) {
+    const live = new Set();
+    const pio = new IntersectionObserver((entries) => entries.forEach((en) => {
+      if (en.isIntersecting) live.add(en.target); else live.delete(en.target);
+    }), { rootMargin: "10%" });
+    px.forEach((im) => pio.observe(im));
+    let pr = 0;
+    const tickPx = () => {
+      pr = 0;
+      const vh = innerHeight;
+      /* до первого срабатывания наблюдателя считаем всех — иначе картинка
+         выше первого экрана стоит без смещения, пока не прокрутят */
+      (live.size ? live : px).forEach((im) => {
+        const r = im.parentElement.getBoundingClientRect();
+        let k = (r.top + r.height / 2 - vh / 2) / vh;     // где элемент относительно центра экрана
+        k = Math.max(-1, Math.min(1, k));                   // за экраном — не дальше ±1, иначе улетает
+        im.style.setProperty("--py", (k * -7).toFixed(2) + "%");
+      });
+    };
+    /* если вкладка скрыта, requestAnimationFrame не приходит и флаг pr
+       завис бы навсегда — страхуем таймером, чтобы после возврата на
+       вкладку параллакс снова считался */
+    addEventListener("scroll", () => {
+      if (pr) return;
+      pr = requestAnimationFrame(tickPx);
+      setTimeout(() => { if (pr) { cancelAnimationFrame(pr); tickPx(); } }, 120);
+    }, { passive: true });
+    tickPx();
+  }
 
   /* ══════════ Счётчики ══════════ */
   const fmt = new Intl.NumberFormat("ru-RU");

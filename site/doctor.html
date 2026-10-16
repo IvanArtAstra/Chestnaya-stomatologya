@@ -10,6 +10,13 @@ try {
     "light";
 } catch (e) { document.documentElement.dataset.theme = "light"; }
 </script>
+<script>
+/* @view-transition включён для всех страниц; пропущенный переход (вкладка
+   скрыта, переход прерван) отклоняет его промисы — штатно, но без catch в
+   консоли «Uncaught (in promise) AbortError». Глушим на каждой странице. */
+(function(){var q=function(vt){if(!vt)return;["ready","finished","updateCallbackDone"].forEach(function(k){var p=vt[k];if(p&&p.catch)p.catch(function(){});});};
+addEventListener("pagereveal",function(e){q(e.viewTransition);});addEventListener("pageswap",function(e){q(e.viewTransition);});})();
+</script>
 <title>Сотрудник — Честная стоматология, Пермь</title>
 <meta name="description" content="Личная страница сотрудника клиники «Честная стоматология» в Перми: отзывы пациентов, публикации, онлайн-запись.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -22,7 +29,7 @@ try {
 <meta property="og:image" content="https://ivanartastra.github.io/Chestnaya-stomatologya/og-cover.jpg">
 <meta property="og:locale" content="ru_RU">
 <link rel="stylesheet" href="fonts.css?v=20260926a">
-<link rel="stylesheet" href="styles.css?v=20260926b">
+<link rel="stylesheet" href="styles.css?v=20261016d">
 <link rel="stylesheet" href="glass.css?v=20260923zd">
 <link rel="stylesheet" href="mobile-perf.css?v=20260926a">
 </head>

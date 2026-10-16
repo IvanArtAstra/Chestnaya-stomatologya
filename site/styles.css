@@ -430,11 +430,38 @@ html:not(.js) .reveal-seq__step--brand { opacity: 1; transform: none; }
    контент никогда не скрывается — дизайн виден всегда.
    Плюс страховочная анимация на случай мёртвого observer'а. */
 html.reveal-armed .reveal {
-  opacity: 0; transform: translateY(42px);
-  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Появление: подъём короче прежнего (42 → 28 px), зато с лёгким
+     масштабом и расфокусом — элемент не «въезжает», а проявляется, как
+     стекло, которое навели на резкость. Кривая с небольшим перелётом. */
+  opacity: 0; transform: translateY(28px) scale(0.985); filter: blur(6px);
+  transition: opacity 0.75s ease, transform 0.9s cubic-bezier(0.22, 0.9, 0.24, 1), filter 0.7s ease;
   animation: revealFailsafe 0.7s ease 2.5s forwards;
 }
-html.reveal-armed .reveal.is-in { opacity: 1; transform: none; animation: none; }
+html.reveal-armed .reveal.is-in { opacity: 1; transform: none; filter: none; animation: none; }
+/* Дети сетки стартуют по очереди: задержка от номера --i, который ставит
+   app.js. Сама сетка получает .is-in от наблюдателя, дети — от неё. */
+html.reveal-armed .stagger > *,
+html.reveal-armed .stagger > .reveal.is-in {   /* карточки из базы приходят уже с .is-in — прячем и их */
+  opacity: 0; transform: translateY(22px); filter: none;
+  transition: opacity 0.6s ease, transform 0.75s cubic-bezier(0.22, 0.9, 0.24, 1);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+html.reveal-armed .stagger.is-in > *,
+html.reveal-armed .stagger.is-in > .reveal.is-in { opacity: 1; transform: none; }
+/* страховка: если наблюдатель не сработал, через 2,5 с всё видно */
+html.reveal-armed .stagger > * { animation: revealFailsafe 0.7s ease 2.5s forwards; }
+html.reveal-armed .stagger.is-in > * { animation: none; }
+/* Параллакс: картинка внутри полосы чуть длиннее рамки и едет по --py */
+/* Параллакс пишем в отдельное свойство translate: transform занят
+   наездом при наведении и правилами mobile-perf, они бы его перебили.
+   Запас по высоте даёт scale — картинка чуть крупнее рамки, края не
+   оголяются при смещении. */
+.band img, .tour__slide img, .tooth-shot img { translate: 0 var(--py, 0); will-change: translate; }
+.band img, .tour__slide img { scale: 1.12; }
+@media (prefers-reduced-motion: reduce) {
+  html.reveal-armed .reveal, html.reveal-armed .stagger > * { opacity: 1; transform: none; filter: none; transition: none; animation: none; }
+  .band img, .tour__slide img, .tooth-shot img { translate: none; scale: none; }
+}
 @keyframes revealFailsafe { to { opacity: 1; transform: none; } }
 
 /* ═══════════════ УСЛУГИ ═══════════════ */
@@ -1991,3 +2018,8 @@ h1, h2, h3, .seq-title { overflow-wrap: break-word; }
   aspect-ratio: 16 / 10; object-fit: cover;
   border-radius: 16px; margin: 4px 0 6px;
 }
+
+/* Точки экскурсии 11 px — пальцем не попасть; растим область нажатия
+   псевдоэлементом, сама точка остаётся маленькой */
+.tour__dot { position: relative; }
+.tour__dot::before { content: ""; position: absolute; inset: -14px -10px; }

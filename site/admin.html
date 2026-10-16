@@ -12,11 +12,18 @@ try {
 /* гейт: без сессии — на страницу входа (полная проверка в admin.js) */
 try { if (!localStorage.getItem("chestom_session")) location.replace("login.html"); } catch (e) {}
 </script>
+<script>
+/* @view-transition включён для всех страниц; пропущенный переход (вкладка
+   скрыта, переход прерван) отклоняет его промисы — штатно, но без catch в
+   консоли «Uncaught (in promise) AbortError». Глушим на каждой странице. */
+(function(){var q=function(vt){if(!vt)return;["ready","finished","updateCallbackDone"].forEach(function(k){var p=vt[k];if(p&&p.catch)p.catch(function(){});});};
+addEventListener("pagereveal",function(e){q(e.viewTransition);});addEventListener("pageswap",function(e){q(e.viewTransition);});})();
+</script>
 <title>Админ-панель — Честная стоматология</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="fonts.css?v=20260926a">
-<link rel="stylesheet" href="styles.css?v=20260926b">
-<link rel="stylesheet" href="admin.css?v=20260923zj">
+<link rel="stylesheet" href="styles.css?v=20261016d">
+<link rel="stylesheet" href="admin.css?v=20261016d">
 <link rel="stylesheet" href="glass.css?v=20260923zd">
 <link rel="stylesheet" href="mobile-perf.css?v=20260926a">
 </head>
@@ -415,6 +422,7 @@ try { if (!localStorage.getItem("chestom_session")) location.replace("login.html
 <script src="db.js?v=20260924d"></script>
 <script src="auth.js?v=20260923k"></script>
 <script src="md.js?v=20260923k"></script>
-<script src="admin.js?v=20260929b"></script>
+<script src="admin-ux.js?v=20261016d"></script>
+<script src="admin.js?v=20261016d"></script>
 </body>
 </html>

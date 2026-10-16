@@ -11,6 +11,13 @@ try {
     "light";
 } catch (e) { document.documentElement.dataset.theme = "light"; }
 </script>
+<script>
+/* @view-transition включён для всех страниц; пропущенный переход (вкладка
+   скрыта, переход прерван) отклоняет его промисы — штатно, но без catch в
+   консоли «Uncaught (in promise) AbortError». Глушим на каждой странице. */
+(function(){var q=function(vt){if(!vt)return;["ready","finished","updateCallbackDone"].forEach(function(k){var p=vt[k];if(p&&p.catch)p.catch(function(){});});};
+addEventListener("pagereveal",function(e){q(e.viewTransition);});addEventListener("pageswap",function(e){q(e.viewTransition);});})();
+</script>
 <title>Честная стоматология — клиника в Перми | Честные цены, онлайн-запись</title>
 <meta name="description" content="Стоматологическая клиника «Честная стоматология» в Перми, ул. Танкистов, 68. Лечение без скрытых услуг и навязанных процедур. Рейтинг 5.0 на 2ГИС. Онлайн-запись.">
 <link rel="canonical" href="https://ivanartastra.github.io/Chestnaya-stomatologya/">
@@ -75,7 +82,7 @@ try {
 }
 </script>
 <link rel="stylesheet" href="fonts.css?v=20260926a">
-<link rel="stylesheet" href="styles.css?v=20260926b">
+<link rel="stylesheet" href="styles.css?v=20261016d">
 <link rel="stylesheet" href="effects.css?v=20260924b">
 <link rel="stylesheet" href="cards-fx.css?v=20260923m">
 <link rel="stylesheet" href="polish.css?v=20260923m">
@@ -1067,14 +1074,14 @@ try {
 <script src="auth.js?v=20260923m"></script>
 <script src="md.js?v=20260923m"></script>
 <script src="ux.js?v=20260926a"></script>
-<script src="app.js?v=20260926a"></script>
+<script src="app.js?v=20261016d"></script>
 <script src="water.js?v=20260926a" defer></script>
 <script src="effects.js?v=20260923t" defer></script>
 <script src="teeth-map.js?v=20260926a" defer></script>
-<script src="hero-seq.js?v=20260926a" defer></script>
+<script src="hero-seq.js?v=20261016d" defer></script>
 <script src="tour.js?v=20260923ze" defer></script>
 <script src="cards-fx.js?v=20260923u" defer></script>
-<script src="motion-fx.js?v=20260923m" defer></script>
+<script src="motion-fx.js?v=20261016d" defer></script>
 <script src="polish.js?v=20260923m" defer></script>
 <script src="svc-play.js?v=20260926a" defer></script>
 <script src="chapters.js?v=20260924f" defer></script>

@@ -212,8 +212,12 @@ html.theme-wipe::view-transition-new(root) { animation: themeWipe 0.55s ease-out
         root.style.setProperty("--tw-r", `${Math.ceil(maxR)}px`);
 
         const vt = document.startViewTransition(apply);
-        /* снимаем класс после — межстраничные переходы снова используют vtOut/vtIn */
-        vt.finished.finally(() => root.classList.remove("theme-wipe"));
+        /* снимаем класс после — межстраничные переходы снова используют vtOut/vtIn.
+           finished отклоняется, если переход пропущен (вкладка скрыта, второй
+           клик подряд) — тема при этом уже переключена, ловим молча, иначе в
+           консоли «Uncaught (in promise) AbortError» на каждый такой случай. */
+        vt.finished.finally(() => root.classList.remove("theme-wipe")).catch(() => {});
+        if (vt.ready && vt.ready.catch) vt.ready.catch(() => {});
       } catch (err) {
         /* при любом сбое тема всё равно должна переключиться */
         const root = document.documentElement;
@@ -223,4 +227,21 @@ html.theme-wipe::view-transition-new(root) { animation: themeWipe 0.55s ease-out
       }
     }, true); /* capture на document — раньше listener'а на самой кнопке */
   } catch (e) { console.error("motion-fx theme init:", e); }
+})();
+
+/* ── Межстраничные переходы: глушим отказ пропущенного перехода ──
+   @view-transition { navigation: auto } в styles.css включает переход между
+   страницами. Когда вкладка скрыта или переход прерван, Chrome отклоняет
+   viewTransition.ready / finished — это штатно, но без catch каждая такая
+   ситуация выглядит в консоли как «Uncaught (in promise) AbortError». */
+(() => {
+  const quiet = (vt) => {
+    if (!vt) return;
+    ["ready", "finished", "updateCallbackDone"].forEach((k) => {
+      const pr = vt[k];
+      if (pr && typeof pr.catch === "function") pr.catch(() => {});
+    });
+  };
+  window.addEventListener("pagereveal", (e) => quiet(e.viewTransition));
+  window.addEventListener("pageswap", (e) => quiet(e.viewTransition));
 })();

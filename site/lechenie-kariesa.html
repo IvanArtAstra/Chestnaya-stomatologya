@@ -10,6 +10,13 @@ try {
     "light";
 } catch (e) { document.documentElement.dataset.theme = "light"; }
 </script>
+<script>
+/* @view-transition включён для всех страниц; пропущенный переход (вкладка
+   скрыта, переход прерван) отклоняет его промисы — штатно, но без catch в
+   консоли «Uncaught (in promise) AbortError». Глушим на каждой странице. */
+(function(){var q=function(vt){if(!vt)return;["ready","finished","updateCallbackDone"].forEach(function(k){var p=vt[k];if(p&&p.catch)p.catch(function(){});});};
+addEventListener("pagereveal",function(e){q(e.viewTransition);});addEventListener("pageswap",function(e){q(e.viewTransition);});})();
+</script>
 <title>Лечение кариеса в Перми — цена от 4 000 ₽ | Честная стоматология</title>
 <meta name="description" content="Лечение кариеса в Перми с анестезией: 4 000–4 500 ₽, анестезия и материалы включены. Скидка 15% при прохождении профгигиены. Ул. Танкистов, 68.">
 <link rel="canonical" href="https://ivanartastra.github.io/Chestnaya-stomatologya/lechenie-kariesa.html">
@@ -27,7 +34,7 @@ try {
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="fonts.css?v=20260926a">
-<link rel="stylesheet" href="styles.css?v=20260926b">
+<link rel="stylesheet" href="styles.css?v=20261016d">
 <link rel="stylesheet" href="glass.css?v=20260923zd">
 <link rel="stylesheet" href="mobile-perf.css?v=20260926a">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Лечение кариеса", "serviceType": "Лечение кариеса", "provider": {"@type": "Dentist", "name": "Честная стоматология", "address": {"@type": "PostalAddress", "streetAddress": "ул. Танкистов, 68", "addressLocality": "Пермь", "postalCode": "614095", "addressCountry": "RU"}, "telephone": "+79991152419"}, "areaServed": "Пермь", "offers": {"@type": "Offer", "price": "4000", "priceCurrency": "RUB"}}</script>

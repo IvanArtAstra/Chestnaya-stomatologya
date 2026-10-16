@@ -244,10 +244,21 @@
     }
 
     var raf = 0, near = true;
+    /* Колесо мыши и тачпад шлют прокрутку ступеньками по 50–100 px; если
+       рисовать кадр ровно по положению, погружение дёргается на каждом
+       щелчке колеса. Поэтому к цели идём не сразу, а догоняем её с
+       каждым кадром на долю LERP — глаз видит скольжение, а не ступени.
+       Пока цель не достигнута, рендер сам себя перезапускает. Пальцем на
+       телефоне прокрутка и так плавная, там догон почти незаметен. */
+    var LERP = 0.22, EPS = 0.0006, shown = -1;
     function render() {
       raf = 0;
-      var p = reduce ? 1 : progress();      // reduced-motion → финальный «светящийся» кадр
-      if (p !== lastP) { lastP = p; draw(p); }
+      var target = reduce ? 1 : progress();   // reduced-motion → финальный «светящийся» кадр
+      if (shown < 0 || reduce) shown = target; // первый кадр и reduced-motion — без догона
+      else shown += (target - shown) * LERP;
+      if (Math.abs(target - shown) < EPS) shown = target;
+      if (shown !== lastP) { lastP = shown; draw(shown); }
+      if (shown !== target) schedule();        // ещё не доехали — следующий кадр
     }
     function schedule() { if (!raf && near) raf = requestAnimationFrame(render); }
 
@@ -262,7 +273,7 @@
       window.addEventListener("scroll", schedule, { passive: true });
     }
     window.addEventListener("resize", function () {
-      setup(); lastP = -1; schedule();
+      setup(); lastP = -1; shown = -1; schedule();
       /* повернули экран — меняем набор кадров и ролик под новые пропорции */
       var m = pickMode();
       if (m !== mode) {

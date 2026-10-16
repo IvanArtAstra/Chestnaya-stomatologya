@@ -10,6 +10,13 @@ try {
     "light";
 } catch (e) { document.documentElement.dataset.theme = "light"; }
 </script>
+<script>
+/* @view-transition включён для всех страниц; пропущенный переход (вкладка
+   скрыта, переход прерван) отклоняет его промисы — штатно, но без catch в
+   консоли «Uncaught (in promise) AbortError». Глушим на каждой странице. */
+(function(){var q=function(vt){if(!vt)return;["ready","finished","updateCallbackDone"].forEach(function(k){var p=vt[k];if(p&&p.catch)p.catch(function(){});});};
+addEventListener("pagereveal",function(e){q(e.viewTransition);});addEventListener("pageswap",function(e){q(e.viewTransition);});})();
+</script>
 <title>Профессиональная чистка зубов в Перми — 4 900 ₽ | Честная стоматология</title>
 <meta name="description" content="Профгигиена в Перми за один визит: ультразвук + Air-Flow + реминерализация — 4 900 ₽. Акция 1+1 за 6 990 ₽ до 31.08.2026. Ул. Танкистов, 68.">
 <link rel="canonical" href="https://ivanartastra.github.io/Chestnaya-stomatologya/profgigiena.html">
@@ -27,7 +34,7 @@ try {
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="fonts.css?v=20260926a">
-<link rel="stylesheet" href="styles.css?v=20260926b">
+<link rel="stylesheet" href="styles.css?v=20261016d">
 <link rel="stylesheet" href="glass.css?v=20260923zd">
 <link rel="stylesheet" href="mobile-perf.css?v=20260926a">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Профессиональная гигиена полости рта", "serviceType": "Профессиональная гигиена полости рта", "provider": {"@type": "Dentist", "name": "Честная стоматология", "address": {"@type": "PostalAddress", "streetAddress": "ул. Танкистов, 68", "addressLocality": "Пермь", "postalCode": "614095", "addressCountry": "RU"}, "telephone": "+79991152419"}, "areaServed": "Пермь", "offers": {"@type": "Offer", "price": "4900", "priceCurrency": "RUB"}}</script>
